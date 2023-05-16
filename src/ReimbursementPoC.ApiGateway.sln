@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReimbursementPoC.ApiGateway", "ApiGateways\ReimbursementPoC.ApiGateway\ReimbursementPoC.ApiGateway.csproj", "{A00FE917-B4FA-471C-B880-59279411464A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateway", "ApiGateway", "{44FDF9A6-65D1-4342-910B-3E9CA17EF479}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{8491F429-EB05-40A2-A659-B16BA39DECD5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Program", "Program", "{F9C6E054-7E02-44E8-B210-B2636DFD78B8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReimbursementPoC.Program.API", "Sevices\ReimbursementPoC.Program.API\ReimbursementPoC.Program.API.csproj", "{930F2027-E6DD-43AE-8BF1-99E906CE54CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A00FE917-B4FA-471C-B880-59279411464A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A00FE917-B4FA-471C-B880-59279411464A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A00FE917-B4FA-471C-B880-59279411464A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A00FE917-B4FA-471C-B880-59279411464A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{930F2027-E6DD-43AE-8BF1-99E906CE54CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{930F2027-E6DD-43AE-8BF1-99E906CE54CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{930F2027-E6DD-43AE-8BF1-99E906CE54CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{930F2027-E6DD-43AE-8BF1-99E906CE54CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A00FE917-B4FA-471C-B880-59279411464A} = {44FDF9A6-65D1-4342-910B-3E9CA17EF479}
+		{F9C6E054-7E02-44E8-B210-B2636DFD78B8} = {8491F429-EB05-40A2-A659-B16BA39DECD5}
+		{930F2027-E6DD-43AE-8BF1-99E906CE54CB} = {F9C6E054-7E02-44E8-B210-B2636DFD78B8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6B33D5C8-E483-4BF1-841E-87067212476D}
+	EndGlobalSection
+EndGlobal
