@@ -15,7 +15,7 @@ namespace ReimbursementPoC.Program.Application.Program.Commands.UpdateProgram
         private readonly IProgramService _ProgramUniquenessChecker;
 
         public UpdateProgramCommandHandler(
-            IApplicationDbContext applicationDbContext, 
+            IApplicationDbContext applicationDbContext,
             IMapper mapper,
             IProgramService ProgramUniquenessChecker)
         {
@@ -36,12 +36,14 @@ namespace ReimbursementPoC.Program.Application.Program.Commands.UpdateProgram
             if (command.LastModified != entity.LastModified)
             {
                 throw new ProgramConcurrentUpdateException($"Program {command.Id} version is outdated.");
-            }            
+            }
 
             entity.UpdateProgram(
                 command.Name,
-                command.Code,
                 command.Description,
+                command.State,
+                command.StartDate,
+                command.EndDate,
                 _ProgramUniquenessChecker);
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);

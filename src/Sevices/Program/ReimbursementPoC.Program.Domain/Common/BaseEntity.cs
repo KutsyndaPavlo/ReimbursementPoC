@@ -7,6 +7,8 @@
             this.Id = Guid.NewGuid();
             this.Created = DateTime.UtcNow;
             this.LastModified = this.Created;
+            this.LastModifiedBy = "";//ToDo
+            this.CreatedBy = "";//ToDo
         }
 
         public Guid Id { get; private set; }

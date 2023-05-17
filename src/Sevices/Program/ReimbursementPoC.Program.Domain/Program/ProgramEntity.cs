@@ -1,4 +1,5 @@
 ﻿using ReimbursementPoC.Program.Domain.Common;
+using ReimbursementPoC.Program.Domain.Product.Events;
 using ReimbursementPoC.Program.Domain.Product.Rules;
 using ReimbursementPoC.Program.Domain.Program.Enums;
 using ReimbursementPoC.Program.Domain.ValueObjects;
@@ -7,14 +8,20 @@ namespace ReimbursementPoC.Program.Domain.Program
 {
     public class ProgramEntity : BaseEntity, IAggregateRoot
     {
+        private ProgramEntity()
+        {
+
+        }
+
         private ProgramEntity(string name, string description, Period period, StateType state) : base()
         {
             this.Name = name;
             this.Description = description;
             this.State = state;
+            this.Period = period;
             this.IsActive = true;
 
-            //this._domainEvents.Add(new ProductCreatedEvent(this));
+            this._domainEvents.Add(new ProgramCreatedEvent(this));
         }
 
         public string Name { get; private set; }
@@ -32,33 +39,36 @@ namespace ReimbursementPoC.Program.Domain.Program
                                               DateTime startDate,
                                               DateTime endDate,
                                               string state,
-                                              IProgramService productUniquenessChecker)
+                                              IProgramService programUniquenessChecker)
         {
-            CheckRule(new ProgramNameMustBeUniqueRule(productUniquenessChecker, name));
+            CheckRule(new ProgramNameMustBeUniqueRule(programUniquenessChecker, name));
 
             return new ProgramEntity(name, description, new Period(startDate, endDate), StateType.FromDisplayName<StateType>(state));
         }
 
         public void UpdateProgram(
             string name,
-            string? code,
             string? description,
-            IProgramService productService)
+            string state,
+            DateTime startDate,
+            DateTime endDate,
+            IProgramService programService)
         {
-            //CheckRule(new ProductNameMustBeUniqueRule(productService, name));
+            CheckRule(new ProgramNameMustBeUniqueRule(programService, name));
 
-            //this.Name = name;
-            //this.Code = code;
-            //this.Description = description;
-            //this.LastModified = DateTime.UtcNow;
+            this.Name = name;
+            this.Description = description;
+            this.State = StateType.FromDisplayName<StateType>(state);
+            this.Period = new Period(startDate, endDate);
+            this.LastModified = DateTime.UtcNow;
 
             //this._domainEvents.Add(new ProductUpdatedEvent(this));
         }
 
         public void DeActivate()
         {
-            //IsActive = false;
-            //this.LastModified = DateTime.UtcNow;
+            IsActive = false;
+            this.LastModified = DateTime.UtcNow;
             //this._domainEvents.Add(new ProductDeactivatedEvent(this));
         }
 
@@ -67,10 +77,5 @@ namespace ReimbursementPoC.Program.Domain.Program
             return true;
             //return !productService.HistoricalProposals(this).Any();
         }
-
-        //public IReadOnlyCollection<ProposalEntity?> ActiveProposals(IProgramService productService)
-        //{
-        //    return productService.LatestProposals(this).ToList().AsReadOnly();
-        //}
     }
 }

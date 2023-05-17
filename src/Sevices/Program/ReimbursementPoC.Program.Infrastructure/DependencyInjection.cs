@@ -14,7 +14,7 @@ namespace ReimbursementPoC.Program.Infrastructure
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseInMemoryDatabase("PriceAnalytic"));
+                    options.UseInMemoryDatabase("ReimbursementPoC"));
             }
             else
             {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ReimbursementPoC.Program.Domain.Program;
+using ReimbursementPoC.Program.Domain.ValueObjects;
 
 namespace ReimbursementPoC.Program.Infrastructure.Persistence.Configurations
 {
@@ -23,14 +24,28 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence.Configurations
             builder.Property(t => t.Description)
                 .HasColumnName("Description");
 
-            //builder.Property(t => t.IsCompleted)
-            //    .HasColumnName("IsCompleted")
-            //    .IsRequired();
+            //builder.HasOne(p => p.State)
+            //.WithMany()
 
-            //builder.Property(t => t.Gender)
-            //    .HasColumnName("Gender")
-            //    .HasColumnType("int")
-            //    .IsRequired();
+            builder.HasOne(x => x.State).WithMany();
+
+            builder.OwnsOne<Period>("Period", mv =>
+                       {
+                           mv.Property(p => p.StartDate).HasColumnName("StartDate");
+                           mv.Property(p => p.EndDate).HasColumnName("EndDate");
+                       });
+
+            builder.Property(t => t.IsActive)
+                .HasColumnName("IsCompleted")
+                .IsRequired();
+
+            builder.Property(t => t.LastModified)
+                .HasColumnName("LastModified")
+                .IsRequired();
+
+            builder.Property(t => t.LastModifiedBy)
+                .HasColumnName("LastModifiedBy")
+                .IsRequired();
 
             builder.Ignore(e => e.DomainEvents);
         }

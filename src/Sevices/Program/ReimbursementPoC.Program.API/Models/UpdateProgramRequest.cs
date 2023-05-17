@@ -1,9 +1,6 @@
-﻿using MediatR;
-using ReimbursementPoC.Program.Application.Program.Queries.GetProgramById;
-
-namespace ReimbursementPoC.Program.Application.Program.Commands.UpdateProgram
+﻿namespace ReimbursementPoC.Program.API.Models
 {
-    public class UpdateProgramCommand : IRequest<ProgramDto>
+    public class UpdateProgramRequest
     {
         public Guid Id { get; set; }
 

@@ -26,9 +26,9 @@ namespace ReimbursementPoC.Program.Application.Program.Commands.CreateProgram
             var entity = ProgramEntity.CreateNew(
                 command.Name,
                 command.Description,
-                DateTime.Now,
-                DateTime.Now,
-                null,
+                command.StartDate,
+                command.EndDate,
+                command.State,
                 _ProgramUniquenessChecker);
 
             _applicationDbContext.Programs.Add(entity);

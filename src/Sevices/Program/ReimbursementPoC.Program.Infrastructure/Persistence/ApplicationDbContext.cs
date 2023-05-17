@@ -2,6 +2,7 @@
 using ReimbursementPoC.Program.Application.Common.Interfaces;
 using ReimbursementPoC.Program.Domain.Common;
 using ReimbursementPoC.Program.Domain.Program;
+using ReimbursementPoC.Program.Domain.Program.Enums;
 using System.Reflection;
 
 namespace ReimbursementPoC.Program.Infrastructure.Persistence
@@ -18,9 +19,7 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence
             Database.EnsureCreated();
         }
 
-        public DbSet<ProgramEntity> Products => Set<ProgramEntity>();
-
-        public DbSet<ProgramEntity> Programs => throw new NotImplementedException();
+        public DbSet<ProgramEntity> Programs => Set<ProgramEntity>();
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -67,10 +66,9 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence
 
         private void Seed(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<SellerEntity>().HasData(
-            //    SellerEntity.CreateNewAndActivate("Silpo", ""),
-            //    SellerEntity.CreateNewAndActivate("Ashan", ""),
-            //    SellerEntity.CreateNewAndActivate("Metro", ""));
+        //    modelBuilder.Entity<StateType>().HasData(
+        //        StateType.Alaska,
+        //        StateType.Alabama);
         }
     }
 }
