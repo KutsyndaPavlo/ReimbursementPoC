@@ -14,4 +14,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Sevices\Program\ReimbursementPoC.Program.API\ReimbursementPoC.Program.API.csproj" />
+  </ItemGroup>
+
 </Project>
