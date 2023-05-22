@@ -3,6 +3,7 @@ using ReimbursementPoC.Program.API.Models;
 using ReimbursementPoC.Program.Application.Program.Commands.CreateProgram;
 using ReimbursementPoC.Program.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Program.Application.Program.Queries.GetPrograms;
+using ReimbursementPoC.Program.Application.Services.Commands.CreateService;
 
 namespace ReimbursementPoC.Program.API.Mappings
 {
@@ -16,7 +17,9 @@ namespace ReimbursementPoC.Program.API.Mappings
                 //config.CreateMap<PriceAnalytics.Administration.Services.Program.Page, ReimbursementPoC.Program.Application.Common.Model.Page>().ReverseMap();
                 //config.CreateMap<ProgramPaginatedList, PaginatedList<ReimbursementPoC.Program.Application.Program.Queries.GetProgramById.ProgramDto>>().ReverseMap();// ToDo
                 config.CreateMap<CreateProgramRequest, ReimbursementPoC.Program.Application.Program.Commands.CreateProgram.CreateProgramCommand>().ReverseMap();
-                config.CreateMap<UpdateProgramRequest, ReimbursementPoC.Program.Application.Program.Commands.UpdateProgram.UpdateProgramCommand>();
+                config.CreateMap<UpdateProgramRequest, ReimbursementPoC.Program.Application.Program.Commands.UpdateProgram.UpdateProgramCommand>().ReverseMap();
+                config.CreateMap<CreateServiceRequest, CreateServiceCommand>().ReverseMap();
+               // config.CreateMap<UpdateServiceRequest, UpdateServiceCommand>().ReverseMap();
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
                 //config.CreateMap<DeactivateProgramCommand, ReimbursementPoC.Program.Application.Program.Commands.DeactivateProgram.DeactivateProgramCommand>()
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
@@ -26,7 +29,7 @@ namespace ReimbursementPoC.Program.API.Mappings
                 //config.CreateMap<ReimbursementPoC.Program.Application.Program.Queries.GetProgramById.ProgramDto, ProgramDto>()
                 //.ForMember(dest => dest.Created, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.Created, DateTimeKind.Utc).ToTimestamp()))
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.LastModified, DateTimeKind.Utc).ToTimestamp()));
-               // config.CreateMap<ProgramDto, ReimbursementPoC.Program.Application.Program.Queries.GetProgramById.ProgramDto>();
+                // config.CreateMap<ProgramDto, ReimbursementPoC.Program.Application.Program.Queries.GetProgramById.ProgramDto>();
                 //.ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.Created.ToDateTime()))
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
 

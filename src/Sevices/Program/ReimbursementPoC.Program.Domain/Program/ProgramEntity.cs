@@ -2,6 +2,7 @@
 using ReimbursementPoC.Program.Domain.Product.Events;
 using ReimbursementPoC.Program.Domain.Product.Rules;
 using ReimbursementPoC.Program.Domain.Program.Enums;
+using ReimbursementPoC.Program.Domain.Service;
 using ReimbursementPoC.Program.Domain.ValueObjects;
 
 namespace ReimbursementPoC.Program.Domain.Program
@@ -33,6 +34,10 @@ namespace ReimbursementPoC.Program.Domain.Program
         public StateType State { get; private set; }
 
         public bool IsActive { get; private set; }
+
+        public List<ServiceEntity> _services;
+
+        public IReadOnlyCollection<ServiceEntity> Services => _services;
 
         public static ProgramEntity CreateNew(string name,
                                               string description,
@@ -76,6 +81,23 @@ namespace ReimbursementPoC.Program.Domain.Program
         {
             return true;
             //return !productService.HistoricalProposals(this).Any();
+        }
+
+        public ServiceEntity AddService(string name, string? description)
+        {
+            //CheckRule(new OnlyActiveSellerCanProvidePoposalRule(seller));
+            //CheckRule(new ProposalShouldBeProvidedToActiveProductRule(product));
+            //CheckRule(new ProposalPriceMustBeGreaterThanZeroRule(price));
+            //CheckRule(new CurrencyOfProposalPriceMustBeUahOrUsd(currency));
+
+            var service = ServiceEntity.CreateNew(name, description, this);
+            this._services.Add(service);
+
+            //CheckRule(new ShouldBeOnlyOneProposalPerDayRule(proposalService, entity));
+
+            //entity.AddDomainEvent(new ProposalCreatedEvent(entity, product, seller));
+
+            return service;
         }
     }
 }

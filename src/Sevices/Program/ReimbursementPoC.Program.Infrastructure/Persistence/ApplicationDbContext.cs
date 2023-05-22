@@ -2,7 +2,7 @@
 using ReimbursementPoC.Program.Application.Common.Interfaces;
 using ReimbursementPoC.Program.Domain.Common;
 using ReimbursementPoC.Program.Domain.Program;
-using ReimbursementPoC.Program.Domain.Program.Enums;
+using ReimbursementPoC.Program.Domain.Service;
 using System.Reflection;
 
 namespace ReimbursementPoC.Program.Infrastructure.Persistence
@@ -20,6 +20,7 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence
         }
 
         public DbSet<ProgramEntity> Programs => Set<ProgramEntity>();
+        public DbSet<ServiceEntity> Services => Set<ServiceEntity>();
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {

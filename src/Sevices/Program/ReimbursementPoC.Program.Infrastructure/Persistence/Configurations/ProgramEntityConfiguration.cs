@@ -24,10 +24,8 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence.Configurations
             builder.Property(t => t.Description)
                 .HasColumnName("Description");
 
-            //builder.HasOne(p => p.State)
-            //.WithMany()
-
-            builder.HasOne(x => x.State).WithMany();
+            builder.HasOne(p => p.State)
+            .WithMany();
 
             builder.OwnsOne<Period>("Period", mv =>
                        {
@@ -45,6 +43,11 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence.Configurations
 
             builder.Property(t => t.LastModifiedBy)
                 .HasColumnName("LastModifiedBy")
+                .IsRequired();
+
+            builder.HasMany("_services")
+                .WithOne()
+                .HasForeignKey("ProgramId")
                 .IsRequired();
 
             builder.Ignore(e => e.DomainEvents);

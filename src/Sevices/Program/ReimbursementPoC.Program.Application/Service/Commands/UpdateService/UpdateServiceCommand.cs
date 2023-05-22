@@ -1,10 +1,9 @@
 ﻿using MediatR;
-using ReimbursementPoC.Program.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Program.Application.Services.Queries.GetServiceById;
 
-namespace ReimbursementPoC.Program.Application.Program.Commands.UpdateProgram
+namespace ReimbursementPoC.Program.Application.Services.Commands.UpdateService
 {
-    public class UpdateProgramCommand : IRequest<ProgramDto>
+    public class UpdateServiceCommand : IRequest<ServiceDto>
     {
         public Guid Id { get; set; }
 
