@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ReimbursementPoC.Program.Domain.Program;
+using ReimbursementPoC.Program.Domain.Program.Enums;
 using ReimbursementPoC.Program.Domain.ValueObjects;
 
 namespace ReimbursementPoC.Program.Infrastructure.Persistence.Configurations
@@ -14,7 +15,7 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence.Configurations
 
             // Properties
             builder.Property(t => t.Id)
-                .HasColumnName("Id");
+                .HasColumnName("Id").ValueGeneratedNever();
 
             builder.Property(t => t.Name)
                 .IsRequired()
@@ -24,8 +25,10 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence.Configurations
             builder.Property(t => t.Description)
                 .HasColumnName("Description");
 
-            builder.HasOne(p => p.State)
-            .WithMany();
+            builder
+            .HasOne(pt => pt.State)
+            .WithMany()
+            .HasForeignKey("_stateId");
 
             builder.OwnsOne<Period>("Period", mv =>
                        {
@@ -46,9 +49,9 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence.Configurations
                 .IsRequired();
 
             builder.HasMany("_services")
-                .WithOne()
+                .WithOne("Program")
                 .HasForeignKey("ProgramId")
-                .IsRequired();
+                .IsRequired().OnDelete(DeleteBehavior.Cascade);
 
             builder.Ignore(e => e.DomainEvents);
         }

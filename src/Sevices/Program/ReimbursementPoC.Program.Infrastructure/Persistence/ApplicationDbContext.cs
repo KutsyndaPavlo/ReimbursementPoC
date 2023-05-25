@@ -2,6 +2,7 @@
 using ReimbursementPoC.Program.Application.Common.Interfaces;
 using ReimbursementPoC.Program.Domain.Common;
 using ReimbursementPoC.Program.Domain.Program;
+using ReimbursementPoC.Program.Domain.Program.Enums;
 using ReimbursementPoC.Program.Domain.Service;
 using System.Reflection;
 
@@ -67,9 +68,9 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence
 
         private void Seed(ModelBuilder modelBuilder)
         {
-        //    modelBuilder.Entity<StateType>().HasData(
-        //        StateType.Alaska,
-        //        StateType.Alabama);
+            modelBuilder.Entity<StateType>().HasData(
+                StateType.Alaska,
+                StateType.Alabama);
         }
     }
 }

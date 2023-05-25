@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PriceAnalytics.Administration.Domain.Product.Specification;
 using ReimbursementPoC.Program.Application.Common.Interfaces;
-using ReimbursementPoC.Program.Domain;
+using ReimbursementPoC.Program.Domain.Service.Exeption;
+using ReimbursementPoC.Program.Domain.Service.Specifications;
 
 namespace ReimbursementPoC.Program.Application.Services.Queries.GetServiceById
 {
@@ -21,14 +21,14 @@ namespace ReimbursementPoC.Program.Application.Services.Queries.GetServiceById
 
         public async Task<ServiceDto> Handle(GetServiceByIdQuery query, CancellationToken cancellationToken)
         {
-            var entity = await _applicationDbContext.Programs.FirstOrDefaultAsync(new ProgramByIdSpecification(query.Id).ToExpression());
+            var service = await _applicationDbContext.Services.FirstOrDefaultAsync(new ServiceByIdSpecification(query.Id).ToExpression());
 
-            if (entity == null)
+            if (service == null)
             {
-                throw new ProgramNotFoundException($"Program with id {query.Id} doesn't exist");
+                throw new ServiceNotFoundException($"Service with id {query.Id} doesn't exist");
             }
 
-            return _mapper.Map<ServiceDto>(entity);
+            return _mapper.Map<ServiceDto>(service);
         }
     }
 }

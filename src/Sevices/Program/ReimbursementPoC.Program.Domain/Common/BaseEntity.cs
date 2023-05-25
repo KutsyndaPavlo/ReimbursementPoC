@@ -1,4 +1,6 @@
-﻿namespace ReimbursementPoC.Program.Domain.Common
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ReimbursementPoC.Program.Domain.Common
 {
     public abstract class BaseEntity
     {

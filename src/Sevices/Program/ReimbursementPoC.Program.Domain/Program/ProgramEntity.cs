@@ -1,7 +1,7 @@
 ﻿using ReimbursementPoC.Program.Domain.Common;
-using ReimbursementPoC.Program.Domain.Product.Events;
 using ReimbursementPoC.Program.Domain.Product.Rules;
 using ReimbursementPoC.Program.Domain.Program.Enums;
+using ReimbursementPoC.Program.Domain.Program.Events;
 using ReimbursementPoC.Program.Domain.Service;
 using ReimbursementPoC.Program.Domain.ValueObjects;
 
@@ -14,11 +14,11 @@ namespace ReimbursementPoC.Program.Domain.Program
 
         }
 
-        private ProgramEntity(string name, string description, Period period, StateType state) : base()
+        private ProgramEntity(string name, string description, int stateId, Period period): base()
         {
             this.Name = name;
             this.Description = description;
-            this.State = state;
+            this._stateId = stateId;
             this.Period = period;
             this.IsActive = true;
 
@@ -33,6 +33,8 @@ namespace ReimbursementPoC.Program.Domain.Program
 
         public StateType State { get; private set; }
 
+        private int _stateId;
+
         public bool IsActive { get; private set; }
 
         public List<ServiceEntity> _services;
@@ -41,20 +43,20 @@ namespace ReimbursementPoC.Program.Domain.Program
 
         public static ProgramEntity CreateNew(string name,
                                               string description,
+                                              int stateId,
                                               DateTime startDate,
                                               DateTime endDate,
-                                              string state,
                                               IProgramService programUniquenessChecker)
         {
             CheckRule(new ProgramNameMustBeUniqueRule(programUniquenessChecker, name));
 
-            return new ProgramEntity(name, description, new Period(startDate, endDate), StateType.FromDisplayName<StateType>(state));
+            return new ProgramEntity(name, description, stateId, new Period(startDate, endDate));
         }
 
         public void UpdateProgram(
             string name,
             string? description,
-            string state,
+            int stateId,
             DateTime startDate,
             DateTime endDate,
             IProgramService programService)
@@ -63,18 +65,18 @@ namespace ReimbursementPoC.Program.Domain.Program
 
             this.Name = name;
             this.Description = description;
-            this.State = StateType.FromDisplayName<StateType>(state);
+            this._stateId = _stateId;
             this.Period = new Period(startDate, endDate);
             this.LastModified = DateTime.UtcNow;
 
-            //this._domainEvents.Add(new ProductUpdatedEvent(this));
+            this._domainEvents.Add(new ProgramUpdatedEvent(this));
         }
 
         public void DeActivate()
         {
             IsActive = false;
             this.LastModified = DateTime.UtcNow;
-            //this._domainEvents.Add(new ProductDeactivatedEvent(this));
+            this._domainEvents.Add(new ProgramDeactivatedEvent(this));
         }
 
         public bool CanBeDeleted(IProgramService productService)
@@ -83,7 +85,7 @@ namespace ReimbursementPoC.Program.Domain.Program
             //return !productService.HistoricalProposals(this).Any();
         }
 
-        public ServiceEntity AddService(string name, string? description)
+        public ServiceEntity CreateService(string name, string? description)
         {
             //CheckRule(new OnlyActiveSellerCanProvidePoposalRule(seller));
             //CheckRule(new ProposalShouldBeProvidedToActiveProductRule(product));
@@ -91,11 +93,10 @@ namespace ReimbursementPoC.Program.Domain.Program
             //CheckRule(new CurrencyOfProposalPriceMustBeUahOrUsd(currency));
 
             var service = ServiceEntity.CreateNew(name, description, this);
-            this._services.Add(service);
 
             //CheckRule(new ShouldBeOnlyOneProposalPerDayRule(proposalService, entity));
 
-            //entity.AddDomainEvent(new ProposalCreatedEvent(entity, product, seller));
+            service.AddDomainEvent(new ServiceCreatedEvent(entity, product, seller));
 
             return service;
         }

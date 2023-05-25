@@ -1,15 +1,14 @@
 ﻿using ReimbursementPoC.Program.Domain.Common;
-using ReimbursementPoC.Program.Domain.Program;
 
 namespace ReimbursementPoC.Program.Domain.Program.Events
 {
     public class ProgramUpdatedEvent : DomainEvent
     {
-        public ProgramUpdatedEvent(ProgramEntity product)
+        public ProgramUpdatedEvent(ProgramEntity program)
         {
-            Product = product;
+            Program = program;
         }
 
-        public ProgramEntity Product { get; }
+        public ProgramEntity Program { get; }
     }
 }

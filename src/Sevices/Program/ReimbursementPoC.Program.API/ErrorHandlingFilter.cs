@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using ReimbursementPoC.Program.Domain.Service.Exeption;
 using System.Net;
 
 namespace ReimbursementPoC.Program.API
@@ -25,11 +26,11 @@ namespace ReimbursementPoC.Program.API
             //    else if (exception is BusinessRuleValidationException)
             //        SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
             //}
-            
-            //else if (exception is ProductCanNotBeDeletedException)
-            //    SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
-            //else if (exception is BusinessRuleValidationException)
-            //    SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
+
+            if (exception is ServiceNotFoundException)
+                SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
+            else if (exception is ServiceNotFoundException)
+                SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
             //else if (exception is ProductNotFoundException)
             //    SetExceptionResult(context, exception, HttpStatusCode.NotFound);
             //else if (exception is SellerNotFoundException)
@@ -38,11 +39,11 @@ namespace ReimbursementPoC.Program.API
             //    SetExceptionResult(context, exception, HttpStatusCode.NotFound);
             //else if (exception is ProductConcurrentUpdateException)
             //    SetExceptionResult(context, exception, HttpStatusCode.Conflict);
-            //else
-                context.Result = new JsonResult($"Something went wrong. Details: {context.Exception}")
-                {
-                    StatusCode = (int)HttpStatusCode.InternalServerError
-                };
+
+            context.Result = new JsonResult($"Something went wrong. Details: {context.Exception}")
+            {
+                StatusCode = (int)HttpStatusCode.InternalServerError
+            };
         }
 
         private static void SetExceptionResult(

@@ -7,10 +7,6 @@ namespace ReimbursementPoC.Program.Application.Services.Queries.GetServices
 {
     public class GetServicesQuery : IRequest<PaginatedList<ServiceDto>>
     {
-
-        [DataMember]
-        public string Name { get; set; }
-
         [DataMember]
         public int Limit { get; set; }
 
@@ -23,9 +19,8 @@ namespace ReimbursementPoC.Program.Application.Services.Queries.GetServices
 
         }
 
-        public GetServicesQuery(string name, int offset, int limit)
+        public GetServicesQuery(int offset, int limit)
         {
-            Name = name;
             Offset = offset;
             Limit = limit;
         }

@@ -8,7 +8,7 @@
 
         public string? Description { get; set; }
 
-        public string State { get; set; }
+        public int StateId { get; set; }
 
         public DateTime StartDate { get; set; }
 

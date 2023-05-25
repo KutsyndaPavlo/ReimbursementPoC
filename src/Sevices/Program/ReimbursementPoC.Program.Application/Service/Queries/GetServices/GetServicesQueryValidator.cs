@@ -6,12 +6,7 @@ namespace ReimbursementPoC.Program.Application.Services.Queries.GetServices
     {
         public GetServicesQueryValidator()
         {
-            RuleFor(v => v.Offset)
-              .GreaterThanOrEqualTo(0);
-
-            RuleFor(v => v.Limit)
-             .GreaterThan(0)
-             .LessThanOrEqualTo(1000);
+            //RuleFor(v => v.ProgramId).NotEmpty();
         }
     }
 }

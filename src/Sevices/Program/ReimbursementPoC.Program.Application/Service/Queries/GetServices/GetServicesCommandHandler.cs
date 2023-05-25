@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Program.Application.Common.Interfaces;
 using ReimbursementPoC.Program.Application.Common.Model;
 using ReimbursementPoC.Program.Application.Services.Queries.GetServiceById;
-using ReimbursementPoC.Program.Domain.Product.Spefifications;
-using ReimbursementPoC.Program.Domain.Program;
+using ReimbursementPoC.Program.Domain.Service;
 
 namespace ReimbursementPoC.Program.Application.Services.Queries.GetServices
 {
@@ -23,16 +22,16 @@ namespace ReimbursementPoC.Program.Application.Services.Queries.GetServices
 
         public async Task<PaginatedList<ServiceDto>> Handle(GetServicesQuery query, CancellationToken cancellationToken)
         {
-            var root = (IQueryable<ProgramEntity>)_applicationDbContext.Programs;
+            var root = (IQueryable<ServiceEntity>)_applicationDbContext.Services;
 
-            if (!string.IsNullOrWhiteSpace(query.Name))
-            {
-                root = root.Where(new ProgramsNameEqualsSpecification(query.Name).ToExpression());
-            }
+            //if (!string.IsNullOrWhiteSpace(query.Name))
+            //{
+            //    root = root.Where(new ServicesNameEqualsSpecification(query.Name).ToExpression());
+            //}
 
             var total = await root.LongCountAsync();
 
-            var data = await root.Include(x => x.State)
+            var data = await root//.Include(x => x.State)
                 .OrderBy(c => c.Name)
                 .Skip(query.Offset)
                 .Take(query.Limit)

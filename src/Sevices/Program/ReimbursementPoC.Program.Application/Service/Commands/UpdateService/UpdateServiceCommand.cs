@@ -11,12 +11,6 @@ namespace ReimbursementPoC.Program.Application.Services.Commands.UpdateService
 
         public string? Description { get; set; }
 
-        public string State { get; set; }
-
-        public DateTime StartDate { get; set; }
-
-        public DateTime EndDate { get; set; }
-
         public DateTime LastModified { get; set; }
     }
 }

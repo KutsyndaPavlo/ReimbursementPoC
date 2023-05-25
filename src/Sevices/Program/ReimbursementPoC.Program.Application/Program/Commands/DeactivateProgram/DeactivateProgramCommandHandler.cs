@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PriceAnalytics.Administration.Domain.Product.Specification;
 using ReimbursementPoC.Program.Application.Common.Interfaces;
 using ReimbursementPoC.Program.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Program.Domain;
+using ReimbursementPoC.Program.Domain.Program.Specification;
 
 namespace ReimbursementPoC.Program.Application.Program.Commands.DeactivateProgram
 {
@@ -28,11 +28,6 @@ namespace ReimbursementPoC.Program.Application.Program.Commands.DeactivateProgra
             if (entity == null)
             {
                 throw new ProgramNotFoundException($"Program with id {command.Id} doesn't exist.");
-            }
-
-            if (command.LastModified != entity.LastModified)
-            {
-                throw new ProgramConcurrentUpdateException($"Program {command.Id} version is outdated.");
             }
 
             entity.DeActivate();

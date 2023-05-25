@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Program.Application.Common.Interfaces;
 using ReimbursementPoC.Program.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Program.Domain.Program;
+using ReimbursementPoC.Program.Domain.Program.Specification;
 
 namespace ReimbursementPoC.Program.Application.Program.Commands.CreateProgram
 {
@@ -26,16 +28,21 @@ namespace ReimbursementPoC.Program.Application.Program.Commands.CreateProgram
             var entity = ProgramEntity.CreateNew(
                 command.Name,
                 command.Description,
+                command.StateId,
                 command.StartDate,
                 command.EndDate,
-                command.State,
                 _ProgramUniquenessChecker);
 
             _applicationDbContext.Programs.Add(entity);
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-            var dto = _mapper.Map<ProgramDto>(entity);
+            var result = await _applicationDbContext
+                .Programs
+                .Include(x => x.State)
+                .FirstOrDefaultAsync(new ProgramByIdSpecification(entity.Id).ToExpression());
+
+            var dto = _mapper.Map<ProgramDto>(result);
 
             return dto;
         }

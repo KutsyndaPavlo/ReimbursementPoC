@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PriceAnalytics.Administration.Domain.Product.Specification;
 using ReimbursementPoC.Program.Application.Common.Interfaces;
 using ReimbursementPoC.Program.Domain;
+using ReimbursementPoC.Program.Domain.Program.Specification;
 
 namespace ReimbursementPoC.Program.Application.Program.Queries.GetProgramById
 {
     public class GetProgramByIdQueryHandler
-        : IRequestHandler<GetProgramByIdQuery, ProgramDto>
+        : IRequestHandler<GetProgramByIdQuery, ProgramFullDto>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
@@ -19,16 +19,20 @@ namespace ReimbursementPoC.Program.Application.Program.Queries.GetProgramById
             _mapper = mapper;
         }
 
-        public async Task<ProgramDto> Handle(GetProgramByIdQuery query, CancellationToken cancellationToken)
+        public async Task<ProgramFullDto> Handle(GetProgramByIdQuery query, CancellationToken cancellationToken)
         {
-            var entity = await _applicationDbContext.Programs.FirstOrDefaultAsync(new ProgramByIdSpecification(query.Id).ToExpression());
+            var entity = await _applicationDbContext
+                .Programs
+                .Include(x => x.State)
+                .Include("_services")
+                .FirstOrDefaultAsync(new ProgramByIdSpecification(query.Id).ToExpression());
 
             if (entity == null)
             {
                 throw new ProgramNotFoundException($"Program with id {query.Id} doesn't exist");
             }
 
-            return _mapper.Map<ProgramDto>(entity);
+            return _mapper.Map<ProgramFullDto>(entity);
         }
     }
 }

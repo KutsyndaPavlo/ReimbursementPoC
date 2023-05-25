@@ -1,8 +1,7 @@
 ﻿using ReimbursementPoC.Program.Domain.Common;
-using ReimbursementPoC.Program.Domain.Program;
 using System.Linq.Expressions;
 
-namespace PriceAnalytics.Administration.Domain.Product.Specification
+namespace ReimbursementPoC.Program.Domain.Program.Specification
 {
     public class ProgramByIdSpecification : Specification<ProgramEntity>
     {

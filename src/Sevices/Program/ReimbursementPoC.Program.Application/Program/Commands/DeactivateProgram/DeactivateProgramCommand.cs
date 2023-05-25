@@ -6,7 +6,5 @@ namespace ReimbursementPoC.Program.Application.Program.Commands.DeactivateProgra
     public class DeactivateProgramCommand : IRequest<ProgramDto>
     {
         public Guid Id { get; set; }
-
-        public DateTime LastModified { get; set; }
     }
 }

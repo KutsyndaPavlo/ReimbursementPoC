@@ -4,6 +4,7 @@ using ReimbursementPoC.Program.Application.Program.Commands.CreateProgram;
 using ReimbursementPoC.Program.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Program.Application.Program.Queries.GetPrograms;
 using ReimbursementPoC.Program.Application.Services.Commands.CreateService;
+using ReimbursementPoC.Program.Application.Services.Commands.UpdateService;
 
 namespace ReimbursementPoC.Program.API.Mappings
 {
@@ -19,7 +20,8 @@ namespace ReimbursementPoC.Program.API.Mappings
                 config.CreateMap<CreateProgramRequest, ReimbursementPoC.Program.Application.Program.Commands.CreateProgram.CreateProgramCommand>().ReverseMap();
                 config.CreateMap<UpdateProgramRequest, ReimbursementPoC.Program.Application.Program.Commands.UpdateProgram.UpdateProgramCommand>().ReverseMap();
                 config.CreateMap<CreateServiceRequest, CreateServiceCommand>().ReverseMap();
-               // config.CreateMap<UpdateServiceRequest, UpdateServiceCommand>().ReverseMap();
+                config.CreateMap<UpdateServiceRequest, UpdateServiceCommand>().ReverseMap();
+                // config.CreateMap<UpdateServiceRequest, UpdateServiceCommand>().ReverseMap();
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
                 //config.CreateMap<DeactivateProgramCommand, ReimbursementPoC.Program.Application.Program.Commands.DeactivateProgram.DeactivateProgramCommand>()
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));

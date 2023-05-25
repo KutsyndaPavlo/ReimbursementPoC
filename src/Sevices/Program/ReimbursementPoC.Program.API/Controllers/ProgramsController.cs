@@ -8,7 +8,6 @@ using ReimbursementPoC.Program.Application.Program.Commands.DeleteProgram;
 using ReimbursementPoC.Program.Application.Program.Commands.UpdateProgram;
 using ReimbursementPoC.Program.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Program.Application.Program.Queries.GetPrograms;
-using ReimbursementPoC.Program.Application.Services.Commands.DeleteService;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -82,33 +81,6 @@ namespace ReimbursementPoC.Program.API.Controllers
             return Ok(result);
         }
 
-        ///// <summary>
-        ///// Gets a specific Program  by the supplied definition Id.
-        ///// </summary>
-        ///// <param name="id">System generated ID returned when create a Program.</param>
-        ///// <returns>
-        ///// A <see cref="ProgramDto" /> which matches the input id.
-        ///// </returns>
-        //[HttpGet("{id}/proposals")]
-        //// [SwaggerOperation(Tags = new[] { "Program" }, Summary = "Get Program by id.")]
-        //[Produces("application/json")]
-        ////[SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(ProgramDto))] 
-        ////[SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
-        ////[SwaggerResponse(StatusCodes.Status404NotFound, "RProgram does not exist")]
-        ////[SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        //public async Task<IActionResult> GetProposals(Guid id)
-        //{
-        //    var query = new GetProgramProposalsQuery(id);
-        //    var result = await _mediator.Send(query);
-
-        //    if (result == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(result);
-        //}
-
         [HttpPost]
         //[SwaggerOperation(Tags = new[] { "Program" }, Summary = "Create Program.")]
         [Produces("application/json")]
@@ -145,9 +117,9 @@ namespace ReimbursementPoC.Program.API.Controllers
         //[SwaggerResponse(StatusCodes.Status404NotFound, "Program does not exist")]
         //[SwaggerResponse(StatusCodes.Status409Conflict, "Program has been updated by someone else")]
         //[SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> DeactivateAsync(Guid id, [FromBody] DeactivateProgramRequest request)
+        public async Task<IActionResult> DeactivateAsync(Guid id)
         {
-            var result = await _mediator.Send(new DeactivateProgramCommand { Id = id, LastModified = request.LastModified });
+            var result = await _mediator.Send(new DeactivateProgramCommand { Id = id });
             return Ok(result);
         }
 
@@ -160,7 +132,7 @@ namespace ReimbursementPoC.Program.API.Controllers
         //[SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var command = new DeleteServiceCommand { Id = id };
+            var command = new DeleteProgramCommand { Id = id };
 
             await _mediator.Send(command);
             return NoContent();

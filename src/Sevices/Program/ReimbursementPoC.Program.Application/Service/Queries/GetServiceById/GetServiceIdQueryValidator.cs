@@ -1,19 +1,14 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReimbursementPoC.Program.Application.Services.Queries.GetServiceById
 {
-    public class GetProgramByIdQueryValidator : AbstractValidator<GetServiceByIdQuery>
+    public class GetServiceByIdQueryValidator : AbstractValidator<GetServiceByIdQuery>
     {
-        public GetProgramByIdQueryValidator()
+        public GetServiceByIdQueryValidator()
         {
-            RuleFor(v => v.Id)
-                .NotEmpty()
-                .WithMessage("Id is required.");
+            //RuleFor(v => v.ServiceId)
+            //    .NotEmpty()
+            //    .WithMessage("ServiceId is required.");
         }
     }
 }

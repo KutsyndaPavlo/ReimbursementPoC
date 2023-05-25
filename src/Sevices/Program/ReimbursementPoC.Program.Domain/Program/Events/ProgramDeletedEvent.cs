@@ -4,11 +4,11 @@ namespace ReimbursementPoC.Program.Domain.Program.Events
 {
     public class ProgramDeletedEvent : DomainEvent
     {
-        public ProgramDeletedEvent(ProgramEntity product)
+        public ProgramDeletedEvent(ProgramEntity program)
         {
-            Product = product;
+            Program = program;
         }
 
-        public ProgramEntity Product { get; }
+        public ProgramEntity Program { get; }
     }
 }

@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace ReimbursementPoC.Program.Application.Program.Queries.GetProgramById
 {
-    public class GetProgramByIdQuery : IRequest<ProgramDto>
+    public class GetProgramByIdQuery : IRequest<ProgramFullDto>
     {
         public GetProgramByIdQuery(Guid id)
         {

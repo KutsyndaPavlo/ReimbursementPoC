@@ -8,13 +8,9 @@
 
         public string? Description { get; set; }
 
-        public string State { get; private set; }
-
-        public DateTime StartDate { get; private set; }
-
-        public DateTime EndDate { get; private set; }
-
         public bool IsActive { get; private set; }
+
+        public Guid ProgramId { get; private set; }
 
         public DateTime Created { get; private set; }
 

@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PriceAnalytics.Administration.Domain.Product.Specification;
 using ReimbursementPoC.Program.Application.Common.Interfaces;
 using ReimbursementPoC.Program.Application.Services.Queries.GetServiceById;
 using ReimbursementPoC.Program.Domain;
-using ReimbursementPoC.Program.Domain.Program;
+using ReimbursementPoC.Program.Domain.Program.Specification;
 
 namespace ReimbursementPoC.Program.Application.Services.Commands.CreateService
 {
@@ -13,15 +12,12 @@ namespace ReimbursementPoC.Program.Application.Services.Commands.CreateService
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
-        private readonly IProgramService _ProgramUniquenessChecker;
 
         public CreateServiceCommandHandler(IApplicationDbContext applicationDbContext, 
-                                           IMapper mapper, 
-                                           IProgramService ProgramUniquenessChecker)
+                                           IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
-            _ProgramUniquenessChecker = ProgramUniquenessChecker;
         }
 
         public async Task<ServiceDto> Handle(CreateServiceCommand command, CancellationToken cancellationToken)
@@ -33,17 +29,12 @@ namespace ReimbursementPoC.Program.Application.Services.Commands.CreateService
                 throw new ProgramNotFoundException($"Program with id {command.ProgramId} doesn't exist");
             }
 
-            program.AddService(command.Name, command.Description);
+            var service = program.CreateService(command.Name, command.Description);
 
-            _applicationDbContext.Programs.Update(program);
-
+            await _applicationDbContext.Services.AddAsync(service);
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-            //var dto = _mapper.Map<ServiceDto>(entity);
-
-            //return dto;
-
-            return null;
+            return _mapper.Map<ServiceDto>(service);
         }
     }
 }

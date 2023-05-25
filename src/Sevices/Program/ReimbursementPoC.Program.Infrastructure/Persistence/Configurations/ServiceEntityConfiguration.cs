@@ -28,9 +28,9 @@ namespace ReimbursementPoC.Program.Infrastructure.Persistence.Configurations
             builder.Property(t => t.Description)
                 .HasColumnName("Description");
 
-            //builder.Property(t => t.IsActive)
-            //    .HasColumnName("IsCompleted")
-            //    .IsRequired();
+            builder.Property(t => t.IsActive)
+                .HasColumnName("IsActive")
+                .IsRequired();
 
             builder.Property(t => t.LastModified)
                 .HasColumnName("LastModified")

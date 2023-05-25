@@ -32,7 +32,8 @@ namespace ReimbursementPoC.Program.Application.Program.Queries.GetPrograms
 
             var total = await root.LongCountAsync();
 
-            var data = await root.Include(x => x.State)
+            var data = await root
+                .Include(x => x.State)
                 .OrderBy(c => c.Name)
                 .Skip(query.Offset)
                 .Take(query.Limit)

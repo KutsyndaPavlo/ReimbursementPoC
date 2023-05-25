@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PriceAnalytics.Administration.Domain.Product.Specification;
 using ReimbursementPoC.Program.Application.Common.Interfaces;
-using ReimbursementPoC.Program.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Program.Application.Services.Queries.GetServiceById;
 using ReimbursementPoC.Program.Domain;
+using ReimbursementPoC.Program.Domain.Program.Specification;
+using ReimbursementPoC.Program.Domain.Service.Exeption;
+using ReimbursementPoC.Program.Domain.Service.Specifications;
 
 namespace ReimbursementPoC.Program.Application.Services.Commands.DeactivateService
 {
@@ -14,7 +15,7 @@ namespace ReimbursementPoC.Program.Application.Services.Commands.DeactivateServi
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
 
-        public DeactivateServiceCommandHandler(IApplicationDbContext applicationDbContext, 
+        public DeactivateServiceCommandHandler(IApplicationDbContext applicationDbContext,
                                               IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
@@ -23,24 +24,28 @@ namespace ReimbursementPoC.Program.Application.Services.Commands.DeactivateServi
 
         public async Task<ServiceDto> Handle(DeactivateServiceCommand command, CancellationToken cancellationToken)
         {
-            var entity = await _applicationDbContext.Programs.FirstOrDefaultAsync(new ProgramByIdSpecification(command.Id).ToExpression());
 
+            var service = await _applicationDbContext.Services.FirstOrDefaultAsync(new ServiceByIdSpecification(command.Id).ToExpression());
 
-            if (entity == null)
+            if (service == null)
             {
-                throw new ProgramNotFoundException($"Program with id {command.Id} doesn't exist.");
+                throw new ServiceNotFoundException($"Program with id {command.Id} doesn't exist");
             }
 
-            if (command.LastModified != entity.LastModified)
-            {
-                throw new ProgramConcurrentUpdateException($"Program {command.Id} version is outdated.");
-            }
+            service.Deactivate();
 
-            entity.DeActivate();
+            //if (!entity.CanBeDeleted(_ProgramService))
+            //{
+            //    throw new ProgramCanNotBeDeletedException($"Program with id {command.Id} can't be deleted");
+            //}
+
+            _applicationDbContext.Services.Update(service);
+
+            //entity.AddDomainEvent(new ProgramDeletedEvent(entity));
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-            var dto = _mapper.Map<ServiceDto>(entity);
+            var dto = _mapper.Map<ServiceDto>(service);
 
             return dto;
         }
