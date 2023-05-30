@@ -3,6 +3,7 @@ using ReimbursementPoC.Program.Domain.Product.Rules;
 using ReimbursementPoC.Program.Domain.Program.Enums;
 using ReimbursementPoC.Program.Domain.Program.Events;
 using ReimbursementPoC.Program.Domain.Service;
+using ReimbursementPoC.Program.Domain.Service.Events;
 using ReimbursementPoC.Program.Domain.ValueObjects;
 
 namespace ReimbursementPoC.Program.Domain.Program
@@ -96,7 +97,7 @@ namespace ReimbursementPoC.Program.Domain.Program
 
             //CheckRule(new ShouldBeOnlyOneProposalPerDayRule(proposalService, entity));
 
-            service.AddDomainEvent(new ServiceCreatedEvent(entity, product, seller));
+            service.AddDomainEvent(new ServiceCreatedEvent(service));
 
             return service;
         }

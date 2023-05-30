@@ -1,3 +1,6 @@
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using ReimbursementPoC.Program.API;
 using ReimbursementPoC.Program.API.Mappings;
 using ReimbursementPoC.Program.Application;
@@ -17,6 +20,10 @@ builder.Services.AddMvc(options =>
 {
     options.Filters.Add(new ErrorHandlingFilter());
 });
+
+var hcBuilder = builder.Services.AddHealthChecks();
+hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,5 +36,16 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health", new HealthCheckOptions()
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.MapHealthChecks("/liveness", new HealthCheckOptions
+{
+    Predicate = r => r.Name.Contains("self")
+});
 
 app.Run();

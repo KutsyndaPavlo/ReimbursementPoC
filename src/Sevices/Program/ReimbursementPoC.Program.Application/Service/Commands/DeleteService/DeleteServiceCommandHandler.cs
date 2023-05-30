@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Program.Application.Common.Interfaces;
+using ReimbursementPoC.Program.Domain.Service.Events;
 using ReimbursementPoC.Program.Domain.Service.Exeption;
 using ReimbursementPoC.Program.Domain.Service.Specifications;
 
@@ -24,14 +25,14 @@ namespace ReimbursementPoC.Program.Application.Services.Commands.DeleteService
                 throw new ServiceNotFoundException($"Program with id {command.Id} doesn't exist");
             }
 
-            //if (!entity.CanBeDeleted(_ProgramService))
-            //{
-            //    throw new ProgramCanNotBeDeletedException($"Program with id {command.Id} can't be deleted");
-            //}
+            if (!service.CanBeDeleted())
+            {
+                throw new ServiceCanNotBeDeletedException($"Service with id {command.Id} can't be deleted");
+            }
 
             _applicationDbContext.Services.Remove(service);
 
-            //entity.AddDomainEvent(new ProgramDeletedEvent(entity));
+            service.AddDomainEvent(new ServiceDeletedEvent(service));
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 

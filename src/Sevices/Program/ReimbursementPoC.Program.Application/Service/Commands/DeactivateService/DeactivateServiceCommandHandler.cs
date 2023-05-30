@@ -41,8 +41,6 @@ namespace ReimbursementPoC.Program.Application.Services.Commands.DeactivateServi
 
             _applicationDbContext.Services.Update(service);
 
-            //entity.AddDomainEvent(new ProgramDeletedEvent(entity));
-
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
             var dto = _mapper.Map<ServiceDto>(service);

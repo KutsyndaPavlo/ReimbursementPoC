@@ -1,5 +1,6 @@
 ﻿using ReimbursementPoC.Program.Domain.Common;
 using ReimbursementPoC.Program.Domain.Program;
+using ReimbursementPoC.Program.Domain.Service.Events;
 
 namespace ReimbursementPoC.Program.Domain.Service
 {
@@ -36,6 +37,13 @@ namespace ReimbursementPoC.Program.Domain.Service
         public void Deactivate()
         {
             IsActive = false;
+            this.AddDomainEvent(new ServiceDeactivatedEvent(this));
+        }
+
+        public bool CanBeDeleted()
+        {
+            // ToDo
+            return true;
         }
 
         public void Update(string name, string? description)
@@ -45,6 +53,8 @@ namespace ReimbursementPoC.Program.Domain.Service
             this.Description = description;
             this.LastModified = DateTime.UtcNow;
             this.LastModifiedBy = "";
+
+            this.AddDomainEvent(new ServiceUpdatedEvent(this));
         }
     }
 }

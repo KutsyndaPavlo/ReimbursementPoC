@@ -1,8 +1,7 @@
-﻿using PriceAnalytics.Application.Common.Models;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using PriceAnalytics.Application.Common.Models;
 using ReimbursementPoC.Program.Domain.Program.Events;
-using ReimbursementPoC.Program.Domain.Product.Events;
 
 namespace ReimbursementPoC.Program.Application.Program.EventHandlers
 {

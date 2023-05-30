@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using ReimbursementPoC.Program.Domain.Product;
 using ReimbursementPoC.Program.Domain.Service.Exeption;
 using System.Net;
 
@@ -28,8 +29,12 @@ namespace ReimbursementPoC.Program.API
             //}
 
             if (exception is ServiceNotFoundException)
-                SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
+                SetExceptionResult(context, exception, HttpStatusCode.NotFound);
             else if (exception is ServiceNotFoundException)
+                SetExceptionResult(context, exception, HttpStatusCode.NotFound);
+            else if (exception is ProgramCanNotBeDeletedException)
+                SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
+            else if (exception is ServiceCanNotBeDeletedException)
                 SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
             //else if (exception is ProductNotFoundException)
             //    SetExceptionResult(context, exception, HttpStatusCode.NotFound);
