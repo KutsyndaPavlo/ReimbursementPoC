@@ -1,10 +1,10 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using ReimbursementPoC.Vendor.API;
-using ReimbursementPoC.Vendor.API.Mappings;
-using ReimbursementPoC.Vendor.Application;
-using ReimbursementPoC.Vendor.Infrastructure;
+using ReimbursementPoC.Customer.API;
+using ReimbursementPoC.Customer.API.Mappings;
+using ReimbursementPoC.Customer.Application;
+using ReimbursementPoC.Customer.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

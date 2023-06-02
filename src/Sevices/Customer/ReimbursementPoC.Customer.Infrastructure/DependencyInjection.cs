@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ReimbursementPoC.Vendor.Application.Common.Interfaces;
-using ReimbursementPoC.Vendor.Infrastructure.Persistence;
-using ReimbursementPoC.Vendor.Infrastructure.Services;
-namespace ReimbursementPoC.Vendor.Infrastructure
+using ReimbursementPoC.Customer.Application.Common.Interfaces;
+using ReimbursementPoC.Customer.Infrastructure.Persistence;
+using ReimbursementPoC.Customer.Infrastructure.Services;
+namespace ReimbursementPoC.Customer.Infrastructure
 {
     public static class DependencyInjection
     {

@@ -7,6 +7,6 @@ namespace ReimbursementPoC.Customer.Application.Customer.Commands.CreateCustomer
     {
         public Guid CustomerId { get; private set; }
 
-        public Guid ServiceId { get; private set; }
+        public Guid VendorSubmissionId { get; private set; }
     }
 }

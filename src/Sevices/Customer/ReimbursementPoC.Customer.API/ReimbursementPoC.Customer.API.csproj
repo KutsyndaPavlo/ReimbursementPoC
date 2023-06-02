@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReimbursementPoC.Vendor.Application\ReimbursementPoC.Vendor.Application.csproj" />
-    <ProjectReference Include="..\ReimbursementPoC.Vendor.Infrastructure\ReimbursementPoC.Vendor.Infrastructure.csproj" />
+    <ProjectReference Include="..\ReimbursementPoC.Customer.Application\ReimbursementPoC.Customer.Application.csproj" />
+    <ProjectReference Include="..\ReimbursementPoC.Customer.Infrastructure\ReimbursementPoC.Customer.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

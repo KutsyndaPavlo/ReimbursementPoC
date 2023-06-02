@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ReimbursementPoC.Vendor.Application.Common.Interfaces;
-using ReimbursementPoC.Vendor.Domain.Common;
-using ReimbursementPoC.Vendor.Domain.Vendor;
+using ReimbursementPoC.Customer.Application.Common.Interfaces;
+using ReimbursementPoC.Customer.Domain.Common;
+using ReimbursementPoC.Customer.Domain.Customer;
 using System.Reflection;
 
-namespace ReimbursementPoC.Vendor.Infrastructure.Persistence
+namespace ReimbursementPoC.Customer.Infrastructure.Persistence
 {
     public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
@@ -18,7 +18,7 @@ namespace ReimbursementPoC.Vendor.Infrastructure.Persistence
             Database.EnsureCreated();
         }
 
-        public DbSet<VendorSubmissionEntity> VendorSubmissions => Set<VendorSubmissionEntity>();
+        public DbSet<CustomerSubmissionEntity> CustomerSubmissions => Set<CustomerSubmissionEntity>();
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {

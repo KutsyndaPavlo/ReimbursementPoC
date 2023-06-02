@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using ReimbursementPoC.Vendor.Domain;
-using ReimbursementPoC.Vendor.Domain.Product;
+using ReimbursementPoC.Customer.Domain;
+using ReimbursementPoC.Customer.Domain.Product;
 using System.Net;
 
-namespace ReimbursementPoC.Vendor.API
+namespace ReimbursementPoC.Customer.API
 {
     public class ErrorHandlingFilter : ExceptionFilterAttribute
     {
@@ -28,13 +28,13 @@ namespace ReimbursementPoC.Vendor.API
             //        SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
             //}
 
-            if (exception is VendorSubmissionNotFoundException)
+            if (exception is CustomerSubmissionNotFoundException)
                 SetExceptionResult(context, exception, HttpStatusCode.NotFound);
-            else if (exception is VendorSubmissionNotFoundException)
+            else if (exception is CustomerSubmissionNotFoundException)
                 SetExceptionResult(context, exception, HttpStatusCode.NotFound);
-            else if (exception is VendorSubmissionCanNotBeDeletedException)
+            else if (exception is CustomerSubmissionCanNotBeDeletedException)
                 SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
-            else if (exception is VendorSubmissionCanNotBeDeletedException)
+            else if (exception is CustomerSubmissionCanNotBeDeletedException)
                 SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
             //else if (exception is ProductNotFoundException)
             //    SetExceptionResult(context, exception, HttpStatusCode.NotFound);

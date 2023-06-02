@@ -24,7 +24,7 @@ namespace ReimbursementPoC.Customer.Application.Customer.Commands.CreateCustomer
         {
             var entity = CustomerSubmissionEntity.CreateNew(
                 command.CustomerId,
-                command.ServiceId);
+                command.VendorSubmissionId);
 
             _applicationDbContext.CustomerSubmissions.Add(entity);
 

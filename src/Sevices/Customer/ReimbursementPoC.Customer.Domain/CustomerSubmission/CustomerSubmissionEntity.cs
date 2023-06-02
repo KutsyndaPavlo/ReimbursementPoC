@@ -24,11 +24,11 @@ namespace ReimbursementPoC.Customer.Domain.Customer
 
         public bool IsActive { get; private set; }
 
-        public static CustomerSubmissionEntity CreateNew(Guid customerId, Guid serviceId)
+        public static CustomerSubmissionEntity CreateNew(Guid customerId, Guid vendorSubmissionId)
         {
             //CheckRule(new CustomerNameMustBeUniqueRule(programUniquenessChecker, name));
 
-            return new CustomerSubmissionEntity(customerId, serviceId);
+            return new CustomerSubmissionEntity(customerId, vendorSubmissionId);
         }
 
         public void DeActivate()

@@ -1,66 +1,66 @@
 ﻿using AutoMapper;
-using ReimbursementPoC.Vendor.API.Models;
+using ReimbursementPoC.Customer.API.Models;
 
-namespace ReimbursementPoC.Vendor.API.Mappings
+namespace ReimbursementPoC.Customer.API.Mappings
 {
     public class MappingProfile : Profile
     {
         public static Action<IMapperConfigurationExpression> AutoMapperConfig =
             config =>
             {
-                //config.CreateMap<GetVendorsQuery, ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendors.GetVendorsQuery>().ReverseMap();
-                //config.CreateMap<GetVendorByIdQuery, ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById.GetVendorByIdQuery>().ReverseMap();
-                //config.CreateMap<PriceAnalytics.Administration.Services.Vendor.Page, ReimbursementPoC.Vendor.Application.Common.Model.Page>().ReverseMap();
-                //config.CreateMap<VendorPaginatedList, PaginatedList<ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById.VendorSubmissionDto>>().ReverseMap();// ToDo
-                config.CreateMap<CreateVendorRequest, ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor.CreateVendorSubmissionCommand>().ReverseMap();
+                //config.CreateMap<GetCustomersQuery, ReimbursementPoC.Customer.Application.Customer.Queries.GetCustomers.GetCustomersQuery>().ReverseMap();
+                //config.CreateMap<GetCustomerByIdQuery, ReimbursementPoC.Customer.Application.Customer.Queries.GetCustomerById.GetCustomerByIdQuery>().ReverseMap();
+                //config.CreateMap<PriceAnalytics.Administration.Services.Customer.Page, ReimbursementPoC.Customer.Application.Common.Model.Page>().ReverseMap();
+                //config.CreateMap<CustomerPaginatedList, PaginatedList<ReimbursementPoC.Customer.Application.Customer.Queries.GetCustomerById.CustomerSubmissionDto>>().ReverseMap();// ToDo
+                config.CreateMap<CreateCustomerRequest, ReimbursementPoC.Customer.Application.Customer.Commands.CreateCustomer.CreateCustomerSubmissionCommand>().ReverseMap();
       
                 // config.CreateMap<UpdateServiceRequest, UpdateServiceCommand>().ReverseMap();
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
-                //config.CreateMap<DeactivateVendorCommand, ReimbursementPoC.Vendor.Application.Vendor.Commands.DeactivateVendor.DeactivateVendorCommand>()
+                //config.CreateMap<DeactivateCustomerCommand, ReimbursementPoC.Customer.Application.Customer.Commands.DeactivateCustomer.DeactivateCustomerCommand>()
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
-                //config.CreateMap<ReimbursementPoC.Vendor.Application.Vendor.Commands.UpdateVendor.UpdateVendorCommand, UpdateVendorCommand>()
+                //config.CreateMap<ReimbursementPoC.Customer.Application.Customer.Commands.UpdateCustomer.UpdateCustomerCommand, UpdateCustomerCommand>()
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.LastModified, DateTimeKind.Utc).ToTimestamp()));
-                //config.CreateMap<DeleteVendorCommand, ReimbursementPoC.Vendor.Application.Vendor.Commands.DeleteVendor.DeleteVendorCommand>().ReverseMap();
-                //config.CreateMap<ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById.VendorSubmissionDto, VendorSubmissionDto>()
+                //config.CreateMap<DeleteCustomerCommand, ReimbursementPoC.Customer.Application.Customer.Commands.DeleteCustomer.DeleteCustomerCommand>().ReverseMap();
+                //config.CreateMap<ReimbursementPoC.Customer.Application.Customer.Queries.GetCustomerById.CustomerSubmissionDto, CustomerSubmissionDto>()
                 //.ForMember(dest => dest.Created, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.Created, DateTimeKind.Utc).ToTimestamp()))
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.LastModified, DateTimeKind.Utc).ToTimestamp()));
-                // config.CreateMap<VendorSubmissionDto, ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById.VendorSubmissionDto>();
+                // config.CreateMap<CustomerSubmissionDto, ReimbursementPoC.Customer.Application.Customer.Queries.GetCustomerById.CustomerSubmissionDto>();
                 //.ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.Created.ToDateTime()))
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
 
-                // config.CreateMap<CreateProposalCommand, ReimbursementPoC.Vendor.Application.Proposal.Commands.CreateProposal.CreateProposalCommand>().ReverseMap();
-                // config.CreateMap<ProposalDto, ReimbursementPoC.Vendor.Application.Proposal.Queries.GetProposalById.ProposalDto>()
+                // config.CreateMap<CreateProposalCommand, ReimbursementPoC.Customer.Application.Proposal.Commands.CreateProposal.CreateProposalCommand>().ReverseMap();
+                // config.CreateMap<ProposalDto, ReimbursementPoC.Customer.Application.Proposal.Queries.GetProposalById.ProposalDto>()
                 // .ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.Created.ToDateTime()))
                 // .ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
-                // config.CreateMap<ReimbursementPoC.Vendor.Application.Proposal.Queries.GetProposalById.ProposalDto, ProposalDto>()
+                // config.CreateMap<ReimbursementPoC.Customer.Application.Proposal.Queries.GetProposalById.ProposalDto, ProposalDto>()
                 //.ForMember(dest => dest.Created, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.Created, DateTimeKind.Utc).ToTimestamp()))
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.LastModified, DateTimeKind.Utc).ToTimestamp()));
-                // config.CreateMap<GetProposalsQuery, ReimbursementPoC.Vendor.Application.Proposal.Queries.GetProposals.GetProposalsQuery>().ReverseMap();
-                // config.CreateMap<GetProposalByIdQuery, ReimbursementPoC.Vendor.Application.Proposal.Queries.GetProposalById.GetProposalByIdQuery>().ReverseMap();
-                // config.CreateMap<PriceAnalytics.Administration.Services.Proposal.Page, ReimbursementPoC.Vendor.Application.Common.Model.Page>();
-                // config.CreateMap<DeleteProposalCommand, ReimbursementPoC.Vendor.Application.Proposal.Commands.DeleteProposal.DeleteProposalCommand>().ReverseMap();
-                // config.CreateMap<ProposalPaginatedList, PaginatedList<ReimbursementPoC.Vendor.Application.Proposal.Queries.GetProposalById.ProposalDto>>().ReverseMap();// ToDo
-                // config.CreateMap<PriceAnalytics.Administration.Services.Proposal.Page, ReimbursementPoC.Vendor.Application.Common.Model.Page>().ReverseMap();
+                // config.CreateMap<GetProposalsQuery, ReimbursementPoC.Customer.Application.Proposal.Queries.GetProposals.GetProposalsQuery>().ReverseMap();
+                // config.CreateMap<GetProposalByIdQuery, ReimbursementPoC.Customer.Application.Proposal.Queries.GetProposalById.GetProposalByIdQuery>().ReverseMap();
+                // config.CreateMap<PriceAnalytics.Administration.Services.Proposal.Page, ReimbursementPoC.Customer.Application.Common.Model.Page>();
+                // config.CreateMap<DeleteProposalCommand, ReimbursementPoC.Customer.Application.Proposal.Commands.DeleteProposal.DeleteProposalCommand>().ReverseMap();
+                // config.CreateMap<ProposalPaginatedList, PaginatedList<ReimbursementPoC.Customer.Application.Proposal.Queries.GetProposalById.ProposalDto>>().ReverseMap();// ToDo
+                // config.CreateMap<PriceAnalytics.Administration.Services.Proposal.Page, ReimbursementPoC.Customer.Application.Common.Model.Page>().ReverseMap();
 
-                // config.CreateMap<GetSellersQuery, ReimbursementPoC.Vendor.Application.Seller.Queries.GetSellers.GetSellersQuery>().ReverseMap();
-                // config.CreateMap<GetSellerByIdQuery, ReimbursementPoC.Vendor.Application.Seller.Queries.GetSellerById.GetSellerByIdQuery>().ReverseMap();
-                // config.CreateMap<PriceAnalytics.Administration.Services.Seller.Page, ReimbursementPoC.Vendor.Application.Common.Model.Page>();
-                // config.CreateMap<SellerPaginatedList, PaginatedList<ReimbursementPoC.Vendor.Application.Seller.Queries.GetSellerById.SellerDto>>().ReverseMap();// ToDo
-                // config.CreateMap<CreateSellerCommand, ReimbursementPoC.Vendor.Application.Product.Commands.CreateSeller.CreateSellerCommand>().ReverseMap();
-                // config.CreateMap<UpdateSellerCommand, ReimbursementPoC.Vendor.Application.Seller.Commands.UpdateSeller.UpdateSellerCommand>()
+                // config.CreateMap<GetSellersQuery, ReimbursementPoC.Customer.Application.Seller.Queries.GetSellers.GetSellersQuery>().ReverseMap();
+                // config.CreateMap<GetSellerByIdQuery, ReimbursementPoC.Customer.Application.Seller.Queries.GetSellerById.GetSellerByIdQuery>().ReverseMap();
+                // config.CreateMap<PriceAnalytics.Administration.Services.Seller.Page, ReimbursementPoC.Customer.Application.Common.Model.Page>();
+                // config.CreateMap<SellerPaginatedList, PaginatedList<ReimbursementPoC.Customer.Application.Seller.Queries.GetSellerById.SellerDto>>().ReverseMap();// ToDo
+                // config.CreateMap<CreateSellerCommand, ReimbursementPoC.Customer.Application.Product.Commands.CreateSeller.CreateSellerCommand>().ReverseMap();
+                // config.CreateMap<UpdateSellerCommand, ReimbursementPoC.Customer.Application.Seller.Commands.UpdateSeller.UpdateSellerCommand>()
                 // .ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
-                // config.CreateMap<DeactivateSellerCommand, ReimbursementPoC.Vendor.Application.Seller.Commands.DeactivateSeller.DeactivateSellerCommand>()
+                // config.CreateMap<DeactivateSellerCommand, ReimbursementPoC.Customer.Application.Seller.Commands.DeactivateSeller.DeactivateSellerCommand>()
                 // .ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
-                // config.CreateMap<ReimbursementPoC.Vendor.Application.Seller.Commands.UpdateSeller.UpdateSellerCommand, UpdateSellerCommand>()
+                // config.CreateMap<ReimbursementPoC.Customer.Application.Seller.Commands.UpdateSeller.UpdateSellerCommand, UpdateSellerCommand>()
                 // .ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.LastModified, DateTimeKind.Utc).ToTimestamp()));
-                // config.CreateMap<DeleteSellerCommand, ReimbursementPoC.Vendor.Application.Seller.Commands.DeleteSeller.DeleteSellerCommand>().ReverseMap();
-                // config.CreateMap<ReimbursementPoC.Vendor.Application.Seller.Queries.GetSellerById.SellerDto, SellerDto>()
+                // config.CreateMap<DeleteSellerCommand, ReimbursementPoC.Customer.Application.Seller.Commands.DeleteSeller.DeleteSellerCommand>().ReverseMap();
+                // config.CreateMap<ReimbursementPoC.Customer.Application.Seller.Queries.GetSellerById.SellerDto, SellerDto>()
                 // .ForMember(dest => dest.Created, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.Created, DateTimeKind.Utc).ToTimestamp()))
                 // .ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.LastModified, DateTimeKind.Utc).ToTimestamp()));
-                // config.CreateMap<SellerDto, ReimbursementPoC.Vendor.Application.Seller.Queries.GetSellerById.SellerDto>()
+                // config.CreateMap<SellerDto, ReimbursementPoC.Customer.Application.Seller.Queries.GetSellerById.SellerDto>()
                 // .ForMember(dest => dest.Created, opt => opt.MapFrom(src => src.Created.ToDateTime()))
                 // .ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
-                // config.CreateMap<PriceAnalytics.Administration.Services.Seller.Page, ReimbursementPoC.Vendor.Application.Common.Model.Page>().ReverseMap();
+                // config.CreateMap<PriceAnalytics.Administration.Services.Seller.Page, ReimbursementPoC.Customer.Application.Common.Model.Page>().ReverseMap();
             };
     }
 }

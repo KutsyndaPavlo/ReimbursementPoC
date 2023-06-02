@@ -1,10 +1,10 @@
 ﻿using PriceAnalytics.Application.Common.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using ReimbursementPoC.Vendor.Application.Common.Interfaces;
-using ReimbursementPoC.Vendor.Domain.Common;
+using ReimbursementPoC.Customer.Application.Common.Interfaces;
+using ReimbursementPoC.Customer.Domain.Common;
 
-namespace ReimbursementPoC.Vendor.Infrastructure.Services;
+namespace ReimbursementPoC.Customer.Infrastructure.Services;
 
 public class DomainEventService : IDomainEventService
 {

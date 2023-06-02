@@ -6,16 +6,16 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Sevices/ReimbursementPoC.Vendor.API/ReimbursementPoC.Vendor.API.csproj", "Sevices/ReimbursementPoC.Vendor.API/"]
-RUN dotnet restore "Sevices/ReimbursementPoC.Vendor.API/ReimbursementPoC.Vendor.API.csproj"
+COPY ["Sevices/ReimbursementPoC.Customer.API/ReimbursementPoC.Customer.API.csproj", "Sevices/ReimbursementPoC.Customer.API/"]
+RUN dotnet restore "Sevices/ReimbursementPoC.Customer.API/ReimbursementPoC.Customer.API.csproj"
 COPY . .
-WORKDIR "/src/Sevices/ReimbursementPoC.Vendor.API"
-RUN dotnet build "ReimbursementPoC.Vendor.API.csproj" -c Release -o /app/build
+WORKDIR "/src/Sevices/ReimbursementPoC.Customer.API"
+RUN dotnet build "ReimbursementPoC.Customer.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ReimbursementPoC.Vendor.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "ReimbursementPoC.Customer.API.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "ReimbursementPoC.Vendor.API.dll"]
+ENTRYPOINT ["dotnet", "ReimbursementPoC.Customer.API.dll"]
