@@ -1,0 +1,22 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "https",
+      "SwaggerKey": "program",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ri-program-apisu445yrz7ulry.azurewebsites.net",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/program/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    }
+  ]
+}

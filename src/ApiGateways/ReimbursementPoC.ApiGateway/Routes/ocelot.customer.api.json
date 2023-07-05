@@ -1,0 +1,22 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "https",
+      "SwaggerKey": "customer",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ri-customer-apisu445yrz7ulry.azurewebsites.net",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/customer/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    }
+  ]
+}

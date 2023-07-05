@@ -1,0 +1,22 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "https",
+      "SwaggerKey": "vendor",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ri-vendor-apisu445yrz7ulry.azurewebsites.net",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/vendor/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    }
+  ]
+}

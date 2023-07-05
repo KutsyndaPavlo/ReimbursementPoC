@@ -1,0 +1,10 @@
+az login
+az group create -n reimbursement-poc -l westeurope
+az group deployment create -g reimbursement-poc --template-file app-service\deloy-app-service.json --parameters app-service-program\deloy-app-service.parameters.json
+az group deployment create -g reimbursement-poc --template-file app-service\deloy-app-service.json --parameters app-service-vendor\deloy-app-service.parameters.json
+az group deployment create -g reimbursement-poc --template-file app-service\deloy-app-service.json --parameters app-service-customer\deloy-app-service.parameters.json
+az group deployment create -g reimbursement-poc --template-file app-service\deloy-app-service.json --parameters app-service-gateway\deloy-app-service.parameters.json
+
+az group deployment create -g reimbursement-poc --template-file servicebus\sbusdeploy.json --parameters servicebus\sbusdeploy.parameters.json
+az group deployment create -g reimbursement-poc --template-file storage\deploystorage.json --parameters storage\deploystorage.parameters.json
+az group deployment create -g reimbursement-poc --template-file cosmos\deploycosmos.json --parameters cosmos\deploycosmos.parameters.json
