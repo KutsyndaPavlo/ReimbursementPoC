@@ -82,7 +82,7 @@ else
 
     protected async Task GetUser()
     {
-        var result = await Http.GetFromJsonAsync<ProgramEntity>("https://localhost:7120/program/api/programs");
+        var result = await Http.GetFromJsonAsync<ProgramEntity>("/program/api/programs");
         programList = result.Items.ToList();
         // searchUserData = programList;
     }

@@ -46,14 +46,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        program = await Http.GetFromJsonAsync<ProgramEntityItem>("https://localhost:7120/program/api/programs/" + programId);
+        program = await Http.GetFromJsonAsync<ProgramEntityItem>("/program/api/programs/" + programId);
     }
 
     protected async Task RemoveUser(Guid id)
     {
-        var result = await Http.DeleteAsync("https://localhost:7120/program/api/programs/" + id);
+        var result = await Http.DeleteAsync("/program/api/programs/" + id);
         if (result.IsSuccessStatusCode)
         {
+
             NavigationManager.NavigateTo("/program/list");
         }
         else

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using ReimbursementPoC.Blazor.UI;
 using ReimbursementPoC.Blazor.UI.Security;
 using System.Net.Http;
@@ -9,12 +10,15 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.Services.AddHttpClient("api")
+builder.Services.AddHttpClient("api", client =>
+                {
+                    client.BaseAddress = new Uri(builder.Configuration.GetSection("GatewayApi").Value);
+                })
                 .AddHttpMessageHandler(sp =>
                 {
                     var handler = sp.GetService<AuthorizationMessageHandler>()
                         .ConfigureHandler(
-                            authorizedUrls: new[] { "https://localhost:7120" },
+                            authorizedUrls: new[] { builder.Configuration.GetSection("IdentityApi").Value },
                             scopes: new[] { "apiscope" });
 
                     return handler;

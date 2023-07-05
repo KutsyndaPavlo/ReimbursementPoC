@@ -7,6 +7,19 @@
 <h1>Add Program</h1>
 <hr />
 
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
+
 <EditForm Model="@program" OnValidSubmit="SaveProgram">
     <DataAnnotationsValidator />
     <div class="mb-3">
@@ -63,6 +76,9 @@
     [Parameter]
     public string programId { get; set; }
 
+    public string Notification { get; set; }
+    public string Error { get; set; }
+
     protected string Title = "Add";
     protected CreateProgramRequest program = new CreateProgramRequest
         {
@@ -73,15 +89,18 @@
 
     protected async Task SaveProgram()
     {
-        var result = await Http.PostAsJsonAsync("https://localhost:7120/program/api/programs", program);
+        var result = await Http.PostAsJsonAsync("/program/api/programs", program);
 
         if (result.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/program/list");
+            Error = "";
+            Notification = "Program was succesfully created";
+
+            //NavigationManager.NavigateTo("/program/list");
         }
         else
         {
-            //NavigationManager.NavigateTo("/program/details");
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
         }
     }
 
