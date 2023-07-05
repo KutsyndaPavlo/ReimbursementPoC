@@ -22,11 +22,40 @@
         </div>
         <ValidationMessage For="@(() => program.Description)" />
     </div>
+
+    <div class="mb-3">
+        <label for="State" class="form-label">State</label>
+        <div class="col-md-4">
+            <InputSelect @bind-Value="program.StateId">
+                <option value="0">Select state ...</option>
+                <option value="1">Alabama</option>
+                <option value="2">Alaska</option>
+            </InputSelect>
+        </div>
+        <ValidationMessage For="@(() => program.StateId)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="StartDate" class="form-label">Start Date</label>
+        <div class="col-md-4">
+            <InputDate @bind-Value="@program.StartDate" @bind-Value:format="dd/MM/yyyy" />
+        </div>
+        <ValidationMessage For="@(() => program.StartDate)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="EndDate" class="form-label">End Date</label>
+        <div class="col-md-4">
+            <InputDate @bind-Value="@program.EndDate" @bind-Value:format="dd/MM/yyyy" />
+        </div>
+        <ValidationMessage For="@(() => program.EndDate)" />
+    </div>
+
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Save</button>
         <button class="btn btn-light" @onclick="Cancel">Cancel</button>
     </div>
-    
+
 </EditForm>
 
 @code {
@@ -34,11 +63,25 @@
     public string programId { get; set; }
 
     protected string Title = "Add";
-    protected CreateProgramRequest program = new();
+    protected CreateProgramRequest program = new CreateProgramRequest
+        {
+            StartDate = DateTime.UtcNow,
+            EndDate = DateTime.UtcNow.AddYears(1)
+        };
+
 
     protected async Task SaveProgram()
     {
-        await Http.PostAsJsonAsync("/program/api/program", program);
+        var result = await Http.PostAsJsonAsync("https://localhost:7120/program/api/programs", program);
+
+        if (result.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/program/list");
+        }
+        else
+        {
+            //NavigationManager.NavigateTo("/program/details");
+        }
     }
 
     public void Cancel()
