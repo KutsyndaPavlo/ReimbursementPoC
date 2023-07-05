@@ -1,9 +1,10 @@
 ﻿@page "/program/add"
+@using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-
-<h1>@Title Program</h1>
+@attribute [Authorize(Roles = "Admin")]
+<h1>Add Program</h1>
 <hr />
 
 <EditForm Model="@program" OnValidSubmit="SaveProgram">

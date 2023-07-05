@@ -1,9 +1,10 @@
-﻿@page "/program/edit"
+﻿@page "/program/edit/{programId}"
+@using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-
-<h1>@Title Program</h1>
+@attribute [Authorize(Roles = "Admin")]
+<h1>Edit Program</h1>
 <hr />
 
 <EditForm Model="@program" OnValidSubmit="SaveProgram">
@@ -61,18 +62,36 @@
 @code {
     [Parameter]
     public string programId { get; set; }
+    UpdateProgramRequest program = new UpdateProgramRequest();
 
-    protected string Title = "Add";
-    protected CreateProgramRequest program = new CreateProgramRequest
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<ProgramEntityItem>("https://localhost:7120/program/api/programs/" + programId);
+
+        program.Id = result.Id;
+        program.Description = result.Description;
+        program.StartDate = result.StartDate;
+        program.EndDate = result.EndDate;
+        program.LastModified = result.LastModified;
+        program.StateId = GetStateId(result.State);
+    }
+
+    private int GetStateId(string name)
+    {
+        // ToDo
+        if (name == "Alabama")
         {
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddYears(1)
-        };
-
+            return 1;
+        }
+        else
+        {
+            return 2;
+        }
+    }
 
     protected async Task SaveProgram()
     {
-        var result = await Http.PostAsJsonAsync("https://localhost:7120/program/api/programs", program);
+        var result = await Http.PatchAsJsonAsync("https://localhost:7120/program/api/programs" + program.Id, program);
 
         if (result.IsSuccessStatusCode)
         {

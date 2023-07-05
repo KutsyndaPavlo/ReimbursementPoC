@@ -1,8 +1,9 @@
 ﻿@page "/program/list"
+@using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-
+@attribute [Authorize(Roles = "Admin")]
 <h1>Program List</h1>
 <p>Blazor CRUD operation</p>
 <hr />
