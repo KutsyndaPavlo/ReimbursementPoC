@@ -38,12 +38,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        service = await Http.GetFromJsonAsync<ServiceDto>("/service/api/services/" + serviceId);
+        service = await Http.GetFromJsonAsync<ServiceDto>("/program/api/services/" + serviceId);
     }
 
     protected async Task RemoveUser(Guid id)
     {
-        var result = await Http.DeleteAsync("/service/api/services/" + id);
+        var result = await Http.DeleteAsync("/program/api/services/" + id);
         if (result.IsSuccessStatusCode)
         {
 

@@ -40,4 +40,9 @@
 
         public DateTime LastModified { get; set; }
     }
+
+    public class ServiceEntity
+    {
+        public IEnumerable<ServiceDto> Items { get; set; }
+    }
 }

@@ -78,8 +78,8 @@ else
 
     protected async Task GetUser()
     {
-        var result = await Http.GetFromJsonAsync<IEnumerable<ServiceDto>>("/service/api/services");
-        serviceList = result.ToList();
+        var result = await Http.GetFromJsonAsync<ServiceEntity>("/program/api/services");
+        serviceList = result.Items.ToList();
     }
 
     //protected void FilterUser()
