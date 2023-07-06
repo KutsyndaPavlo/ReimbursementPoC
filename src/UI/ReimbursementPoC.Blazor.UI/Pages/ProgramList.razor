@@ -77,10 +77,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await GetUser();
+        await GetPrograms();
     }
 
-    protected async Task GetUser()
+    protected async Task GetPrograms()
     {
         var result = await Http.GetFromJsonAsync<ProgramEntity>("/program/api/programs");
         programList = result.Items.ToList();

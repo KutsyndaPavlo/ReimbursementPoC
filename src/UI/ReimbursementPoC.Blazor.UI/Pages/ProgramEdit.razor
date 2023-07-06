@@ -1,55 +1,55 @@
-﻿@page "/service/edit/{serviceId}"
+﻿@page "/program/edit/{programId}"
 @using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Admin")]
-<h1>Edit Service</h1>
+<h1>Edit Program</h1>
 <hr />
 
-<EditForm Model="@service" OnValidSubmit="SaveService">
+<EditForm Model="@program" OnValidSubmit="SaveProgram">
     <DataAnnotationsValidator />
     <div class="mb-3">
         <label for="Name" class="form-label">Name</label>
         <div class="col-md-4">
-            <InputText class="form-control" @bind-Value="service.Name" />
+            <InputText class="form-control" @bind-Value="program.Name" />
         </div>
-        <ValidationMessage For="@(() => service.Name)" />
+        <ValidationMessage For="@(() => program.Name)" />
     </div>
     <div class="mb-3">
         <label for="Description" class="form-label">Description</label>
         <div class="col-md-4">
-            <InputText class="form-control" @bind-Value="service.Description" />
+            <InputText class="form-control" @bind-Value="program.Description" />
         </div>
-        <ValidationMessage For="@(() => service.Description)" />
+        <ValidationMessage For="@(() => program.Description)" />
     </div>
 
     <div class="mb-3">
         <label for="State" class="form-label">State</label>
         <div class="col-md-4">
-            <InputSelect @bind-Value="service.StateId">
+            <InputSelect @bind-Value="program.StateId">
                 <option value="0">Select state ...</option>
                 <option value="1">Alabama</option>
                 <option value="2">Alaska</option>
             </InputSelect>
         </div>
-        <ValidationMessage For="@(() => service.StateId)" />
+        <ValidationMessage For="@(() => program.StateId)" />
     </div>
 
     <div class="mb-3">
         <label for="StartDate" class="form-label">Start Date</label>
         <div class="col-md-4">
-            <InputDate @bind-Value="@service.StartDate" @bind-Value:format="dd/MM/yyyy" />
+            <InputDate @bind-Value="@program.StartDate" @bind-Value:format="dd/MM/yyyy" />
         </div>
-        <ValidationMessage For="@(() => service.StartDate)" />
+        <ValidationMessage For="@(() => program.StartDate)" />
     </div>
 
     <div class="mb-3">
         <label for="EndDate" class="form-label">End Date</label>
         <div class="col-md-4">
-            <InputDate @bind-Value="@service.EndDate" @bind-Value:format="dd/MM/yyyy" />
+            <InputDate @bind-Value="@program.EndDate" @bind-Value:format="dd/MM/yyyy" />
         </div>
-        <ValidationMessage For="@(() => service.EndDate)" />
+        <ValidationMessage For="@(() => program.EndDate)" />
     </div>
 
     <div class="form-group">
@@ -61,20 +61,20 @@
 
 @code {
     [Parameter]
-    public string serviceId { get; set; }
-    UpdateServiceRequest service = new UpdateServiceRequest();
+    public string programId { get; set; }
+    UpdateProgramRequest program = new UpdateProgramRequest();
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<ServiceEntityItem>("/service/api/services/" + serviceId);
+        var result = await Http.GetFromJsonAsync<ProgramEntityItem>("/program/api/programs/" + programId);
 
-        service.Id = result.Id;
-        service.Name = result.Name;
-        service.Description = result.Description;
-        service.StartDate = result.StartDate;
-        service.EndDate = result.EndDate;
-        service.LastModified = result.LastModified;
-        service.StateId = GetStateId(result.State);
+        program.Id = result.Id;
+        program.Name = result.Name;
+        program.Description = result.Description;
+        program.StartDate = result.StartDate;
+        program.EndDate = result.EndDate;
+        program.LastModified = result.LastModified;
+        program.StateId = GetStateId(result.State);
     }
 
     private int GetStateId(string name)
@@ -90,22 +90,22 @@
         }
     }
 
-    protected async Task SaveService()
+    protected async Task SaveProgram()
     {
-        var result = await Http.PutAsJsonAsync("/service/api/services/" + service.Id, service);
+        var result = await Http.PutAsJsonAsync("/program/api/programs/" + program.Id, program);
 
         if (result.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/service/list");
+            NavigationManager.NavigateTo("/program/list");
         }
         else
         {
-            //NavigationManager.NavigateTo("/service/details");
+            //NavigationManager.NavigateTo("/program/details");
         }
     }
 
     public void Cancel()
     {
-        NavigationManager.NavigateTo("/service/list");
+        NavigationManager.NavigateTo("/program/list");
     }
 }

@@ -1,55 +1,27 @@
-﻿@page "/program/edit/{programId}"
+﻿@page "/service/edit/{serviceId}"
 @using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Admin")]
-<h1>Edit Program</h1>
+<h1>Edit Service</h1>
 <hr />
 
-<EditForm Model="@program" OnValidSubmit="SaveProgram">
+<EditForm Model="@service" OnValidSubmit="SaveService">
     <DataAnnotationsValidator />
     <div class="mb-3">
         <label for="Name" class="form-label">Name</label>
         <div class="col-md-4">
-            <InputText class="form-control" @bind-Value="program.Name" />
+            <InputText class="form-control" @bind-Value="service.Name" />
         </div>
-        <ValidationMessage For="@(() => program.Name)" />
+        <ValidationMessage For="@(() => service.Name)" />
     </div>
     <div class="mb-3">
         <label for="Description" class="form-label">Description</label>
         <div class="col-md-4">
-            <InputText class="form-control" @bind-Value="program.Description" />
+            <InputText class="form-control" @bind-Value="service.Description" />
         </div>
-        <ValidationMessage For="@(() => program.Description)" />
-    </div>
-
-    <div class="mb-3">
-        <label for="State" class="form-label">State</label>
-        <div class="col-md-4">
-            <InputSelect @bind-Value="program.StateId">
-                <option value="0">Select state ...</option>
-                <option value="1">Alabama</option>
-                <option value="2">Alaska</option>
-            </InputSelect>
-        </div>
-        <ValidationMessage For="@(() => program.StateId)" />
-    </div>
-
-    <div class="mb-3">
-        <label for="StartDate" class="form-label">Start Date</label>
-        <div class="col-md-4">
-            <InputDate @bind-Value="@program.StartDate" @bind-Value:format="dd/MM/yyyy" />
-        </div>
-        <ValidationMessage For="@(() => program.StartDate)" />
-    </div>
-
-    <div class="mb-3">
-        <label for="EndDate" class="form-label">End Date</label>
-        <div class="col-md-4">
-            <InputDate @bind-Value="@program.EndDate" @bind-Value:format="dd/MM/yyyy" />
-        </div>
-        <ValidationMessage For="@(() => program.EndDate)" />
+        <ValidationMessage For="@(() => service.Description)" />
     </div>
 
     <div class="form-group">
@@ -61,51 +33,35 @@
 
 @code {
     [Parameter]
-    public string programId { get; set; }
-    UpdateProgramRequest program = new UpdateProgramRequest();
+    public string serviceId { get; set; }
+    UpdateServiceRequest service = new UpdateServiceRequest();
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<ProgramEntityItem>("/program/api/programs/" + programId);
+        var result = await Http.GetFromJsonAsync<ServiceDto>("/service/api/services/" + serviceId);
 
-        program.Id = result.Id;
-        program.Name = result.Name;
-        program.Description = result.Description;
-        program.StartDate = result.StartDate;
-        program.EndDate = result.EndDate;
-        program.LastModified = result.LastModified;
-        program.StateId = GetStateId(result.State);
+        service.Id = result.Id;
+        service.Name = result.Name;
+        service.Description = result.Description;
+        service.LastModified = result.LastModified;
     }
 
-    private int GetStateId(string name)
+    protected async Task SaveService()
     {
-        // ToDo
-        if (name == "Alabama")
-        {
-            return 1;
-        }
-        else
-        {
-            return 2;
-        }
-    }
-
-    protected async Task SaveProgram()
-    {
-        var result = await Http.PutAsJsonAsync("/program/api/programs/" + program.Id, program);
+        var result = await Http.PutAsJsonAsync("/service/api/services/" + service.Id, service);
 
         if (result.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/program/list");
+            NavigationManager.NavigateTo("/service/list");
         }
         else
         {
-            //NavigationManager.NavigateTo("/program/details");
+            //NavigationManager.NavigateTo("/service/details");
         }
     }
 
     public void Cancel()
     {
-        NavigationManager.NavigateTo("/program/list");
+        NavigationManager.NavigateTo("/service/list");
     }
 }

@@ -38,31 +38,18 @@
     </div>
 
     <div class="mb-3">
-        <label for="State" class="form-label">State</label>
+        <label for="State" class="form-label">Program</label>
         <div class="col-md-4">
-            <InputSelect @bind-Value="service.StateId">
-                <option value="0">Select state ...</option>
-                <option value="1">Alabama</option>
-                <option value="2">Alaska</option>
+            <InputSelect @bind-Value="service.ProgramId">
+                <option value="">Select program ...</option>
+
+                @foreach (var item in programList)
+                {
+                    <option value="@item.Id">@item.Name (@item.State)</option>
+                }
             </InputSelect>
         </div>
-        <ValidationMessage For="@(() => service.StateId)" />
-    </div>
-
-    <div class="mb-3">
-        <label for="StartDate" class="form-label">Start Date</label>
-        <div class="col-md-4">
-            <InputDate @bind-Value="@service.StartDate" @bind-Value:format="dd/MM/yyyy" />
-        </div>
-        <ValidationMessage For="@(() => service.StartDate)" />
-    </div>
-
-    <div class="mb-3">
-        <label for="EndDate" class="form-label">End Date</label>
-        <div class="col-md-4">
-            <InputDate @bind-Value="@service.EndDate" @bind-Value:format="dd/MM/yyyy" />
-        </div>
-        <ValidationMessage For="@(() => service.EndDate)" />
+        <ValidationMessage For="@(() => service.ProgramId)" />
     </div>
 
     <div class="form-group">
@@ -80,12 +67,20 @@
     public string Error { get; set; }
 
     protected string Title = "Add";
-    protected CreateServiceRequest service = new CreateServiceRequest
-        {
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddYears(1)
-        };
+    protected CreateServiceRequest service = new CreateServiceRequest();
 
+    protected List<ProgramEntityItem> programList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetPrograms();
+    }
+
+    protected async Task GetPrograms()
+    {
+        var result = await Http.GetFromJsonAsync<ProgramEntity>("/program/api/programs");
+        programList = result.Items.ToList();
+    }
 
     protected async Task SaveService()
     {

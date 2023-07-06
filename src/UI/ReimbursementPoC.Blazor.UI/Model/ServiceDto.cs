@@ -20,4 +20,24 @@
 
         public string? LastModifiedBy { get; set; }
     }
+
+    public class CreateServiceRequest
+    {
+        public Guid ProgramId { get; set; }
+
+        public string Name { get; set; }
+
+        public string? Description { get; set; }
+    }
+
+    public class UpdateServiceRequest
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string? Description { get; set; }
+
+        public DateTime LastModified { get; set; }
+    }
 }
