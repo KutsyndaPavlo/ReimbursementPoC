@@ -1,11 +1,24 @@
-﻿@page "/service/edit/{serviceId}"
+﻿@page "/service/add"
 @using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Admin")]
-<h1>Edit Service</h1>
+<h1>Add Service</h1>
 <hr />
+
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
 
 <EditForm Model="@service" OnValidSubmit="SaveService">
     <DataAnnotationsValidator />
@@ -62,45 +75,36 @@
 @code {
     [Parameter]
     public string serviceId { get; set; }
-    UpdateServiceRequest service = new UpdateServiceRequest();
 
-    protected override async Task OnInitializedAsync()
-    {
-        var result = await Http.GetFromJsonAsync<ServiceEntityItem>("/service/api/services/" + serviceId);
+    public string Notification { get; set; }
+    public string Error { get; set; }
 
-        service.Id = result.Id;
-        service.Name = result.Name;
-        service.Description = result.Description;
-        service.StartDate = result.StartDate;
-        service.EndDate = result.EndDate;
-        service.LastModified = result.LastModified;
-        service.StateId = GetStateId(result.State);
-    }
-
-    private int GetStateId(string name)
-    {
-        // ToDo
-        if (name == "Alabama")
+    protected string Title = "Add";
+    protected CreateServiceRequest service = new CreateServiceRequest
         {
-            return 1;
-        }
-        else
-        {
-            return 2;
-        }
-    }
+            StartDate = DateTime.UtcNow,
+            EndDate = DateTime.UtcNow.AddYears(1)
+        };
+
 
     protected async Task SaveService()
     {
-        var result = await Http.PutAsJsonAsync("/service/api/services/" + service.Id, service);
+        var result = await Http.PostAsJsonAsync("/service/api/services", service);
 
         if (result.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/service/list");
+            Error = "";
+            Notification = "Service was succesfully created";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/service/list");
+            });
         }
         else
         {
-            //NavigationManager.NavigateTo("/service/details");
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
         }
     }
 
