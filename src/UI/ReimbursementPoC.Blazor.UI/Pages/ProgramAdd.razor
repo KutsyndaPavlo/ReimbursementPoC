@@ -96,7 +96,11 @@
             Error = "";
             Notification = "Program was succesfully created";
 
-            //NavigationManager.NavigateTo("/program/list");
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/program/list");
+            });
         }
         else
         {
