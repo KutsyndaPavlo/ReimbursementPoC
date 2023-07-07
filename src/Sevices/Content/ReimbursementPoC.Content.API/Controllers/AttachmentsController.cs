@@ -4,18 +4,10 @@ using Microsoft.Azure.Cosmos;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
+using ReimbursementPoC.Content.API.Model;
 
 namespace ReimbursementPoC.Content.API.Controllers
-{
-    public class Attachment
-    {
-
-        [JsonProperty(PropertyName = "id")]
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public Guid UserId { get; set; }
-        public string Name { get; set; }
-    }
-
+{  
     [Route("api/[controller]")]
     [ApiController]
     public class AttachmentsController : Controller
