@@ -1,0 +1,54 @@
+﻿@page "/customerSubmission/delete/{customerSubmissionId}"
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize(Roles = "Admin")]
+<h2>Delete Customer Submission</h2>
+<br />
+
+<div class="form-group">
+    <h4>Do you want to delete this Customer Submission?</h4>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>VendorSubmissionId</td>
+                <td>@service.VendorSubmissionId</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="form-group">
+    <input type="submit" value="Delete" @onclick="(async () => await RemoveCustomerSubmission(service.Id))" class="btn btn-danger" />
+    <input type="submit" value="Cancel" @onclick="(() => Cancel())" class="btn btn-warning" />
+</div>
+
+@code {
+    [Parameter]
+    public string customerSubmissionId { get; set; }
+    CustomerSubmissionDto service = new CustomerSubmissionDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        service = await Http.GetFromJsonAsync<CustomerSubmissionDto>("/customer/api/CustomerSubmissions/" + customerSubmissionId);
+    }
+
+    protected async Task RemoveCustomerSubmission(Guid id)
+    {
+        var result = await Http.DeleteAsync("/customer/api/CustomerSubmissions/" + id);
+        if (result.IsSuccessStatusCode)
+        {
+
+            NavigationManager.NavigateTo("/customerSubmission/list");
+        }
+        else
+        {
+            
+        }
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/customerSubmission/list");
+    }
+}
