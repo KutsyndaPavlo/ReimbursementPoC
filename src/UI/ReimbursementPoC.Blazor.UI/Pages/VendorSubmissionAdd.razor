@@ -52,10 +52,12 @@
     public string Error { get; set; }
 
     protected string Title = "Add";
-    protected CreateVendorSubmissionRequest vendorSubmission = new CreateVendorSubmissionRequest();
+    protected CreateVendorSubmissionRequest vendorSubmission = new CreateVendorSubmissionRequest()
+        {
+           // VendorId = User.
+        };
 
     protected List<ServiceDto> serviceList = new();
-
     protected override async Task OnInitializedAsync()
     {
         await GetServices();
