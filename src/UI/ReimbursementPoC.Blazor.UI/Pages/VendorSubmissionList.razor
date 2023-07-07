@@ -1,0 +1,108 @@
+﻿@page "/vendorSubmission/list"
+@using Microsoft.AspNetCore.Authorization;
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+<h1>Vendor Submission List</h1>
+<p>Blazor CRUD operation</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <a href='/vendorSubmission/add' class="btn btn-primary" role="button">
+            <i class="fas fa-user-plus"></i>
+            Add Vendor Submission
+        </a>
+    </div>
+    @*<div class="input-group col">
+        <input type="text" class="form-control" placeholder="Search user by name"
+               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
+        @if (SearchString.Length > 0)
+        {
+            <div class="input-group-append">
+                <button class="btn btn-danger" @onclick="ResetSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        }
+    </div>*@
+</div>
+<br />
+
+@if (serviceList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped align-middle table-bordered">
+        <thead class="table-success">
+            <tr>
+                <th>Id</th>
+                <th>ServiceId</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in serviceList)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.ServiceId</td>
+                    <td>
+                        <a href='/vendorSubmission/edit/@item.Id' class="btn btn-outline-dark" role="button">
+                            Edit
+                        </a>
+                        <a href='/vendorSubmission/delete/@item.Id' class="btn btn-outline-danger" role="button">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected List<VendorSubmissionDto> serviceList = new();
+    //protected List<User> searchUserData = new();
+    //protected User user = new();
+    //protected string SearchString { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetVendorSubmission();
+    }
+
+    protected async Task GetVendorSubmission()
+    {
+        var result = await Http.GetFromJsonAsync<PaginatedList<VendorSubmissionDto>>("/vendor/api/VendorSubmissions");
+        serviceList = result.Items.ToList();
+    }
+
+    //protected void FilterUser()
+    //{
+    //    if (!string.IsNullOrEmpty(SearchString))
+    //    {
+    //        serviceList = searchUserData
+    //            .Where(x => x.Username.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
+    //            .ToList();
+    //    }
+    //    else
+    //    {
+    //        serviceList = searchUserData;
+    //    }
+    //}
+
+    //protected void DeleteConfirm(int userID)
+    //{
+    //    user = serviceList.FirstOrDefault(x => x.Userid == userID);
+    //}
+
+    //public void ResetSearch()
+    //{
+    //    SearchString = string.Empty;
+    //    serviceList = searchUserData;
+    //}
+
+}

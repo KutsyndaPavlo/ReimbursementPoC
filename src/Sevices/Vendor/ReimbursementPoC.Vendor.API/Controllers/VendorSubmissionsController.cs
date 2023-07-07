@@ -99,7 +99,7 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status409Conflict, "Vendor already exist")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> PostAsync([FromBody] CreateVendorRequest request)
+        public async Task<IActionResult> PostAsync([FromBody] CreateVendorSubmissionRequest request)
         {
             var result = await _mediator.Send(_mapper.Map<CreateVendorSubmissionCommand>(request));
 

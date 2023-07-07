@@ -12,7 +12,7 @@ namespace ReimbursementPoC.Vendor.API.Mappings
                 //config.CreateMap<GetVendorByIdQuery, ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById.GetVendorByIdQuery>().ReverseMap();
                 //config.CreateMap<PriceAnalytics.Administration.Services.Vendor.Page, ReimbursementPoC.Vendor.Application.Common.Model.Page>().ReverseMap();
                 //config.CreateMap<VendorPaginatedList, PaginatedList<ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById.VendorSubmissionDto>>().ReverseMap();// ToDo
-                config.CreateMap<CreateVendorRequest, ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor.CreateVendorSubmissionCommand>().ReverseMap();
+                config.CreateMap<CreateVendorSubmissionRequest, ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor.CreateVendorSubmissionCommand>().ReverseMap();
       
                 // config.CreateMap<UpdateServiceRequest, UpdateServiceCommand>().ReverseMap();
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));

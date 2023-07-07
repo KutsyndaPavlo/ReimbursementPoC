@@ -1,0 +1,95 @@
+﻿@page "/vendorSubmission/add"
+@using Microsoft.AspNetCore.Authorization;
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+<h1>Add Vendor Submission</h1>
+<hr />
+
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
+
+<EditForm Model="@vendorSubmission" OnValidSubmit="SaveVendorSubmission">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="State" class="form-label">Vendor Submission</label>
+        <div class="col-md-4">
+            <InputSelect @bind-Value="vendorSubmission.ServiceId">
+                <option value="">Select service ...</option>
+
+                @foreach (var item in serviceList)
+                {
+                    <option value="@item.Id">@item.Name (program @item.ProgramId)</option>
+                }
+            </InputSelect>
+        </div>
+        <ValidationMessage For="@(() => vendorSubmission.ServiceId)" />
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+    </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public string vendorSubmissionId { get; set; }
+
+    public string Notification { get; set; }
+    public string Error { get; set; }
+
+    protected string Title = "Add";
+    protected CreateVendorSubmissionRequest vendorSubmission = new CreateVendorSubmissionRequest();
+
+    protected List<ServiceDto> serviceList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetServices();
+    }
+
+    protected async Task GetServices()
+    {
+        var result = await Http.GetFromJsonAsync<ServiceEntity>("/program/api/services");
+        serviceList = result.Items.ToList();
+    }
+
+    protected async Task SaveVendorSubmission()
+    {
+        var result = await Http.PostAsJsonAsync("/vendor/api/VendorSubmissions", vendorSubmission);
+
+        if (result.IsSuccessStatusCode)
+        {
+            Error = "";
+            Notification = "VendorSubmission was succesfully created";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/vendorSubmission/list");
+            });
+        }
+        else
+        {
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
+        }
+    }
+
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("/vendorSubmission/list");
+    }
+}

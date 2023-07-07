@@ -1,6 +1,6 @@
 ﻿namespace ReimbursementPoC.Vendor.API.Models
 {
-    public class CreateVendorRequest
+    public class CreateVendorSubmissionRequest
     {
         public Guid VendorId { get; private set; }
 
