@@ -1,0 +1,97 @@
+﻿@page "/customerSubmission/add"
+@using Microsoft.AspNetCore.Authorization;
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+<h1>Add Customer Submission</h1>
+<hr />
+
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
+
+<EditForm Model="@customerSubmission" OnValidSubmit="SaveCustomerSubmission">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="State" class="form-label">Customer Submission</label>
+        <div class="col-md-4">
+            <InputSelect @bind-Value="customerSubmission.VendorSubmissionId">
+                <option value="">Select service ...</option>
+
+                @foreach (var item in list)
+                {
+                    <option value="@item.Id">@item.VendorSubmissionId</option>
+                }
+            </InputSelect>
+        </div>
+        <ValidationMessage For="@(() => customerSubmission.VendorSubmissionId)" />
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+    </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public string customerSubmissionId { get; set; }
+
+    public string Notification { get; set; }
+    public string Error { get; set; }
+
+    protected string Title = "Add";
+    protected CreateCustomerSubmissionRequest customerSubmission = new CreateCustomerSubmissionRequest()
+        {
+            CustomerId = Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1")
+        };
+
+    protected List<CustomerSubmissionDto> list = new();
+    protected override async Task OnInitializedAsync()
+    {
+        await GetVendorSubmissions();
+    }
+
+    protected async Task GetVendorSubmissions()
+    {
+        var result = await Http.GetFromJsonAsync<PaginatedList<CustomerSubmissionDto>>("/vendor/api/VendorSubmissions");
+        list = result.Items.ToList();
+    }
+
+    protected async Task SaveCustomerSubmission()
+    {
+        var result = await Http.PostAsJsonAsync("/customer/api/CustomerSubmissions", customerSubmission);
+
+        if (result.IsSuccessStatusCode)
+        {
+            Error = "";
+            Notification = "CustomerSubmission was succesfully created";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/customerSubmission/list");
+            });
+        }
+        else
+        {
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
+        }
+    }
+
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("/customerSubmission/list");
+    }
+}

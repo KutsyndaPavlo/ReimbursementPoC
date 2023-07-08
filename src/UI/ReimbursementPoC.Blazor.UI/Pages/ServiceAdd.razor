@@ -1,0 +1,110 @@
+﻿@page "/service/add"
+@using Microsoft.AspNetCore.Authorization;
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+<h1>Add Service</h1>
+<hr />
+
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
+
+<EditForm Model="@service" OnValidSubmit="SaveService">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="Name" class="form-label">Name</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="service.Name" />
+        </div>
+        <ValidationMessage For="@(() => service.Name)" />
+    </div>
+    <div class="mb-3">
+        <label for="Description" class="form-label">Description</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="service.Description" />
+        </div>
+        <ValidationMessage For="@(() => service.Description)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="State" class="form-label">Program</label>
+        <div class="col-md-4">
+            <InputSelect @bind-Value="service.ProgramId">
+                <option value="">Select program ...</option>
+
+                @foreach (var item in programList)
+                {
+                    <option value="@item.Id">@item.Name (@item.State)</option>
+                }
+            </InputSelect>
+        </div>
+        <ValidationMessage For="@(() => service.ProgramId)" />
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+    </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public string serviceId { get; set; }
+
+    public string Notification { get; set; }
+    public string Error { get; set; }
+
+    protected string Title = "Add";
+    protected CreateServiceRequest service = new CreateServiceRequest();
+
+    protected List<ProgramEntityItem> programList = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetPrograms();
+    }
+
+    protected async Task GetPrograms()
+    {
+        var result = await Http.GetFromJsonAsync<ProgramEntity>("/program/api/programs");
+        programList = result.Items.ToList();
+    }
+
+    protected async Task SaveService()
+    {
+        var result = await Http.PostAsJsonAsync("/program/api/services", service);
+
+        if (result.IsSuccessStatusCode)
+        {
+            Error = "";
+            Notification = "Service was succesfully created";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/service/list");
+            });
+        }
+        else
+        {
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
+        }
+    }
+
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("/service/list");
+    }
+}
