@@ -1,3 +1,16 @@
+# variables:
+# - name: BuildParameters.RestoreBuildProjects
+  # value: '**/ReimbursementPoC.Customer.API.csproj'
+# - name: BuildParameters.TestProjects
+  # value: '**/*[Tt]ests/ReimbursementPoC.Customer.UnitTests.csproj'
+# trigger:
+  # branches:
+    # include:
+    # - main
+  # paths:
+    # include:
+    # - customer
+# name: $(date:yyyyMMdd)$(rev:.r)
 # Docker
 # Build and push an image to Azure Container Registry
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
@@ -20,9 +33,9 @@ variables:
       latesttag: 'snapshot-latest'
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'fa6d4660-2a47-4898-88e5-c923174cd753'
-  imageRepository: 'vendor-api'
+  imageRepository: 'identity-api'
   containerRegistry: 'reimbursementpoccontainerregistry.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/src/Sevices/Vendor/ReimbursementPoC.Vendor.APIDockerfile'  
+  dockerfilePath: '$(Build.SourcesDirectory)/src/Identity/ReimbursementPoC.Identity.API/Dockerfile'  
   buildContext: '$(Build.SourcesDirectory)/src'
 
   # Agent VM image name
@@ -48,19 +61,7 @@ stages:
         tags: |
           $(tag)
           $(latesttag)
-# variables:
-# - name: BuildParameters.RestoreBuildProjects
-  # value: '**/ReimbursementPoC.Vendor.API.csproj'
-# - name: BuildParameters.TestProjects
-  # value: '**/*[Tt]ests/ReimbursementPoC.Vendor.UnitTests.csproj'
-# trigger:
-  # branches:
-    # include:
-    # - refs/heads/main
-  # paths:
-    # include:
-    # - vendor
-# name: $(date:yyyyMMdd)$(rev:.r)
+          
 # resources:
   # repositories:
   # - repository: self
