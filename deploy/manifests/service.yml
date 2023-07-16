@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: apigateway
+    labels:
+      name: apigateway
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+    selector:
+        name: apigateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: programapi
+  labels:
+    name: programapi
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: LoadBalancer
+  selector:
+    name: programapi  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: searchapi
+  labels:
+    name: searchapi
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: LoadBalancer
+  selector:
+    name: searchapi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: searchbackgroundtasks
+  labels:
+    name: searchbackgroundtasks
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: LoadBalancer
+  selector:
+    name: searchbackgroundtasks

@@ -33,7 +33,7 @@
     <Content Update="Routes\Development\ocelot.global.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Routes\Development\ocelot.program.api.json">
+    <Content Update="Routes\Development\ocelot.administration.api.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Routes\Development\ocelot.SwaggerEndPoints.json">
@@ -48,7 +48,7 @@
     <Content Update="Routes\ocelot.global.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="Routes\ocelot.program.api.json">
+    <Content Update="Routes\ocelot.administration.api.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Update="Routes\ocelot.SwaggerEndPoints.json">
