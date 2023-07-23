@@ -7,7 +7,7 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
     {
         private VendorSubmissionEntity()
         {
-
+            // oly for EF
         }
 
         private VendorSubmissionEntity(Guid vendorId, Guid serviceId) : base()
@@ -22,7 +22,7 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
 
         public Guid ServiceId { get; private set; }
 
-        public bool IsActive { get; private set; }
+        public bool IsCanceled { get; private set; }
 
         public static VendorSubmissionEntity CreateNew(Guid vendorId, Guid serviceId)
         {
@@ -31,11 +31,11 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
             return new VendorSubmissionEntity(vendorId, serviceId);
         }
 
-        public void DeActivate()
+        public void Cancel()
         {
-            IsActive = false;
+            IsCanceled = false;
             this.LastModified = DateTime.UtcNow;
-            this._domainEvents.Add(new VendorSubmissionDeactivatedEvent(this));
+            this._domainEvents.Add(new VendorSubmissionCanceledEvent(this));
         }
 
         public bool CanBeDeleted()

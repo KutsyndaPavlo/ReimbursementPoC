@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using ReimbursementPoC.Vendor.API.Models;
 using ReimbursementPoC.Vendor.Application.Common.Model;
 using ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor;
-using ReimbursementPoC.Vendor.Application.Vendor.Commands.DeactivateVendor;
+using ReimbursementPoC.Vendor.Application.Vendor.Commands.cancelVendor;
 using ReimbursementPoC.Vendor.Application.Vendor.Commands.DeleteVendor;
 using ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById;
 using ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendors;
 using Swashbuckle.AspNetCore.Annotations;
+using ReimbursementPoC.Vendor.Application.Vendor.Commands.DeactivateVendor;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -106,33 +107,37 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
 
-        [HttpPut("{id}/deactivate")]
-        [SwaggerOperation(Tags = new[] { "VendorSubmission" }, Summary = "Deactivate a VendorSubmission.")]
+        [HttpPut("{id}/cancel")]
+        [SwaggerOperation(Tags = new[] { "VendorSubmission" }, Summary = "Cancel a VendorSubmission.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(VendorSubmissionDto))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "VendorSubmission does not exist")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> DeactivateAsync(Guid id)
+        public async Task<IActionResult> CancelAsync(Guid id)
         {
-            var result = await _mediator.Send(new DeactivateVendorSubmissionCommand { Id = id });
+            var result = await _mediator.Send(new CancelVendorSubmissionCommand
+            {
+                SubmissionId = id,
+                // VendorId = HttpContext.Request.Headers["X-UserId"].;
+            });
             return Ok(result);
         }
 
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Tags = new[] { "VendorSubmission" }, Summary = "Delete VendorSubmission by id.")]
-        [Produces("application/json")]
-        [SwaggerResponse(StatusCodes.Status204NoContent)]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "VendorSubmission does not exist")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var command = new DeleteVendorSubmissionCommand { Id = id };
+        //[HttpDelete("{id}")]
+        //[SwaggerOperation(Tags = new[] { "VendorSubmission" }, Summary = "Delete VendorSubmission by id.")]
+        //[Produces("application/json")]
+        //[SwaggerResponse(StatusCodes.Status204NoContent)]
+        //[SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
+        //[SwaggerResponse(StatusCodes.Status404NotFound, "VendorSubmission does not exist")]
+        //[SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
+        //public async Task<IActionResult> Delete(Guid id)
+        //{
+        //    var command = new DeleteVendorSubmissionCommand { Id = id };
 
-            await _mediator.Send(command);
-            return NoContent();
-        }
+        //    await _mediator.Send(command);
+        //    return NoContent();
+        //}
 
         #endregion
     }

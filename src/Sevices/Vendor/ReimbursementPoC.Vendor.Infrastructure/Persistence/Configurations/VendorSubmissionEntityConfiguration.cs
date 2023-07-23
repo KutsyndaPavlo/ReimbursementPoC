@@ -21,7 +21,7 @@ namespace ReimbursementPoC.Vendor.Infrastructure.Persistence.Configurations
             builder.Property(t => t.ServiceId)
                 .HasColumnName("ServiceId").ValueGeneratedNever();
 
-            builder.Property(t => t.IsActive)
+            builder.Property(t => t.IsCanceled)
                 .HasColumnName("IsActive").ValueGeneratedNever();
 
             builder.Ignore(e => e.DomainEvents);

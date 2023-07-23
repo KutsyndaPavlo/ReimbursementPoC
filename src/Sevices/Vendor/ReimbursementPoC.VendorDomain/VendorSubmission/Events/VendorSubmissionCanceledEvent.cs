@@ -2,9 +2,9 @@
 
 namespace ReimbursementPoC.Vendor.Domain.Vendor.Events
 {
-    public class VendorSubmissionDeactivatedEvent : DomainEvent
+    public class VendorSubmissionCanceledEvent : DomainEvent
     {
-        public VendorSubmissionDeactivatedEvent(VendorSubmissionEntity vendorSubmission)
+        public VendorSubmissionCanceledEvent(VendorSubmissionEntity vendorSubmission)
         {
             VendorSubmission = vendorSubmission;
         }

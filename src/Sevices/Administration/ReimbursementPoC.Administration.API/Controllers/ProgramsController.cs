@@ -69,7 +69,6 @@ namespace ReimbursementPoC.Administration.API.Controllers
             [FromQuery] int offset = 0, 
             [FromQuery] int limit = 50)
         {
-            var userId = HttpContext.Request.Headers["X-UserId"];
             var query = new GetProgramsQuery(name, offset, limit, sort);
             var result = await _mediator.Send(query);
             return Ok(result);

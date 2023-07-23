@@ -1,10 +1,10 @@
-﻿@page "/program/{programId}/service/{serviceId}/cancel"
+﻿@page "/vendorSubmission/{vendorSubmissionId}/Cancel"
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @using Microsoft.AspNetCore.Authorization;
 @attribute [Authorize(Roles = "Admin")]
-<h2>Cancel Service</h2>
+<h2>Cancel Vendor Submission</h2>
 <br />
 
 @if (!string.IsNullOrWhiteSpace(Notification))
@@ -20,46 +20,36 @@
     </div>
 }
 <div class="form-group">
-    <h4>Do you want to cancel this Service?</h4>
+    <h4>Do you want to cancel this Vendor Submission?</h4>
     <table class="table">
         <tbody>
             <tr>
-                <td>Name</td>
-                <td>@service.Name</td>
-            </tr>
-            <tr>
-                <td>Description</td>
-                <td>@service.Description</td>
-            </tr>
-            <tr>
-                <td>Program Name</td>
-                <td>@service.Program?.Name</td>
+                <td>ServiceId</td>
+                <td>@submission.ServiceId</td>
             </tr>
         </tbody>
     </table>
 </div>
 <div class="form-group">
-    <input type="submit" value="Confirm" @onclick="(async () => await CancelService(service.Id))" class="btn btn-danger" />
+    <input type="submit" value="Confirm" @onclick="(async () => await CancelVendorSubmission(submission.Id))" class="btn btn-danger" />
     <input type="submit" value="Return" @onclick="(() => Cancel())" class="btn btn-warning" />
 </div>
 
 @code {
     [Parameter]
-    public string programId { get; set; }
-    [Parameter]
-    public string serviceId { get; set; }
+    public string vendorSubmissionId { get; set; }
     public string Notification { get; set; }
     public string Error { get; set; }
-    ServiceDto service = new ServiceDto();
+    VendorSubmissionDto submission = new VendorSubmissionDto();
 
     protected override async Task OnInitializedAsync()
     {
-        service = await Http.GetFromJsonAsync<ServiceDto>("/administration/api/services/" + serviceId);
+        submission = await Http.GetFromJsonAsync<VendorSubmissionDto>("/vendor/api/VendorSubmissions/" + vendorSubmissionId);
     }
 
-    protected async Task CancelService(Guid id)
+    protected async Task CancelVendorSubmission(Guid id)
     {
-        var result = await Http.PutAsJsonAsync("/administration/api/services/" + id + "/cancel", service);
+        var result = await Http.PutAsJsonAsync("/vendor/api/VendorSubmissions/" + id + "/cancel", submission);
         if (result.IsSuccessStatusCode)
         {
             Error = "";
@@ -68,7 +58,7 @@
             Task.Run(async () =>
             {
                 await Task.Delay(TimeSpan.FromSeconds(3));
-                NavigationManager.NavigateTo($"/program/{programId}/services");
+                NavigationManager.NavigateTo($"/vendorSubmission/list");
             });
         }
         else
@@ -79,6 +69,6 @@
 
     void Cancel()
     {
-        NavigationManager.NavigateTo($"/program/{programId}/services");
+        NavigationManager.NavigateTo($"/vendorSubmission/list");
     }
 }

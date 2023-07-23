@@ -6,7 +6,7 @@ using ReimbursementPoC.Vendor.Domain.Vendor.Events;
 
 namespace ReimbursementPoC.Vendor.Application.VendorSubmission.EventHandlers
 {
-    public class VendorDeactivatedEventHandler : INotificationHandler<DomainEventNotification<VendorSubmissionDeactivatedEvent>>
+    public class VendorDeactivatedEventHandler : INotificationHandler<DomainEventNotification<VendorSubmissionCanceledEvent>>
     {
         private readonly ILogger<VendorDeactivatedEventHandler> _logger;
         private readonly IApplicationDbContext _applicationDbContext;
@@ -18,7 +18,7 @@ namespace ReimbursementPoC.Vendor.Application.VendorSubmission.EventHandlers
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task Handle(DomainEventNotification<VendorSubmissionDeactivatedEvent> notification, CancellationToken cancellationToken)
+        public async Task Handle(DomainEventNotification<VendorSubmissionCanceledEvent> notification, CancellationToken cancellationToken)
         {
             var domainEvent = notification.DomainEvent;
 

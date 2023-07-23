@@ -8,29 +8,30 @@ using ReimbursementPoC.Vendor.Domain.VendorSubmission.Specification;
 
 namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.DeactivateVendor
 {
-    public class DeactivateVendorSubmissionCommandHandler : IRequestHandler<DeactivateVendorSubmissionCommand, VendorSubmissionDto>
+    public class CancelVendorSubmissionCommandHandler : IRequestHandler<CancelVendorSubmissionCommand, VendorSubmissionDto>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
 
-        public DeactivateVendorSubmissionCommandHandler(IApplicationDbContext applicationDbContext, 
-                                              IMapper mapper)
+        public CancelVendorSubmissionCommandHandler(IApplicationDbContext applicationDbContext, 
+                                                    IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
         }
 
-        public async Task<VendorSubmissionDto> Handle(DeactivateVendorSubmissionCommand command, CancellationToken cancellationToken)
+        public async Task<VendorSubmissionDto> Handle(CancelVendorSubmissionCommand command, CancellationToken cancellationToken)
         {
-            var entity = await _applicationDbContext.VendorSubmissions.FirstOrDefaultAsync(new VendorSubmissionByIdSpecification(command.Id).ToExpression());
+            // ToDo check if vendor exists
 
+            var entity = await _applicationDbContext.VendorSubmissions.FirstOrDefaultAsync(new VendorSubmissionByIdSpecification(command.SubmissionId).ToExpression());
 
             if (entity == null)
             {
-                throw new VendorSubmissionNotFoundException($"Vendor with id {command.Id} doesn't exist.");
+                throw new VendorSubmissionNotFoundException($"Vendor submission with id {command.SubmissionId} doesn't exist.");
             }
 
-            entity.DeActivate();
+            entity.Cancel();
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 

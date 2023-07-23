@@ -3,8 +3,9 @@ using ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById;
 
 namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.DeactivateVendor
 {
-    public class DeactivateVendorSubmissionCommand : IRequest<VendorSubmissionDto>
+    public class CancelVendorSubmissionCommand : IRequest<VendorSubmissionDto>
     {
-        public Guid Id { get; set; }
+        public Guid VendorId { get; set; }
+        public Guid SubmissionId { get; set; }
     }
 }
