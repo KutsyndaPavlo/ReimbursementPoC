@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Vendor.Application.Common.Interfaces;
+using ReimbursementPoC.Vendor.Application.Vendor.Commands.CancelVendorSubmission;
 using ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById;
 using ReimbursementPoC.Vendor.Domain;
 using ReimbursementPoC.Vendor.Domain.VendorSubmission.Specification;

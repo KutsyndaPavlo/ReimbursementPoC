@@ -3,13 +3,11 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ReimbursementPoC.Vendor.API.Models;
 using ReimbursementPoC.Vendor.Application.Common.Model;
+using ReimbursementPoC.Vendor.Application.Vendor.Commands.CancelVendorSubmission;
 using ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor;
-using ReimbursementPoC.Vendor.Application.Vendor.Commands.cancelVendor;
-using ReimbursementPoC.Vendor.Application.Vendor.Commands.DeleteVendor;
 using ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById;
 using ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendors;
 using Swashbuckle.AspNetCore.Annotations;
-using ReimbursementPoC.Vendor.Application.Vendor.Commands.DeactivateVendor;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -102,7 +100,11 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> PostAsync([FromBody] CreateVendorSubmissionRequest request)
         {
-            var result = await _mediator.Send(_mapper.Map<CreateVendorSubmissionCommand>(request));
+            var result = await _mediator.Send(new CreateVendorSubmissionCommand 
+            {
+                 ServiceId = request.ServiceId,
+                // VendorId = HttpContext.Request.Headers["X-UserId"];
+            });
 
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }

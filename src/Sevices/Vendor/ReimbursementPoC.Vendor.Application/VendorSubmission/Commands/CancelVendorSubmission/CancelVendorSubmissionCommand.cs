@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById;
 
-namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.DeactivateVendor
+namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.CancelVendorSubmission
 {
     public class CancelVendorSubmissionCommand : IRequest<VendorSubmissionDto>
     {
