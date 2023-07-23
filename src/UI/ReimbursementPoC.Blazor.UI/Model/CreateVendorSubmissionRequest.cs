@@ -1,0 +1,9 @@
+﻿namespace ReimbursementPoC.Blazor.UI.Model
+{
+    public class CreateVendorSubmissionRequest
+    {
+        public Guid VendorId { get; set; }
+
+        public Guid ServiceId { get; set; }
+    }
+}

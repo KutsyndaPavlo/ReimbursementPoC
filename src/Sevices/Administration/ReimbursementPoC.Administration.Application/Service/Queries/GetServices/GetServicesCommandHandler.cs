@@ -22,16 +22,11 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
 
         public async Task<PaginatedList<ServiceDto>> Handle(GetServicesQuery query, CancellationToken cancellationToken)
         {
-            var root = (IQueryable<ServiceEntity>)_applicationDbContext.Services;
-
-            //if (!string.IsNullOrWhiteSpace(query.Name))
-            //{
-            //    root = root.Where(new ServicesNameEqualsSpecification(query.Name).ToExpression());
-            //}
-
+            var root = (IQueryable<ServiceEntity>)_applicationDbContext.Services.Include(x => x.Program)
+                .Where(x => !x.IsCanceled && !x.Program.IsCanceled);
             var total = await root.LongCountAsync();
 
-            var data = await root//.Include(x => x.State)
+            var data = await root
                 .OrderBy(c => c.Name)
                 .Skip(query.Offset)
                 .Take(query.Limit)

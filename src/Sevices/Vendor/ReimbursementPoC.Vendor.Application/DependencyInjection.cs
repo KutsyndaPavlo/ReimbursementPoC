@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using ReimbursementPoC.Administration.IntergrationEvents;
 using ReimbursementPoC.Infrustructure.EventBus;
 using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
 using ReimbursementPoC.Infrustructure.EventBusServiceBus;

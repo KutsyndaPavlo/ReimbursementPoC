@@ -23,13 +23,13 @@
       ]
     },
     {
-      "Key": "program",
+      "Key": "administration",
       "TransformByOcelotConfig": true,
       "Config": [
         {
-          "Name": "Program.API",
+          "Name": "Administration.API",
           "Version": "1.0",
-          "Url": "http://localhost:5136/program/swagger/v1/swagger.json"
+          "Url": "http://localhost:5136/administration/swagger/v1/swagger.json"
         }
       ]
     }

@@ -1,9 +1,10 @@
 ﻿using ReimbursementPoC.Administration.Domain.Common;
-using ReimbursementPoC.Administration.Domain.Product.Rules;
 using ReimbursementPoC.Administration.Domain.Program.Enums;
 using ReimbursementPoC.Administration.Domain.Program.Events;
+using ReimbursementPoC.Administration.Domain.Program.Rules;
 using ReimbursementPoC.Administration.Domain.Service;
 using ReimbursementPoC.Administration.Domain.Service.Events;
+using ReimbursementPoC.Administration.Domain.Service.Rules;
 using ReimbursementPoC.Administration.Domain.ValueObjects;
 
 namespace ReimbursementPoC.Administration.Domain.Program
@@ -12,7 +13,7 @@ namespace ReimbursementPoC.Administration.Domain.Program
     {
         private ProgramEntity()
         {
-
+            // only for EF
         }
 
         private ProgramEntity(string name, string description, int stateId, Period period): base()
@@ -21,7 +22,7 @@ namespace ReimbursementPoC.Administration.Domain.Program
             this.Description = description;
             this._stateId = stateId;
             this.Period = period;
-            this.IsActive = true;
+            this.IsCanceled = false;
 
             this._domainEvents.Add(new ProgramCreatedEvent(this));
         }
@@ -36,7 +37,7 @@ namespace ReimbursementPoC.Administration.Domain.Program
 
         private int _stateId;
 
-        public bool IsActive { get; private set; }
+        public bool IsCanceled { get; private set; }
 
         public List<ServiceEntity> _services;
 
@@ -47,55 +48,43 @@ namespace ReimbursementPoC.Administration.Domain.Program
                                               int stateId,
                                               DateTime startDate,
                                               DateTime endDate,
-                                              IProgramService programUniquenessChecker)
+                                              IProgramService programService)
         {
-            CheckRule(new ProgramNameMustBeUniqueRule(programUniquenessChecker, name));
+            CheckRule(new ProgramMustBeSinglePerStatePerPeriodRule(programService, stateId, startDate, endDate));
 
             return new ProgramEntity(name, description, stateId, new Period(startDate, endDate));
         }
 
         public void UpdateProgram(
             string name,
-            string? description,
-            int stateId,
-            DateTime startDate,
-            DateTime endDate,
-            IProgramService programService)
+            string? description)
         {
-            //CheckRule(new ProgramNameMustBeUniqueRule(programService, name));
+           // CheckRule(new ServiceNameShouldUniquePerProgram(name, this.Services));
 
             this.Name = name;
             this.Description = description;
-            this._stateId = _stateId;
-            this.Period = new Period(startDate, endDate);
             this.LastModified = DateTime.UtcNow;
 
             this._domainEvents.Add(new ProgramUpdatedEvent(this));
         }
 
-        public void DeActivate()
+        public void Cancel()
         {
-            IsActive = false;
+            IsCanceled = true;
             this.LastModified = DateTime.UtcNow;
-            this._domainEvents.Add(new ProgramDeactivatedEvent(this));
+            this._domainEvents.Add(new ProgramCanceledEvent(this));
         }
 
-        public bool CanBeDeleted(IProgramService productService)
+        public bool CanBeDeleted()
         {
-            return true;
-            //return !productService.HistoricalProposals(this).Any();
+            return !_services.Any();
         }
 
         public ServiceEntity CreateService(string name, string? description)
         {
-            //CheckRule(new OnlyActiveSellerCanProvidePoposalRule(seller));
-            //CheckRule(new ProposalShouldBeProvidedToActiveProductRule(product));
-            //CheckRule(new ProposalPriceMustBeGreaterThanZeroRule(price));
-            //CheckRule(new CurrencyOfProposalPriceMustBeUahOrUsd(currency));
+            CheckRule(new ServiceNameShouldUniquePerProgram(name, this.Services));
 
             var service = ServiceEntity.CreateNew(name, description, this);
-
-            //CheckRule(new ShouldBeOnlyOneProposalPerDayRule(proposalService, entity));
 
             service.AddDomainEvent(new ServiceCreatedEvent(service));
 

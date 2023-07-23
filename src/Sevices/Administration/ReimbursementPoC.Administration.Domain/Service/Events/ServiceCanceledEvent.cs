@@ -3,9 +3,9 @@ using ReimbursementPoC.Administration.Domain.Service;
 
 namespace ReimbursementPoC.Administration.Domain.Service.Events
 {
-    public class ServiceDeactivatedEvent : DomainEvent
+    public class ServiceCanceledEvent : DomainEvent
     {
-        public ServiceDeactivatedEvent(ServiceEntity service)
+        public ServiceCanceledEvent(ServiceEntity service)
         {
             Service = service;
         }

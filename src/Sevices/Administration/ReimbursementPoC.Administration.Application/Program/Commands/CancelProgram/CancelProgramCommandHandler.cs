@@ -8,19 +8,19 @@ using ReimbursementPoC.Administration.Domain.Program.Specification;
 
 namespace ReimbursementPoC.Administration.Application.Program.Commands.DeactivateProgram
 {
-    public class DeactivateProgramCommandHandler : IRequestHandler<DeactivateProgramCommand, ProgramDto>
+    public class CancelProgramCommandHandler : IRequestHandler<CancelProgramCommand, ProgramDto>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
 
-        public DeactivateProgramCommandHandler(IApplicationDbContext applicationDbContext, 
+        public CancelProgramCommandHandler(IApplicationDbContext applicationDbContext, 
                                               IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
         }
 
-        public async Task<ProgramDto> Handle(DeactivateProgramCommand command, CancellationToken cancellationToken)
+        public async Task<ProgramDto> Handle(CancelProgramCommand command, CancellationToken cancellationToken)
         {
             var entity = await _applicationDbContext.Programs.FirstOrDefaultAsync(new ProgramByIdSpecification(command.Id).ToExpression());
 
@@ -30,7 +30,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.Deactivat
                 throw new ProgramNotFoundException($"Program with id {command.Id} doesn't exist.");
             }
 
-            entity.DeActivate();
+            entity.Cancel();
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 

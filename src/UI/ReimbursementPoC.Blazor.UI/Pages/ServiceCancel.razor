@@ -1,0 +1,84 @@
+﻿@page "/program/{programId}/service/{serviceId}/cancel"
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize(Roles = "Admin")]
+<h2>Cancel Service</h2>
+<br />
+
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
+<div class="form-group">
+    <h4>Do you want to cancel this Service?</h4>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>Name</td>
+                <td>@service.Name</td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td>@service.Description</td>
+            </tr>
+            <tr>
+                <td>Program Name</td>
+                <td>@service.Program?.Name</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="form-group">
+    <input type="submit" value="Confirm" @onclick="(async () => await CancelService(service.Id))" class="btn btn-danger" />
+    <input type="submit" value="Cancel" @onclick="(() => Cancel())" class="btn btn-warning" />
+</div>
+
+@code {
+    [Parameter]
+    public string programId { get; set; }
+    [Parameter]
+    public string serviceId { get; set; }
+    public string Notification { get; set; }
+    public string Error { get; set; }
+    ServiceDto service = new ServiceDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        service = await Http.GetFromJsonAsync<ServiceDto>("/administration/api/services/" + serviceId);
+    }
+
+    protected async Task CancelService(Guid id)
+    {
+        var result = await Http.PutAsJsonAsync("/administration/api/services/" + id + "/cancel", service);
+        if (result.IsSuccessStatusCode)
+        {
+            Error = "";
+            Notification = "Service was succesfully canceled";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo($"/program/{programId}/services");
+            });
+        }
+        else
+        {
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
+        }
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo($"/program/{programId}/services");
+    }
+}

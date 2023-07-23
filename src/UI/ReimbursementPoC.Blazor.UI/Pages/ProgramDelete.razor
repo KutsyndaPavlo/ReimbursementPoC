@@ -1,4 +1,4 @@
-﻿@page "/program/delete/{programId}"
+﻿@*@page "/program/{programId}/delete"
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -6,6 +6,19 @@
 @attribute [Authorize(Roles = "Admin")]
 <h2>Delete Program</h2>
 <br />
+
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
 
 <div class="form-group">
     <h4>Do you want to delete this Program?</h4>
@@ -35,31 +48,39 @@
     </table>
 </div>
 <div class="form-group">
-    <input type="submit" value="Delete" @onclick="(async () => await RemoveUser(program.Id))" class="btn btn-danger" />
+    <input type="submit" value="Delete" @onclick="(async () => await RemoveProgram(program.Id))" class="btn btn-danger" />
     <input type="submit" value="Cancel" @onclick="(() => Cancel())" class="btn btn-warning" />
 </div>
 
 @code {
     [Parameter]
     public string programId { get; set; }
-    ProgramEntityItem program = new ProgramEntityItem();
+    public string Notification { get; set; }
+    public string Error { get; set; }
+    ProgramDto program = new ProgramDto();
 
     protected override async Task OnInitializedAsync()
     {
-        program = await Http.GetFromJsonAsync<ProgramEntityItem>("/program/api/programs/" + programId);
+        program = await Http.GetFromJsonAsync<ProgramDto>("/administration/api/programs/" + programId);
     }
 
-    protected async Task RemoveUser(Guid id)
+    protected async Task RemoveProgram(Guid id)
     {
-        var result = await Http.DeleteAsync("/program/api/programs/" + id);
+        var result = await Http.DeleteAsync("/administration/api/programs/" + id);
         if (result.IsSuccessStatusCode)
         {
+            Error = "";
+            Notification = "Program was succesfully deleted";
 
-            NavigationManager.NavigateTo("/program/list");
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/program/list");
+            });
         }
         else
         {
-            
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
         }
     }
 
@@ -67,4 +88,4 @@
     {
         NavigationManager.NavigateTo("/program/list");
     }
-}
+}*@

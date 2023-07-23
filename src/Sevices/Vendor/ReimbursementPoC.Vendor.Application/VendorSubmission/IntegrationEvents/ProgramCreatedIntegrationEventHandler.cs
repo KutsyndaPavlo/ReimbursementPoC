@@ -1,4 +1,5 @@
-﻿using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
+﻿using ReimbursementPoC.Administration.IntergrationEvents;
+using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -8,7 +8,7 @@ namespace ReimbursementPoC.Administration.Domain.Service
     {
         private ServiceEntity()
         {
-
+            // only for EF
         }
 
         private ServiceEntity(string name, string? description, Guid programId) : base()
@@ -16,14 +16,14 @@ namespace ReimbursementPoC.Administration.Domain.Service
             Name = name;
             Description = description;
             ProgramId = programId;
-            IsActive = true;
+            IsCanceled = false;
         }
 
         public string Name { get; private set; }
 
         public string? Description { get; private set; }
 
-        public bool IsActive { get; private set; }
+        public bool IsCanceled { get; private set; }
 
         public Guid ProgramId { get; private set; }
 
@@ -34,10 +34,12 @@ namespace ReimbursementPoC.Administration.Domain.Service
             return new ServiceEntity(name, description, program.Id);
         }
 
-        public void Deactivate()
+        public void Cancel()
         {
-            IsActive = false;
-            this.AddDomainEvent(new ServiceDeactivatedEvent(this));
+            IsCanceled = true;
+            this.LastModified = DateTime.UtcNow;
+            this.LastModifiedBy = "";
+            this.AddDomainEvent(new ServiceCanceledEvent(this));
         }
 
         public bool CanBeDeleted()

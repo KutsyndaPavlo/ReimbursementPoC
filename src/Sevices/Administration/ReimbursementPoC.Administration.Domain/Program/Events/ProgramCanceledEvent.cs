@@ -2,9 +2,9 @@
 
 namespace ReimbursementPoC.Administration.Domain.Program.Events
 {
-    public class ProgramDeactivatedEvent : DomainEvent
+    public class ProgramCanceledEvent : DomainEvent
     {
-        public ProgramDeactivatedEvent(ProgramEntity program)
+        public ProgramCanceledEvent(ProgramEntity program)
         {
             Program = program;
         }

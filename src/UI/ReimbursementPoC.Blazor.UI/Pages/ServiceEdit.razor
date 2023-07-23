@@ -1,4 +1,4 @@
-﻿@page "/service/edit/{serviceId}"
+﻿@page "/program/{programId}/service/{serviceId}/edit"
 @using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
@@ -7,6 +7,18 @@
 <h1>Edit Service</h1>
 <hr />
 
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
 <EditForm Model="@service" OnValidSubmit="SaveService">
     <DataAnnotationsValidator />
     <div class="mb-3">
@@ -33,12 +45,16 @@
 
 @code {
     [Parameter]
+    public string programId { get; set; }
+    [Parameter]
     public string serviceId { get; set; }
+    public string Notification { get; set; }
+    public string Error { get; set; }
     UpdateServiceRequest service = new UpdateServiceRequest();
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<ServiceDto>("/program/api/services/" + serviceId);
+        var result = await Http.GetFromJsonAsync<ServiceDto>("/administration/api/services/" + serviceId);
 
         service.Id = result.Id;
         service.Name = result.Name;
@@ -48,20 +64,26 @@
 
     protected async Task SaveService()
     {
-        var result = await Http.PutAsJsonAsync("/program/api/services/" + service.Id, service);
-
+        var result = await Http.PutAsJsonAsync("/administration/api/services/" + service.Id, service);
         if (result.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/service/list");
+            Error = "";
+            Notification = "Service was succesfully canceled";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo($"/program/{programId}/services");
+            });
         }
         else
         {
-            //NavigationManager.NavigateTo("/service/details");
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
         }
     }
 
-    public void Cancel()
+    void Cancel()
     {
-        NavigationManager.NavigateTo("/service/list");
+        NavigationManager.NavigateTo($"/program/{programId}/services");
     }
 }

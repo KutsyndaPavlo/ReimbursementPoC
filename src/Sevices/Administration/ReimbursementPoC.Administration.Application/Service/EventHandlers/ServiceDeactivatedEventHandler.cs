@@ -5,7 +5,7 @@ using ReimbursementPoC.Administration.Domain.Service.Events;
 
 namespace ReimbursementPoC.Service.Application.Service.EventHandlers
 {
-    public class ServiceDeactivatedEventHandler : INotificationHandler<DomainEventNotification<ServiceDeactivatedEvent>>
+    public class ServiceDeactivatedEventHandler : INotificationHandler<DomainEventNotification<ServiceCanceledEvent>>
     {
         private readonly ILogger<ServiceDeactivatedEventHandler> _logger;
 
@@ -14,7 +14,7 @@ namespace ReimbursementPoC.Service.Application.Service.EventHandlers
             _logger = logger;
         }
 
-        public async Task Handle(DomainEventNotification<ServiceDeactivatedEvent> notification, CancellationToken cancellationToken)
+        public async Task Handle(DomainEventNotification<ServiceCanceledEvent> notification, CancellationToken cancellationToken)
         {
             var domainEvent = notification.DomainEvent;
 

@@ -1,6 +1,6 @@
 ﻿using ReimbursementPoC.Infrustructure.EventBus.Events;
 
-namespace ReimbursementPoC.Administration.Application.Program.IntegrationEvents
+namespace ReimbursementPoC.Administration.IntergrationEvents
 {
     public record ProgramCreatedIntegrationEvent : IntegrationEvent
     {

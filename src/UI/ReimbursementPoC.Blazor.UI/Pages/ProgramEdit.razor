@@ -1,4 +1,4 @@
-﻿@page "/program/edit/{programId}"
+﻿@page "/program/{programId}/edit"
 @using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
@@ -6,6 +6,19 @@
 @attribute [Authorize(Roles = "Admin")]
 <h1>Edit Program</h1>
 <hr />
+
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
 
 <EditForm Model="@program" OnValidSubmit="SaveProgram">
     <DataAnnotationsValidator />
@@ -23,35 +36,6 @@
         </div>
         <ValidationMessage For="@(() => program.Description)" />
     </div>
-
-    <div class="mb-3">
-        <label for="State" class="form-label">State</label>
-        <div class="col-md-4">
-            <InputSelect @bind-Value="program.StateId">
-                <option value="0">Select state ...</option>
-                <option value="1">Alabama</option>
-                <option value="2">Alaska</option>
-            </InputSelect>
-        </div>
-        <ValidationMessage For="@(() => program.StateId)" />
-    </div>
-
-    <div class="mb-3">
-        <label for="StartDate" class="form-label">Start Date</label>
-        <div class="col-md-4">
-            <InputDate @bind-Value="@program.StartDate" @bind-Value:format="dd/MM/yyyy" />
-        </div>
-        <ValidationMessage For="@(() => program.StartDate)" />
-    </div>
-
-    <div class="mb-3">
-        <label for="EndDate" class="form-label">End Date</label>
-        <div class="col-md-4">
-            <InputDate @bind-Value="@program.EndDate" @bind-Value:format="dd/MM/yyyy" />
-        </div>
-        <ValidationMessage For="@(() => program.EndDate)" />
-    </div>
-
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Save</button>
         <button class="btn btn-light" @onclick="Cancel">Cancel</button>
@@ -62,11 +46,13 @@
 @code {
     [Parameter]
     public string programId { get; set; }
+    public string Notification { get; set; }
+    public string Error { get; set; }
     UpdateProgramRequest program = new UpdateProgramRequest();
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<ProgramEntityItem>("/program/api/programs/" + programId);
+        var result = await Http.GetFromJsonAsync<ProgramDto>("/administration/api/programs/" + programId);
 
         program.Id = result.Id;
         program.Name = result.Name;
@@ -74,33 +60,40 @@
         program.StartDate = result.StartDate;
         program.EndDate = result.EndDate;
         program.LastModified = result.LastModified;
-        program.StateId = GetStateId(result.State);
+        program.StateId = result.StateId;
     }
 
-    private int GetStateId(string name)
-    {
-        // ToDo
-        if (name == "Alabama")
-        {
-            return 1;
-        }
-        else
-        {
-            return 2;
-        }
-    }
+    //private int GetStateId(string name)
+    //{
+    //    // ToDo
+    //    if (name == "Alabama")
+    //    {
+    //        return 1;
+    //    }
+    //    else
+    //    {
+    //        return 2;
+    //    }
+    //}
 
     protected async Task SaveProgram()
     {
-        var result = await Http.PutAsJsonAsync("/program/api/programs/" + program.Id, program);
-
+        var result = await Http.PutAsJsonAsync("/administration/api/programs/" + program.Id, program);
+        
         if (result.IsSuccessStatusCode)
         {
-            NavigationManager.NavigateTo("/program/list");
+            Error = "";
+            Notification = "Program was succesfully updated";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/program/list");
+            });
         }
         else
         {
-            //NavigationManager.NavigateTo("/program/details");
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
         }
     }
 

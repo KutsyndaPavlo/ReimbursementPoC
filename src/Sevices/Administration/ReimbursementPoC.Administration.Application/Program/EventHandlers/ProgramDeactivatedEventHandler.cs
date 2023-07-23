@@ -6,7 +6,7 @@ using ReimbursementPoC.Administration.Domain.Program.Events;
 
 namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
 {
-    public class ProgramDeactivatedEventHandler : INotificationHandler<DomainEventNotification<ProgramDeactivatedEvent>>
+    public class ProgramDeactivatedEventHandler : INotificationHandler<DomainEventNotification<ProgramCanceledEvent>>
     {
         private readonly ILogger<ProgramDeactivatedEventHandler> _logger;
         private readonly IApplicationDbContext _applicationDbContext;
@@ -18,7 +18,7 @@ namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task Handle(DomainEventNotification<ProgramDeactivatedEvent> notification, CancellationToken cancellationToken)
+        public async Task Handle(DomainEventNotification<ProgramCanceledEvent> notification, CancellationToken cancellationToken)
         {
             var domainEvent = notification.DomainEvent;
 

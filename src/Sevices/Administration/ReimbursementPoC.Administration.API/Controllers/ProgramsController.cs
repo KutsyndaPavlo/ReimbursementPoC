@@ -63,10 +63,14 @@ namespace ReimbursementPoC.Administration.API.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<ProgramDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> GetAsync([FromQuery] string? name, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
+        public async Task<IActionResult> GetAsync(
+            [FromQuery] string? name, 
+            [FromQuery] string? sort, 
+            [FromQuery] int offset = 0, 
+            [FromQuery] int limit = 50)
         {
             var userId = HttpContext.Request.Headers["X-UserId"];
-            var query = new GetProgramsQuery(name, offset, limit);
+            var query = new GetProgramsQuery(name, offset, limit, sort);
             var result = await _mediator.Send(query);
             return Ok(result);
         }
@@ -126,16 +130,16 @@ namespace ReimbursementPoC.Administration.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{id}/deactivate")]
-        [SwaggerOperation(Tags = new[] { "Program" }, Summary = "Deactivate a program.")]
+        [HttpPut("{id}/cancel")]
+        [SwaggerOperation(Tags = new[] { "Program" }, Summary = "Cancel a program.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(ProgramDto))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Program does not exist")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> DeactivateAsync(Guid id)
+        public async Task<IActionResult> CancelAsync(Guid id)
         {
-            var result = await _mediator.Send(new DeactivateProgramCommand { Id = id });
+            var result = await _mediator.Send(new CancelProgramCommand { Id = id });
             return Ok(result);
         }
 

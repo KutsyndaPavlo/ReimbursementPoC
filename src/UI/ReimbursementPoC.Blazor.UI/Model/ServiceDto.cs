@@ -8,9 +8,7 @@
 
         public string? Description { get; set; }
 
-        public bool IsActive { get; set; }
-
-        public Guid ProgramId { get; set; }
+        public ProgramDto Program { get; set; }
 
         public DateTime Created { get; set; }
 
@@ -19,30 +17,5 @@
         public DateTime LastModified { get; set; }
 
         public string? LastModifiedBy { get; set; }
-    }
-
-    public class CreateServiceRequest
-    {
-        public Guid ProgramId { get; set; }
-
-        public string Name { get; set; }
-
-        public string? Description { get; set; }
-    }
-
-    public class UpdateServiceRequest
-    {
-        public Guid Id { get; set; }
-
-        public string Name { get; set; }
-
-        public string? Description { get; set; }
-
-        public DateTime LastModified { get; set; }
-    }
-
-    public class ServiceEntity
-    {
-        public IEnumerable<ServiceDto> Items { get; set; }
     }
 }
