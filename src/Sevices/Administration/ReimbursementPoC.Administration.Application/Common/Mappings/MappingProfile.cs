@@ -17,18 +17,12 @@ namespace ReimbursementPoC.Administration.Application.Common.Mappings
 
                 config.CreateMap<ProgramEntity, ProgramDto>()
                     .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.Period.StartDate))
-                    .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.Period.EndDate));
-
-                config.CreateMap<ProgramEntity, ProgramFullDto>()
-                    .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.Period.StartDate))
-                    .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.Period.EndDate));
-                    //.ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.Services.ToList()));
+                    .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.Period.EndDate))
+                    .ForMember(dest => dest.StateId, opt => opt.MapFrom(src => src.State.Id))
+                    .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State.Name));
 
                 config.CreateMap<ProgramDto, ProgramEntity>()
                     .ForMember(dest => dest.Period, opt => opt.MapFrom(src => new Period(src.StartDate, src.EndDate)));
-
-                config.CreateMap<ProgramFullDto, ProgramEntity>()
-                    .ForMember(dest => dest.Period, opt => opt.MapFrom(src => new Period(src.StartDate, src.EndDate)));                
             };
     }
 }

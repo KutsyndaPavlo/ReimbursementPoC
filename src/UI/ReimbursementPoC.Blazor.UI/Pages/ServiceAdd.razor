@@ -1,4 +1,4 @@
-﻿@page "/service/add"
+﻿@page "/program/{programId}/service/add"
 @using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
@@ -37,21 +37,6 @@
         <ValidationMessage For="@(() => service.Description)" />
     </div>
 
-    <div class="mb-3">
-        <label for="State" class="form-label">Program</label>
-        <div class="col-md-4">
-            <InputSelect @bind-Value="service.ProgramId">
-                <option value="">Select program ...</option>
-
-                @foreach (var item in programList)
-                {
-                    <option value="@item.Id">@item.Name (@item.State)</option>
-                }
-            </InputSelect>
-        </div>
-        <ValidationMessage For="@(() => service.ProgramId)" />
-    </div>
-
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Save</button>
         <button class="btn btn-light" @onclick="Cancel">Cancel</button>
@@ -61,30 +46,24 @@
 
 @code {
     [Parameter]
-    public string serviceId { get; set; }
-
+    public string programId { get; set; }
     public string Notification { get; set; }
     public string Error { get; set; }
 
     protected string Title = "Add";
-    protected CreateServiceRequest service = new CreateServiceRequest();
-
-    protected List<ProgramEntityItem> programList = new();
+    protected CreateServiceRequest service;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetPrograms();
-    }
-
-    protected async Task GetPrograms()
-    {
-        var result = await Http.GetFromJsonAsync<ProgramEntity>("/program/api/programs");
-        programList = result.Items.ToList();
+        service = new CreateServiceRequest
+            {
+                ProgramId = Guid.Parse(programId)
+            };
     }
 
     protected async Task SaveService()
     {
-        var result = await Http.PostAsJsonAsync("/program/api/services", service);
+        var result = await Http.PostAsJsonAsync("/administration/api/services", service);
 
         if (result.IsSuccessStatusCode)
         {
@@ -94,7 +73,7 @@
             Task.Run(async () =>
             {
                 await Task.Delay(TimeSpan.FromSeconds(3));
-                NavigationManager.NavigateTo("/service/list");
+                NavigationManager.NavigateTo($"/program/{programId}/services");
             });
         }
         else
@@ -105,6 +84,6 @@
 
     public void Cancel()
     {
-        NavigationManager.NavigateTo("/service/list");
+        NavigationManager.NavigateTo($"/program/{programId}/services");
     }
 }

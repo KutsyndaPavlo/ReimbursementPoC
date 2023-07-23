@@ -3,7 +3,7 @@ using ReimbursementPoC.Administration.Application.Services.Queries.GetServiceByI
 
 namespace ReimbursementPoC.Administration.Application.Services.Commands.DeactivateService
 {
-    public class DeactivateServiceCommand : IRequest<ServiceDto>
+    public class CancelServiceCommand : IRequest<ServiceDto>
     {
         public Guid Id { get; set; }
     }

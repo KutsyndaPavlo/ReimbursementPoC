@@ -3,7 +3,7 @@
     {
       "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
-      "SwaggerKey": "program",
+      "SwaggerKey": "administration",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -13,7 +13,7 @@
       //"UpstreamHeaderTransform": {
       //  "Uncle": "Bob"
       //},
-      "UpstreamPathTemplate": "/program/{everything}",
+      "UpstreamPathTemplate": "/administration/{everything}",
       "UpstreamHttpMethod": [
         "GET",
         "POST",

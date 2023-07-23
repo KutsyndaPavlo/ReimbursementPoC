@@ -35,20 +35,25 @@ public class EventBusServiceBus : IEventBus, IAsyncDisposable
 
     public void Publish(IntegrationEvent @event)
     {
-        var eventName = @event.GetType().Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
-        var jsonMessage = JsonSerializer.Serialize(@event, @event.GetType());
-        var body = Encoding.UTF8.GetBytes(jsonMessage);
-
-        var message = new ServiceBusMessage
+        // ToDo
+        try
         {
-            MessageId = Guid.NewGuid().ToString(),
-            Body = new BinaryData(body),
-            Subject = eventName,
-        };
+            var eventName = @event.GetType().Name.Replace(INTEGRATION_EVENT_SUFFIX, "");
+            var jsonMessage = JsonSerializer.Serialize(@event, @event.GetType());
+            var body = Encoding.UTF8.GetBytes(jsonMessage);
 
-        _sender.SendMessageAsync(message)
-            .GetAwaiter()
-            .GetResult();
+            var message = new ServiceBusMessage
+            {
+                MessageId = Guid.NewGuid().ToString(),
+                Body = new BinaryData(body),
+                Subject = eventName,
+            };
+
+            _sender.SendMessageAsync(message)
+                .GetAwaiter()
+                .GetResult();
+        }
+        catch (Exception ex) { }
     }
 
     public void SubscribeDynamic<TH>(string eventName)

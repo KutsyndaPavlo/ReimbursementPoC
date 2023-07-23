@@ -1,6 +1,6 @@
 ﻿using ReimbursementPoC.Administration.Application.Common.Interfaces;
-using ReimbursementPoC.Administration.Domain.Product.Spefifications;
 using ReimbursementPoC.Administration.Domain.Program;
+using ReimbursementPoC.Administration.Domain.Program.Specifications;
 
 namespace ReimbursementPoC.Administration.Application.Program.DomainServices
 {
@@ -40,9 +40,16 @@ namespace ReimbursementPoC.Administration.Application.Program.DomainServices
         //        .Take(limit);
         //}
 
-        public bool IsUniqueName(string name)
+        public bool IsSinglePerStatePerPeriod(
+            int stateId,
+            DateTime startDate,
+            DateTime endDate)
         {
-            return !_applicationDbContext.Programs.Any(new ProgramsNameEqualsSpecification(name).ToExpression());
+            var specifications = new ProgramIsNotCanceledSpecification()
+                            .And(new ProgramStateEqualsSpecification(stateId))
+                            .And(new ProgramPeriodIntersectsSpecification(startDate, endDate));
+
+            return !_applicationDbContext.Programs.Any(specifications.ToExpression());
         }
     }
 }

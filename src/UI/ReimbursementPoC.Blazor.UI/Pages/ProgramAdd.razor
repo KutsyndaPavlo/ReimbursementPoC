@@ -89,7 +89,7 @@
 
     protected async Task SaveProgram()
     {
-        var result = await Http.PostAsJsonAsync("/program/api/programs", program);
+        var result = await Http.PostAsJsonAsync("/administration/api/programs", program);
 
         if (result.IsSuccessStatusCode)
         {

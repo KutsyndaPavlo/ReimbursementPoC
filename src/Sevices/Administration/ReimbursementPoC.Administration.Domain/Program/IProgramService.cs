@@ -2,7 +2,10 @@
 {
     public interface IProgramService
     {
-        bool IsUniqueName(string name);
+        bool IsSinglePerStatePerPeriod(
+            int stateId,
+            DateTime startDate,
+            DateTime endDate);
 
         //IEnumerable<ProposalEntity> LatestProposals(ProgramEntity product);
 

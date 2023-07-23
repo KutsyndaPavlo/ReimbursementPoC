@@ -8,20 +8,22 @@
 
         public string? Description { get; set; }
 
-        public string State { get; private set; }
+        public string StateId { get;  set; }
 
-        public DateTime StartDate { get; private set; }
+        public string State { get; set; }
 
-        public DateTime EndDate { get; private set; }
+        public DateTime StartDate { get;  set; }
 
-        public bool IsActive { get; private set; }
+        public DateTime EndDate { get;  set; }
 
-        public DateTime Created { get; private set; }
+        public DateTime Created { get;  set; }
 
         public string? CreatedBy { get; set; }
 
-        public DateTime LastModified { get; protected set; }
+        public DateTime LastModified { get; set; }
 
         public string? LastModifiedBy { get; set; }
+
+        public bool CanBeDeleted { get; set; }
     }
 }

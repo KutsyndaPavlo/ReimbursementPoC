@@ -2,6 +2,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ReimbursementPoC.Administration.API.Models;
+using ReimbursementPoC.Administration.Application.Common.Model;
+using ReimbursementPoC.Administration.Application.Service.Queries.GetServicesByProgramId;
 using ReimbursementPoC.Administration.Application.Services.Commands.CreateService;
 using ReimbursementPoC.Administration.Application.Services.Commands.DeactivateService;
 using ReimbursementPoC.Administration.Application.Services.Commands.DeleteService;
@@ -43,12 +45,25 @@ namespace ReimbursementPoC.service.API.Controllers
         [HttpGet()]
         [SwaggerOperation(Tags = new[] { "service" }, Summary = "Get all services.")]
         [Produces("application/json")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(IEnumerable<ServiceDto>))]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<ServiceDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> GetAsync([FromQuery] int offset = 0, [FromQuery] int limit = 50)
         {
             var query = new GetServicesQuery(offset, limit);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("program/{programId}/services")]
+        [SwaggerOperation(Tags = new[] { "service" }, Summary = "Get services by program id.")]
+        [Produces("application/json")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<ServiceDto>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
+        public async Task<IActionResult> GetServicesByProgramIdAsync([FromRoute] Guid programId, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
+        {
+            var query = new GetServicesByProgramIdQuery(programId, offset, limit);
             var result = await _mediator.Send(query);
             return Ok(result);
         }
@@ -102,17 +117,17 @@ namespace ReimbursementPoC.service.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("{id}/deactivate")]
-        [SwaggerOperation(Tags = new[] { "Service" }, Summary = "Deactivate a service.")]
+        [HttpPut("{id}/cancel")]
+        [SwaggerOperation(Tags = new[] { "Service" }, Summary = "Cancel a service.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(ServiceDto))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Service does not exist")]
         [SwaggerResponse(StatusCodes.Status409Conflict, "Service has been updated by someone else")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> DeactivateServiceAsync(Guid id)
+        public async Task<IActionResult> CancelServiceAsync(Guid id)
         {
-            var result = await _mediator.Send(new DeactivateServiceCommand
+            var result = await _mediator.Send(new CancelServiceCommand
             {
                 Id = id
             });

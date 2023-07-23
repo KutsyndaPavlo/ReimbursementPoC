@@ -8,11 +8,4 @@
 
         public Guid VendorSubmissionId { get; set; }
     }
-
-    public class CreateCustomerSubmissionRequest
-    {
-        public Guid CustomerId { get; set; }
-
-        public Guid VendorSubmissionId { get; set; }
-    }
 }

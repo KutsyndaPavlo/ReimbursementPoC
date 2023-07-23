@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\..\Infrastructure\EventBusServiceBus\ReimbursementPoC.Infrustructure.EventBusServiceBus.csproj" />
     <ProjectReference Include="..\..\..\Infrastructure\EventBus\ReimbursementPoC.Infrustructure.EventBus.csproj" />
     <ProjectReference Include="..\ReimbursementPoC.Administration.Domain\ReimbursementPoC.Administration.Domain.csproj" />
+    <ProjectReference Include="..\ReimbursementPoC.Administration.IntergrationEvents\ReimbursementPoC.Administration.IntergrationEvents.csproj" />
   </ItemGroup>
 
   <ItemGroup>

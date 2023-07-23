@@ -23,13 +23,13 @@
       ]
     },
     {
-      "Key": "program",
+      "Key": "administration",
       "TransformByOcelotConfig": true,
       "Config": [
         {
-          "Name": "Program.API",
+          "Name": "Administration.API",
           "Version": "1.0",
-          "Url": "https://ri-getaway-apisu445yrz7ulry.azurewebsites.net/program/swagger/v1/swagger.json"
+          "Url": "https://ri-getaway-apisu445yrz7ulry.azurewebsites.net/administration/swagger/v1/swagger.json"
         }
       ]
     }

@@ -36,7 +36,7 @@ namespace ReimbursementPoC.Administration.Infrastructure.Persistence.Configurati
                            mv.Property(p => p.EndDate).HasColumnName("EndDate");
                        });
 
-            builder.Property(t => t.IsActive)
+            builder.Property(t => t.IsCanceled)
                 .HasColumnName("IsCompleted")
                 .IsRequired();
 

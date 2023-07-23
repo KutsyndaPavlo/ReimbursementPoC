@@ -1,4 +1,4 @@
-﻿@page "/service/list"
+﻿@page "/program/{programId}/services"
 @using Microsoft.AspNetCore.Authorization;
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
@@ -10,7 +10,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <a href='/service/add' class="btn btn-primary" role="button">
+        <a href='/program/@programId/service/add' class="btn btn-primary" role="button">
             <i class="fas fa-user-plus"></i>
             Add Service
         </a>
@@ -41,7 +41,7 @@ else
             <tr>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Program Id</th>
+                <th>Program</th>
             </tr>
         </thead>
         <tbody>
@@ -50,61 +50,107 @@ else
                 <tr>
                     <td>@item.Name</td>
                     <td>@item.Description</td>
-                    <td>@item.ProgramId</td>
+                    <td>@item.Program?.Name</td>
                     <td>
-                        <a href='/service/edit/@item.Id' class="btn btn-outline-dark" role="button">
+                        <a href='/program/@programId/service/@item.Id/edit' class="btn btn-outline-dark" role="button">
                             Edit
                         </a>
-                        <a href='/service/delete/@item.Id' class="btn btn-outline-danger" role="button">
-                            Delete
+                        <a href='/program/@programId/service/@item.Id/cancel' class="btn btn-outline-danger" role="button">
+                            Cancel
                         </a>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            @foreach (var link in _links)
+            {
+                <li @onclick="() => OnSelectedPage(link)" style="cursor: pointer;" class="page-item  @(link.Active ? "active" : null)">
+                    <span class="page-link" href="#">@link.Text</span>
+                </li>
+            }
+        </ul>
+    </nav>
 }
 
 @code {
+    [Parameter]
+    public string programId { get; set; }
     protected List<ServiceDto> serviceList = new();
-    //protected List<User> searchUserData = new();
-    //protected User user = new();
-    //protected string SearchString { get; set; } = string.Empty;
+    private int defaultLimit = 5;
+    private int CurrentOffset = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetUser();
+        await GetServicesAsync();
     }
 
-    protected async Task GetUser()
+    protected async Task GetServicesAsync()
     {
-        var result = await Http.GetFromJsonAsync<ServiceEntity>("/program/api/services");
-        serviceList = result.Items.ToList();
+        var result = await Http.GetFromJsonAsync<PaginatedList<ServiceDto>>($"/administration/api/services/program/{programId}/services?offset={CurrentOffset}&limit={defaultLimit}");
+
+        serviceList.Clear();
+        serviceList.AddRange(result.Items.ToList());
+
+        CreatePaginationLinks(result.Page);
     }
 
-    //protected void FilterUser()
-    //{
-    //    if (!string.IsNullOrEmpty(SearchString))
-    //    {
-    //        serviceList = searchUserData
-    //            .Where(x => x.Username.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
-    //            .ToList();
-    //    }
-    //    else
-    //    {
-    //        serviceList = searchUserData;
-    //    }
-    //}
+    private List<PagingLink> _links = new List<PagingLink>();
 
-    //protected void DeleteConfirm(int userID)
-    //{
-    //    user = serviceList.FirstOrDefault(x => x.Userid == userID);
-    //}
+    private void CreatePaginationLinks(Page page)
+    {
+        _links.Clear();
+        var totalPageCount = (page.Total / defaultLimit) + ((page.Total % defaultLimit) > 0 ? 1 : 0);
+        var currentPage = (page.Offset / defaultLimit) + 1;
+        var countOfVisualPages = 5;
 
-    //public void ResetSearch()
-    //{
-    //    SearchString = string.Empty;
-    //    serviceList = searchUserData;
-    //}
+        if (currentPage != 1)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "First",
+                    Offset = 0
+                });
+        }
 
+        for (int i = ((currentPage - countOfVisualPages) > 0 ? (currentPage - countOfVisualPages) : 1); i < currentPage; i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+        for (int i = currentPage; i <= ((currentPage + countOfVisualPages) > totalPageCount ? totalPageCount : (currentPage + countOfVisualPages)); i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+
+        if (currentPage <= totalPageCount && currentPage != totalPageCount)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "Last",
+                    Offset = (int)((totalPageCount - 1) * defaultLimit)
+                });
+        }
+    }
+
+    private async Task OnSelectedPage(PagingLink link)
+    {
+        CurrentOffset = link.Offset;
+        await GetServicesAsync();
+    }
 }

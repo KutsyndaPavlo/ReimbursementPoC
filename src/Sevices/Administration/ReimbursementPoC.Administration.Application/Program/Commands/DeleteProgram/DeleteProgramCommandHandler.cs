@@ -12,24 +12,23 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.DeletePro
     public class DeleteProgramCommandHandler : IRequestHandler<DeleteProgramCommand, bool>
     {
         private readonly IApplicationDbContext _applicationDbContext;
-        private readonly IProgramService _ProgramService;
 
-        public DeleteProgramCommandHandler(IApplicationDbContext applicationDbContext, IProgramService ProgramService)
+        public DeleteProgramCommandHandler(IApplicationDbContext applicationDbContext)
         {
             _applicationDbContext = applicationDbContext;
-            _ProgramService = ProgramService;
         }
 
         public async Task<bool> Handle(DeleteProgramCommand command, CancellationToken cancellationToken)
         {
-            var entity = await _applicationDbContext.Programs.FirstOrDefaultAsync(new ProgramByIdSpecification(command.Id).ToExpression());
+            var entity = await _applicationDbContext.Programs.Include("_services")
+                .FirstOrDefaultAsync(new ProgramByIdSpecification(command.Id).ToExpression());
 
             if (entity == null)
             {
                 throw new ProgramNotFoundException($"Program with id {command.Id} doesn't exist");
             }
 
-            if (!entity.CanBeDeleted(_ProgramService))
+            if (!entity.CanBeDeleted())
             {
                 throw new ProgramCanNotBeDeletedException($"Program with id {command.Id} can't be deleted");
             }

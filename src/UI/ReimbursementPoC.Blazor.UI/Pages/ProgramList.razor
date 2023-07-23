@@ -15,18 +15,33 @@
             Add Program
         </a>
     </div>
-    @*<div class="input-group col">
-        <input type="text" class="form-control" placeholder="Search user by name"
-               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
-        @if (SearchString.Length > 0)
+</div>
+<br />
+<div class="row">
+    <div class="input-group col">
+        <input type="text" class="form-control" placeholder="Search program by name (begin with, case-insensitive)"
+               @bind="NameSearchString" @bind:event="oninput" @onkeyup="FilterProgramsAsync" />
+        @if (NameSearchString.Length > 0)
         {
             <div class="input-group-append">
-                <button class="btn btn-danger" @onclick="ResetSearch">
-                    <i class="fas fa-times"></i>
+                <button class="btn btn-danger" @onclick="ResetSearchFilterAsync">
+                    <i class="fas fa-times">Reset search</i>
                 </button>
             </div>
         }
-    </div>*@
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="input-group col">
+        <select @onchange="SortProgramsAsync">
+            <option value="">- Sort By -</option>
+            <option value="nameAsc">Name ASC</option>
+            <option value="nameDesc">Name DESC</option>
+            <option value="dateAsc">Start date ASC</option>
+            <option value="dateDesc">Start date Desc</option>
+        </select>
+    </div>
 </div>
 <br />
 
@@ -56,60 +71,135 @@ else
                     <td>@item.EndDate</td>
                     <td>@item.State</td>
                     <td>
-                        <a href='/program/edit/@item.Id' class="btn btn-outline-dark" role="button">
+                        <a href='/program/@item.Id/services' class="btn btn-outline-dark" role="button">
+                            Services
+                        </a>
+                        <a href='/program/@item.Id/edit' class="btn btn-outline-dark" role="button">
                             Edit
                         </a>
-                        <a href='/program/delete/@item.Id' class="btn btn-outline-danger" role="button">
-                            Delete
+                        <a href='/program/@item.Id/cancel' class="btn btn-outline-dark" role="button">
+                            Cancel
                         </a>
+                        @*@if (item.CanBeDeleted)
+                        {
+                            <a di href='/program/delete/@item.Id' class="btn btn-outline-danger" role="button">
+                                Delete
+                            </a>
+                        }*@
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            @foreach (var link in _links)
+            {
+                <li @onclick="() => OnSelectedPage(link)" style="cursor: pointer;" class="page-item  @(link.Active ? "active" : null)">
+                    <span class="page-link" href="#">@link.Text</span>
+                </li>
+            }
+        </ul>
+    </nav>
 }
 
 @code {
-    protected List<ProgramEntityItem> programList = new();
-    //protected List<User> searchUserData = new();
-    //protected User user = new();
-    //protected string SearchString { get; set; } = string.Empty;
+    protected List<ProgramDto> programList = new();
+    protected string NameSearchString { get; set; } = string.Empty;
+    protected string SortTypeString { get; set; } = string.Empty;
+    private int defaultLimit = 5;
+    private int CurrentOffset = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetPrograms();
+        await GetProgramsAsync();
     }
 
-    protected async Task GetPrograms()
+    protected async Task GetProgramsAsync()
     {
-        var result = await Http.GetFromJsonAsync<ProgramEntity>("/program/api/programs");
-        programList = result.Items.ToList();
-        // searchUserData = programList;
+        var url = $"/administration/api/programs?offset={CurrentOffset}&&limit={defaultLimit}&name={NameSearchString}&sort={SortTypeString ?? "nameAsc"}";
+        var result = await Http.GetFromJsonAsync<PaginatedList<ProgramDto>>(url);
+        programList.Clear();
+        programList.AddRange(result.Items.ToList());
+
+        CreatePaginationLinks(result.Page);
     }
 
-    //protected void FilterUser()
-    //{
-    //    if (!string.IsNullOrEmpty(SearchString))
-    //    {
-    //        programList = searchUserData
-    //            .Where(x => x.Username.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
-    //            .ToList();
-    //    }
-    //    else
-    //    {
-    //        programList = searchUserData;
-    //    }
-    //}
+    protected async Task SortProgramsAsync(ChangeEventArgs e)
+    {
+        SortTypeString = e.Value.ToString();
+        CurrentOffset = 0;
+        await GetProgramsAsync();
+    }
 
-    //protected void DeleteConfirm(int userID)
-    //{
-    //    user = programList.FirstOrDefault(x => x.Userid == userID);
-    //}
+    protected async Task FilterProgramsAsync()
+    {
+        CurrentOffset = 0;
+        await GetProgramsAsync();
+    }
 
-    //public void ResetSearch()
-    //{
-    //    SearchString = string.Empty;
-    //    programList = searchUserData;
-    //}
+    protected async Task ResetSearchFilterAsync()
+    {
+        NameSearchString = "";
+        SortTypeString = "";
+        CurrentOffset = 0;
+        await GetProgramsAsync();
+    }
 
+    private List<PagingLink> _links = new List<PagingLink>();
+
+    private void CreatePaginationLinks(Page page)
+    {
+        _links.Clear();
+        var totalPageCount = (page.Total / defaultLimit) + ((page.Total % defaultLimit) > 0 ? 1 : 0);
+        var currentPage = (page.Offset / defaultLimit) + 1;
+        var countOfVisualPages = 5;
+
+        if (currentPage != 1)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "First",
+                    Offset = 0
+                });
+        }
+
+        for (int i = ((currentPage - countOfVisualPages) > 0 ? (currentPage - countOfVisualPages) : 1); i < currentPage; i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+        for (int i = currentPage; i <= ((currentPage + countOfVisualPages) > totalPageCount ? totalPageCount : (currentPage + countOfVisualPages)); i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+
+        if (currentPage <= totalPageCount && currentPage != totalPageCount)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "Last",
+                    Offset = (int)((totalPageCount - 1) * defaultLimit)
+                });
+        }
+    }
+
+    private async Task OnSelectedPage(PagingLink link)
+    {
+        CurrentOffset = link.Offset;
+        await GetProgramsAsync();
+    }
 }

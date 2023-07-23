@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using PriceAnalytics.Application.Common.Models;
-using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
-using ReimbursementPoC.Administration.Application.Program.IntegrationEvents;
 using ReimbursementPoC.Administration.Domain.Program.Events;
+using ReimbursementPoC.Administration.IntergrationEvents;
+using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
 
 namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
 {

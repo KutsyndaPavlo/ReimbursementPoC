@@ -1,4 +1,6 @@
-﻿namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById
+﻿using ReimbursementPoC.Administration.Application.Program.Queries.GetProgramById;
+
+namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById
 {
     public class ServiceDto
     {
@@ -8,9 +10,7 @@
 
         public string? Description { get; set; }
 
-        public bool IsActive { get; set; }
-
-        public Guid ProgramId { get; set; }
+        public ProgramDto Program { get; set; }
 
         public DateTime Created { get; set; }
 

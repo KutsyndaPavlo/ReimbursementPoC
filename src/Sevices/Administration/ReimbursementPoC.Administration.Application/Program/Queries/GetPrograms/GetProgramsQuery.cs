@@ -14,20 +14,23 @@ namespace ReimbursementPoC.Administration.Application.Program.Queries.GetProgram
         [DataMember]
         public int Limit { get; set; }
 
-
         [DataMember]
         public int Offset { get; set; }
+
+        [DataMember]
+        public string Sort { get; set; }
 
         public GetProgramsQuery()
         {
 
         }
 
-        public GetProgramsQuery(string name, int offset, int limit)
+        public GetProgramsQuery(string name, int offset, int limit, string sort)
         {
             Name = name;
             Offset = offset;
             Limit = limit;
+            Sort = sort;
         }
     }
 }

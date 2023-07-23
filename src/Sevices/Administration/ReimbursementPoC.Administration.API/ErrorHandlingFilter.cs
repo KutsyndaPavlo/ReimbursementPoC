@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using ReimbursementPoC.Administration.Domain.Common;
 using ReimbursementPoC.Administration.Domain.Product;
+using ReimbursementPoC.Administration.Domain.Program.Rules;
 using ReimbursementPoC.Administration.Domain.Service.Exeption;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace ReimbursementPoC.Administration.API
@@ -27,8 +30,9 @@ namespace ReimbursementPoC.Administration.API
             //    else if (exception is BusinessRuleValidationException)
             //        SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
             //}
-
-            if (exception is ServiceNotFoundException)
+            if (exception is BusinessRuleValidationException || exception.GetType().Name == typeof(ValidationException).Name)
+                SetExceptionResult(context, exception, HttpStatusCode.BadRequest);
+            else if (exception is ServiceNotFoundException)
                 SetExceptionResult(context, exception, HttpStatusCode.NotFound);
             else if (exception is ServiceNotFoundException)
                 SetExceptionResult(context, exception, HttpStatusCode.NotFound);
@@ -44,11 +48,13 @@ namespace ReimbursementPoC.Administration.API
             //    SetExceptionResult(context, exception, HttpStatusCode.NotFound);
             //else if (exception is ProductConcurrentUpdateException)
             //    SetExceptionResult(context, exception, HttpStatusCode.Conflict);
-
-            context.Result = new JsonResult($"Something went wrong. Details: {context.Exception}")
+            else
             {
-                StatusCode = (int)HttpStatusCode.InternalServerError
-            };
+                context.Result = new JsonResult($"Something went wrong. Details: {context.Exception}")
+                {
+                    StatusCode = (int)HttpStatusCode.InternalServerError
+                };
+            }
         }
 
         private static void SetExceptionResult(

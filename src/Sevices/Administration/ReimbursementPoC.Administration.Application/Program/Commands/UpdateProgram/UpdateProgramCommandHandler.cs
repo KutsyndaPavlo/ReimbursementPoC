@@ -41,11 +41,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.UpdatePro
 
             entity.UpdateProgram(
                 command.Name,
-                command.Description,
-                command.StateId,
-                command.StartDate,
-                command.EndDate,
-                _ProgramUniquenessChecker);
+                command.Description);
 
             _applicationDbContext.Programs.Update(entity);
 

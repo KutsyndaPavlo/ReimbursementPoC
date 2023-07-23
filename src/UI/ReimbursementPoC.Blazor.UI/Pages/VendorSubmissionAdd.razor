@@ -30,7 +30,7 @@
 
                 @foreach (var item in serviceList)
                 {
-                    <option value="@item.Id">@item.Name (program @item.ProgramId)</option>
+                    <option value="@item.Id">@item.Name (program @item.Program.Name)</option>
                 }
             </InputSelect>
         </div>
@@ -65,7 +65,7 @@
 
     protected async Task GetServices()
     {
-        var result = await Http.GetFromJsonAsync<ServiceEntity>("/program/api/services");
+        var result = await Http.GetFromJsonAsync<PaginatedList<ServiceDto>>("/administration/api/services");
         serviceList = result.Items.ToList();
     }
 

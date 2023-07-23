@@ -28,7 +28,7 @@ namespace ReimbursementPoC.Administration.Infrastructure.Persistence.Configurati
             builder.Property(t => t.Description)
                 .HasColumnName("Description");
 
-            builder.Property(t => t.IsActive)
+            builder.Property(t => t.IsCanceled)
                 .HasColumnName("IsActive")
                 .IsRequired();
 
