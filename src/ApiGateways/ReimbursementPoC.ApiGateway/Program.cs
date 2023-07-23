@@ -1,23 +1,15 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using MMLib.SwaggerForOcelot.DependencyInjection;
-using Newtonsoft.Json.Linq;
 using Ocelot.Authorization;
 using Ocelot.DependencyInjection;
 using Ocelot.DownstreamRouteFinder.UrlMatcher;
 using Ocelot.Middleware;
 using Ocelot.Provider.Polly;
-using Ocelot.Request.Middleware;
 using Ocelot.Responses;
-using Ocelot.Values;
-using Polly;
 using ReimbursementPoC.ApiGateway;
-using System.Reflection.Metadata;
 using System.Security.Claims;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 

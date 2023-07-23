@@ -30,7 +30,7 @@
 </div>
 <br />
 
-@if (serviceList == null)
+@if (submissions == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -44,7 +44,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in serviceList)
+            @foreach (var item in submissions)
             {
                 <tr>
                     <td>@item.Id</td>
@@ -64,45 +64,80 @@ else
 }
 
 @code {
-    protected List<VendorSubmissionDto> serviceList = new();
-    //protected List<User> searchUserData = new();
-    //protected User user = new();
-    //protected string SearchString { get; set; } = string.Empty;
+    protected List<VendorSubmissionDto> submissions = new();
+
+    private int defaultLimit = 5;
+    private int CurrentOffset = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetVendorSubmission();
+        await GetVendorSubmissionAsync();
     }
 
-    protected async Task GetVendorSubmission()
+    protected async Task GetVendorSubmissionAsync()
     {
-        var result = await Http.GetFromJsonAsync<PaginatedList<VendorSubmissionDto>>("/vendor/api/VendorSubmissions");
-        serviceList = result.Items.ToList();
+        var result = await Http.GetFromJsonAsync<PaginatedList<VendorSubmissionDto>>($"/vendor/api/VendorSubmissions?offset={CurrentOffset}&limit={defaultLimit}");
+
+        submissions.Clear();
+        submissions.AddRange(result.Items.ToList());
+
+        CreatePaginationLinks(result.Page);
     }
 
-    //protected void FilterUser()
-    //{
-    //    if (!string.IsNullOrEmpty(SearchString))
-    //    {
-    //        serviceList = searchUserData
-    //            .Where(x => x.Username.IndexOf(SearchString, StringComparison.OrdinalIgnoreCase) != -1)
-    //            .ToList();
-    //    }
-    //    else
-    //    {
-    //        serviceList = searchUserData;
-    //    }
-    //}
+    private List<PagingLink> _links = new List<PagingLink>();
 
-    //protected void DeleteConfirm(int userID)
-    //{
-    //    user = serviceList.FirstOrDefault(x => x.Userid == userID);
-    //}
+    private void CreatePaginationLinks(Page page)
+    {
+        _links.Clear();
+        var totalPageCount = (page.Total / defaultLimit) + ((page.Total % defaultLimit) > 0 ? 1 : 0);
+        var currentPage = (page.Offset / defaultLimit) + 1;
+        var countOfVisualPages = 5;
 
-    //public void ResetSearch()
-    //{
-    //    SearchString = string.Empty;
-    //    serviceList = searchUserData;
-    //}
+        if (currentPage != 1)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "First",
+                    Offset = 0
+                });
+        }
 
+        for (int i = ((currentPage - countOfVisualPages) > 0 ? (currentPage - countOfVisualPages) : 1); i < currentPage; i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+        for (int i = currentPage; i <= ((currentPage + countOfVisualPages) > totalPageCount ? totalPageCount : (currentPage + countOfVisualPages)); i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+
+        if (currentPage <= totalPageCount && currentPage != totalPageCount)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "Last",
+                    Offset = (int)((totalPageCount - 1) * defaultLimit)
+                });
+        }
+    }
+
+    private async Task OnSelectedPage(PagingLink link)
+    {
+        CurrentOffset = link.Offset;
+        await GetVendorSubmissionAsync();
+    }
 }

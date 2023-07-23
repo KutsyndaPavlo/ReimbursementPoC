@@ -16,7 +16,22 @@
         "POST",
         "PUT",
         "DELETE"
-      ]
+      ],
+      "AuthenticationOptions": {
+        //"AuthenticationProviderKey": "BearerProgram",
+        "AllowedScopes": [ "apiscope" ]
+      },
+      "RouteClaimsRequirement": {
+        //"UserType": "registered"
+        //"http///schemas.microsoft.com/ws/2008/06/identity/claims/role": "Admin"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 50
+      }
     }
   ]
 }

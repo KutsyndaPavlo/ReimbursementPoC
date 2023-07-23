@@ -103,7 +103,7 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             var result = await _mediator.Send(new CreateVendorSubmissionCommand 
             {
                  ServiceId = request.ServiceId,
-                // VendorId = HttpContext.Request.Headers["X-UserId"];
+                 VendorId = Guid.Parse(HttpContext.Request.Headers["X-UserId"].ToString())
             });
 
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
@@ -121,7 +121,7 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             var result = await _mediator.Send(new CancelVendorSubmissionCommand
             {
                 SubmissionId = id,
-                // VendorId = HttpContext.Request.Headers["X-UserId"].;
+                VendorId = Guid.Parse((HttpContext.Request.Headers["X-UserId"]))
             });
             return Ok(result);
         }
