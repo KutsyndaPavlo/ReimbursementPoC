@@ -74,18 +74,16 @@ else
                         <a href='/program/@item.Id/services' class="btn btn-outline-dark" role="button">
                             Services
                         </a>
-                        <a href='/program/@item.Id/edit' class="btn btn-outline-dark" role="button">
-                            Edit
-                        </a>
-                        <a href='/program/@item.Id/cancel' class="btn btn-outline-dark" role="button">
-                            Cancel
-                        </a>
-                        @*@if (item.CanBeDeleted)
+
+                        @if (!item.IsCanceled)
                         {
-                            <a di href='/program/delete/@item.Id' class="btn btn-outline-danger" role="button">
-                                Delete
+                            <a href='/program/@item.Id/edit' class="btn btn-outline-dark" role="button">
+                                Edit
                             </a>
-                        }*@
+                            <a href='/program/@item.Id/cancel' class="btn btn-outline-dark" role="button">
+                                Cancel
+                            </a>
+                        }
                     </td>
                 </tr>
             }

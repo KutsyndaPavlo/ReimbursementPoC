@@ -13,7 +13,7 @@ namespace ReimbursementPoC.Administration.Domain.Service.Rules
             _existingServices = existingServices;
         }
 
-        public bool IsBroken() => _existingServices.Any(x=>!x.IsCanceled && x.Name == _newServiceName);
+        public bool IsBroken() => _existingServices.Any(x=> x.Name == _newServiceName);
 
         //public bool IsBroken() => _existingServices.Any(new ServiceNameEqualsSpecification(_newService).ToExpression());
 

@@ -7,5 +7,7 @@
         public Guid VendorId { get; set; }
 
         public Guid ServiceId { get; set; }
+
+        public bool IsCanceled { get; set; }
     }
 }

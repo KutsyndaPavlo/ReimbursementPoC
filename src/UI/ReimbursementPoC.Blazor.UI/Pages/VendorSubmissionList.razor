@@ -16,16 +16,16 @@
         </a>
     </div>
     @*<div class="input-group col">
-        <input type="text" class="form-control" placeholder="Search user by name"
-               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
-        @if (SearchString.Length > 0)
-        {
-            <div class="input-group-append">
-                <button class="btn btn-danger" @onclick="ResetSearch">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        }
+    <input type="text" class="form-control" placeholder="Search user by name"
+    @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
+    @if (SearchString.Length > 0)
+    {
+    <div class="input-group-append">
+    <button class="btn btn-danger" @onclick="ResetSearch">
+    <i class="fas fa-times"></i>
+    </button>
+    </div>
+    }
     </div>*@
 </div>
 <br />
@@ -50,9 +50,12 @@ else
                     <td>@item.Id</td>
                     <td>@item.ServiceId</td>
                     <td>
-                        <a href='/vendorSubmission/delete/@item.Id' class="btn btn-outline-danger" role="button">
-                            Delete
-                        </a>
+                        @if (!item.IsCanceled)
+                        {
+                            <a href='/vendorSubmission/delete/@item.Id' class="btn btn-outline-danger" role="button">
+                                Delete
+                            </a>
+                        }
                     </td>
                 </tr>
             }

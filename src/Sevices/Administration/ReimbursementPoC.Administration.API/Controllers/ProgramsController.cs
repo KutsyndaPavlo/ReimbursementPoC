@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReimbursementPoC.Administration.API.Models;
 using ReimbursementPoC.Administration.Application.Common.Model;

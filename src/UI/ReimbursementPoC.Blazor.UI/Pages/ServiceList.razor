@@ -16,16 +16,16 @@
         </a>
     </div>
     @*<div class="input-group col">
-        <input type="text" class="form-control" placeholder="Search user by name"
-               @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
-        @if (SearchString.Length > 0)
-        {
-            <div class="input-group-append">
-                <button class="btn btn-danger" @onclick="ResetSearch">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        }
+    <input type="text" class="form-control" placeholder="Search user by name"
+    @bind="SearchString" @bind:event="oninput" @onkeyup="FilterUser" />
+    @if (SearchString.Length > 0)
+    {
+    <div class="input-group-append">
+    <button class="btn btn-danger" @onclick="ResetSearch">
+    <i class="fas fa-times"></i>
+    </button>
+    </div>
+    }
     </div>*@
 </div>
 <br />
@@ -41,7 +41,9 @@ else
             <tr>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Program</th>
+                <th>Is canceled?</th>
+                <th>Program name</th>
+                <th>Is program canceled?</th>
             </tr>
         </thead>
         <tbody>
@@ -50,14 +52,19 @@ else
                 <tr>
                     <td>@item.Name</td>
                     <td>@item.Description</td>
+                    <td>@item.IsCanceled</td>
                     <td>@item.Program?.Name</td>
+                    <td>@item.Program?.IsCanceled</td>
                     <td>
-                        <a href='/program/@programId/service/@item.Id/edit' class="btn btn-outline-dark" role="button">
-                            Edit
-                        </a>
-                        <a href='/program/@programId/service/@item.Id/cancel' class="btn btn-outline-danger" role="button">
-                            Cancel
-                        </a>
+                        @if (!item.IsCanceled)
+                        {
+                            <a href='/program/@programId/service/@item.Id/edit' class="btn btn-outline-dark" role="button">
+                                Edit
+                            </a>
+                            <a href='/program/@programId/service/@item.Id/cancel' class="btn btn-outline-danger" role="button">
+                                Cancel
+                            </a>
+                        }
                     </td>
                 </tr>
             }

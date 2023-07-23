@@ -26,7 +26,7 @@ namespace ReimbursementPoC.Administration.Application.Service.Queries.GetService
         public async Task<PaginatedList<ServiceDto>> Handle(GetServicesByProgramIdQuery query, CancellationToken cancellationToken)
         {
             //ToDo add specification
-            var program = await _applicationDbContext.Programs.Where(x => !x.IsCanceled)
+            var program = await _applicationDbContext.Programs
                 .FirstOrDefaultAsync(new ProgramByIdSpecification(query.ProgramId).ToExpression());
 
             if (program == null)
@@ -35,7 +35,7 @@ namespace ReimbursementPoC.Administration.Application.Service.Queries.GetService
             }
 
             var root = (IQueryable<ServiceEntity>)_applicationDbContext.Services.Include(x => x.Program)
-                .Where(x => x.ProgramId == query.ProgramId && !x.IsCanceled && !x.Program.IsCanceled);
+                .Where(x => x.ProgramId == query.ProgramId);
 
             var total = await root.LongCountAsync();
 

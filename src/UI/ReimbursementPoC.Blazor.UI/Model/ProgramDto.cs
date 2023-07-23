@@ -19,5 +19,7 @@ namespace ReimbursementPoC.Blazor.UI.Model
         public DateTime EndDate { get; set; }
 
         public DateTime LastModified { get; set; }
+
+        public bool IsCanceled { get; set; }
     }
 }

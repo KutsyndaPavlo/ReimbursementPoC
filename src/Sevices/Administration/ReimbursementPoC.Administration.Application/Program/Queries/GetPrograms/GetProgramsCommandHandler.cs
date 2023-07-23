@@ -24,7 +24,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Queries.GetProgram
 
         public async Task<PaginatedList<ProgramDto>> Handle(GetProgramsQuery query, CancellationToken cancellationToken)
         {
-            var root = (IQueryable<ProgramEntity>)_applicationDbContext.Programs.Where(x => !x.IsCanceled);
+            var root = (IQueryable<ProgramEntity>)_applicationDbContext.Programs;
 
             if (!string.IsNullOrWhiteSpace(query.Name))
             {

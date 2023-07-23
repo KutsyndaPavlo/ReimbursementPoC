@@ -24,6 +24,6 @@
 
         public string? LastModifiedBy { get; set; }
 
-        public bool CanBeDeleted { get; set; }
+        public bool IsCanceled { get; set; }
     }
 }

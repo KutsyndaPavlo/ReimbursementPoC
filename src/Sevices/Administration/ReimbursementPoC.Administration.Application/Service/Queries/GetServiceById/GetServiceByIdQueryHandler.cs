@@ -22,7 +22,7 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
         public async Task<ServiceDto> Handle(GetServiceByIdQuery query, CancellationToken cancellationToken)
         {
             //ToDo add specification
-            var service = await _applicationDbContext.Services.Include(x => x.Program).Where(x=> !x.IsCanceled && !x.Program.IsCanceled).FirstOrDefaultAsync(new ServiceByIdSpecification(query.Id).ToExpression());
+            var service = await _applicationDbContext.Services.Include(x => x.Program).FirstOrDefaultAsync(new ServiceByIdSpecification(query.Id).ToExpression());
 
             if (service == null)
             {
