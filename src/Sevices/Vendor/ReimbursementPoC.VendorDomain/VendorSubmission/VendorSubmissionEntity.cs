@@ -33,7 +33,7 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
 
         public static VendorSubmissionEntity CreateNew(Guid vendorId, Guid serviceId, string serviceFullName, string description)
         {
-            CheckRule(new VendorSubmissionNameMustBeUniqueRule(serviceId));
+            CheckRule(new VendorSubmissionMustBeSinglePerServiceRule(serviceId));
 
             return new VendorSubmissionEntity(vendorId, serviceId, serviceFullName, description);
         }

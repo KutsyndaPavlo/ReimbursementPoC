@@ -1,18 +1,17 @@
 ﻿using ReimbursementPoC.Vendor.Domain.Common;
-using ReimbursementPoC.Vendor.Domain.Vendor;
 
 namespace ReimbursementPoC.Vendor.Domain.Product.Rules
 {
-    public class VendorSubmissionShouldUniquePerServiceRule : IBusinessRule
+    public class VendorSubmissionMustBeSinglePerServiceRule : IBusinessRule
     {
-        private readonly string _service;
+        private readonly Guid _serviceId;
 
-        public VendorSubmissionShouldUniquePerServiceRule(string service)
+        public VendorSubmissionMustBeSinglePerServiceRule(Guid serviceId)
         {
-            _service = service;
+            _serviceId = serviceId;
         }
 
-        public bool IsBroken() => false;
+        public bool IsBroken() => false;  //ToDo
 
         public string Message => "Vendor submission already exist within the service.";
     }
