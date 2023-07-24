@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById;
 using ReimbursementPoC.Vendor.Domain.Vendor;
+using ReimbursementPoC.Vendor.Domain.VendorSubmission.DomainServices;
 
 namespace ReimbursementPoC.Vendor.Application.Common.Mappings
 {

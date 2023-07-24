@@ -21,7 +21,7 @@
 }
 
 <EditForm Model="@vendorSubmission" OnValidSubmit="SaveVendorSubmission">
-    <DataAnnotationsValidator />
+   @* <DataAnnotationsValidator />*@
     <div class="mb-3">
         <label for="State" class="form-label">Vendor Submission</label>
         <div class="col-md-4">
@@ -41,7 +41,6 @@
         <div class="col-md-4">
             <InputText class="form-control" @bind-Value="vendorSubmission.Description" />
         </div>
-        <ValidationMessage For="@(() => vendorSubmission.Description)" />
     </div>
 
     <div class="form-group">

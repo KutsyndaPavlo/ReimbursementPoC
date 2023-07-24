@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using MediatR.Registration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +11,9 @@ using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
 using ReimbursementPoC.Infrustructure.EventBusServiceBus;
 using ReimbursementPoC.Vendor.Application.Common.Behaviours;
 using ReimbursementPoC.Vendor.Application.Common.Mappings;
+using ReimbursementPoC.Vendor.Application.VendorSubmission.DomainServices;
 using ReimbursementPoC.Vendor.Application.VendorSubmission.IntegrationEvents;
+using ReimbursementPoC.Vendor.Domain.VendorSubmission.DomainServices;
 using System.Reflection;
 
 namespace ReimbursementPoC.Vendor.Application
@@ -19,6 +22,7 @@ namespace ReimbursementPoC.Vendor.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<IVendorSubmissionService, VendorSubmissionService>();
             services.AddAutoMapper(MappingProfile.AutoMapperConfig, typeof(MappingProfile).Assembly);
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

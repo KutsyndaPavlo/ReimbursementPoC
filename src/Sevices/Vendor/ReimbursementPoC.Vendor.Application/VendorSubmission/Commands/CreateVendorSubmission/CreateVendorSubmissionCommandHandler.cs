@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Vendor.Application.Common.Interfaces;
 using ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendorById;
 using ReimbursementPoC.Vendor.Domain.Vendor;
+using ReimbursementPoC.Vendor.Domain.VendorSubmission.DomainServices;
 using ReimbursementPoC.Vendor.Domain.VendorSubmission.Specification;
 
 namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor
@@ -12,12 +13,15 @@ namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
+        private readonly IVendorSubmissionService _vendorSubmissionService;
 
         public CreateVendorSubmissionCommandHandler(IApplicationDbContext applicationDbContext, 
-                                                    IMapper mapper)
+                                                    IMapper mapper,
+                                                    IVendorSubmissionService vendorSubmissionService)
         {
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
+            _vendorSubmissionService = vendorSubmissionService;
         }
 
         public async Task<VendorSubmissionDto> Handle(CreateVendorSubmissionCommand command, CancellationToken cancellationToken)
@@ -26,7 +30,8 @@ namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor
                 command.VendorId,
                 command.ServiceId,
                 command.ServiceFullName,
-                command.Description);
+                command.Description,
+                _vendorSubmissionService);
 
             _applicationDbContext.VendorSubmissions.Add(entity);
 

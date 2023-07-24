@@ -1,6 +1,7 @@
 ﻿using ReimbursementPoC.Vendor.Domain.Common;
 using ReimbursementPoC.Vendor.Domain.Product.Rules;
 using ReimbursementPoC.Vendor.Domain.Vendor.Events;
+using ReimbursementPoC.Vendor.Domain.VendorSubmission.DomainServices;
 
 namespace ReimbursementPoC.Vendor.Domain.Vendor
 {
@@ -27,13 +28,18 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
 
         public string ServiceFullName { get; private set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         public bool IsCanceled { get; private set; }
 
-        public static VendorSubmissionEntity CreateNew(Guid vendorId, Guid serviceId, string serviceFullName, string description)
+        public static VendorSubmissionEntity CreateNew(
+            Guid vendorId, 
+            Guid serviceId, 
+            string serviceFullName, 
+            string description,
+            IVendorSubmissionService vendorSubmissionService)
         {
-            CheckRule(new VendorSubmissionMustBeSinglePerServiceRule(serviceId));
+            CheckRule(new VendorSubmissionMustBeSinglePerServiceRule(serviceId, vendorId, vendorSubmissionService));
 
             return new VendorSubmissionEntity(vendorId, serviceId, serviceFullName, description);
         }
