@@ -10,25 +10,28 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
             // oly for EF
         }
 
-        private VendorSubmissionEntity(Guid vendorId, Guid serviceId) : base()
+        private VendorSubmissionEntity(Guid vendorId, Guid serviceId, string serviceFullName) : base()
         {
             this.VendorId = vendorId;
             this.ServiceId = serviceId;
 
             this._domainEvents.Add(new VendorSubmissionCreatedEvent(this));
+            ServiceFullName = serviceFullName;
         }
 
         public Guid VendorId { get; private set; }
 
         public Guid ServiceId { get; private set; }
 
+        public string ServiceFullName { get; private set; }
+
         public bool IsCanceled { get; private set; }
 
-        public static VendorSubmissionEntity CreateNew(Guid vendorId, Guid serviceId)
+        public static VendorSubmissionEntity CreateNew(Guid vendorId, Guid serviceId, string serviceFullName)
         {
             //ToDo CheckRule(new VendorNameMustBeUniqueRule(programUniquenessChecker, name));
 
-            return new VendorSubmissionEntity(vendorId, serviceId);
+            return new VendorSubmissionEntity(vendorId, serviceId, serviceFullName);
         }
 
         public void Cancel()
@@ -42,6 +45,11 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
         {
             return true;
             //return !productService.HistoricalProposals(this).Any();
+        }
+
+        public static VendorSubmissionEntity CreateNew(Guid vendorId, Guid serviceId, object serviceFullName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

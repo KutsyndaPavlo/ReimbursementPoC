@@ -70,6 +70,7 @@
 
     protected async Task SaveVendorSubmission()
     {
+        vendorSubmission.ServiceFullName = serviceList.FirstOrDefault(x => x.Id == vendorSubmission.ServiceId)?.FullName;
         var result = await Http.PostAsJsonAsync("/vendor/api/VendorSubmissions", vendorSubmission);
 
         if (result.IsSuccessStatusCode)

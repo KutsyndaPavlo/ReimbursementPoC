@@ -107,6 +107,8 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> Get(Guid id)
         {
+            //ToDo check id Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1") // ToDo//VendorId 
+
             var query = new GetVendorSubmissionByIdQuery(id);
             var result = await _mediator.Send(query);
 
@@ -155,7 +157,7 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             var result = await _mediator.Send(new CancelVendorSubmissionCommand
             {
                 SubmissionId = id,
-                VendorId = Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1") // ToDo//VendorId
+                VendorId = VendorId
             });
             return Ok(result);
         }

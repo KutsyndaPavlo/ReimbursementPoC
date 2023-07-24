@@ -24,7 +24,8 @@ namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor
         {
             var entity = VendorSubmissionEntity.CreateNew(
                 command.VendorId,
-                command.ServiceId);
+                command.ServiceId,
+                command.ServiceFullName);
 
             _applicationDbContext.VendorSubmissions.Add(entity);
 
