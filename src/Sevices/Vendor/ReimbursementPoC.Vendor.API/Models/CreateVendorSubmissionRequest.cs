@@ -5,5 +5,7 @@
         public Guid ServiceId { get; set; }
 
         public Guid VendorId { get; set; }
+
+        public string ServiceFullName { get; set; }
     }
 }

@@ -135,7 +135,8 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             var result = await _mediator.Send(new CreateVendorSubmissionCommand 
             {
                  ServiceId = request.ServiceId,
-                 VendorId = request.VendorId
+                 VendorId = request.VendorId,
+                 ServiceFullName = request.ServiceFullName
             });
 
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
@@ -157,7 +158,7 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             var result = await _mediator.Send(new CancelVendorSubmissionCommand
             {
                 SubmissionId = id,
-                VendorId = VendorId
+               // VendorId = VendorId
             });
             return Ok(result);
         }
