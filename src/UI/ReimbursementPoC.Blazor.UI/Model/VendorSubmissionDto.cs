@@ -10,6 +10,8 @@
 
         public string ServiceFullName { get; set; }
 
+        public string Description { get; set; }
+
         public bool IsCanceled { get; set; }
     }
 }

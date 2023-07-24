@@ -132,11 +132,12 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             var rr = HttpContext.Request.Headers["X-UserId"];
             // todo check vendor id
 
-            var result = await _mediator.Send(new CreateVendorSubmissionCommand 
+            var result = await _mediator.Send(new CreateVendorSubmissionCommand
             {
-                 ServiceId = request.ServiceId,
-                 VendorId = request.VendorId,
-                 ServiceFullName = request.ServiceFullName
+                ServiceId = request.ServiceId,
+                VendorId = request.VendorId,
+                ServiceFullName = request.ServiceFullName,
+                Description = request.Description
             });
 
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
@@ -158,7 +159,7 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             var result = await _mediator.Send(new CancelVendorSubmissionCommand
             {
                 SubmissionId = id,
-               // VendorId = VendorId
+                // VendorId = VendorId
             });
             return Ok(result);
         }

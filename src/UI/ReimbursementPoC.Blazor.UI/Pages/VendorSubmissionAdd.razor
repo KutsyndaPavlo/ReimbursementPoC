@@ -36,6 +36,14 @@
         <ValidationMessage For="@(() => vendorSubmission.ServiceId)" />
     </div>
 
+    <div class="mb-3">
+        <label for="State" class="form-label">Description</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="vendorSubmission.Description" />
+        </div>
+        <ValidationMessage For="@(() => vendorSubmission.Description)" />
+    </div>
+
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Save</button>
         <button class="btn btn-light" @onclick="Cancel">Cancel</button>
