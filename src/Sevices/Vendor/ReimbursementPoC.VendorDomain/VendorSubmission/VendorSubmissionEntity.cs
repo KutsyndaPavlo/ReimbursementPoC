@@ -1,4 +1,5 @@
 ﻿using ReimbursementPoC.Vendor.Domain.Common;
+using ReimbursementPoC.Vendor.Domain.Product.Rules;
 using ReimbursementPoC.Vendor.Domain.Vendor.Events;
 
 namespace ReimbursementPoC.Vendor.Domain.Vendor
@@ -32,7 +33,7 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
 
         public static VendorSubmissionEntity CreateNew(Guid vendorId, Guid serviceId, string serviceFullName, string description)
         {
-            //ToDo CheckRule(new VendorNameMustBeUniqueRule(programUniquenessChecker, name));
+            CheckRule(new VendorSubmissionNameMustBeUniqueRule(serviceId));
 
             return new VendorSubmissionEntity(vendorId, serviceId, serviceFullName, description);
         }
