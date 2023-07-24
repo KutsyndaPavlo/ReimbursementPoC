@@ -42,15 +42,15 @@ namespace ReimbursementPoC.service.API.Controllers
 
         #region Actions
 
-        [HttpGet()]
-        [SwaggerOperation(Tags = new[] { "service" }, Summary = "Get all services.")]
+        [HttpGet("active")]
+        [SwaggerOperation(Tags = new[] { "service" }, Summary = "Get active services.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<ServiceDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> GetAsync([FromQuery] int offset = 0, [FromQuery] int limit = 50)
         {
-            var query = new GetServicesQuery(offset, limit);
+            var query = new GetActiveServicesQuery(offset, limit);
             var result = await _mediator.Send(query);
             return Ok(result);
         }

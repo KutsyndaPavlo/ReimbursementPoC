@@ -39,21 +39,21 @@ else
     <table class="table table-striped align-middle table-bordered">
         <thead class="table-success">
             <tr>
-                <th>Id</th>
-                <th>ServiceId</th>
+                <th>Service</th>
+                <th>Is canceled ?</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in submissions)
             {
                 <tr>
-                    <td>@item.Id</td>
-                    <td>@item.ServiceId</td>
+                    <td>@item.ServiceFullName</td>
+                    <td>@item.IsCanceled</td>
                     <td>
                         @if (!item.IsCanceled)
                         {
-                            <a href='/vendorSubmission/delete/@item.Id' class="btn btn-outline-danger" role="button">
-                                Delete
+                            <a href='/vendorSubmission/@item.Id/cancel' class="btn btn-outline-danger" role="button">
+                                Cancel
                             </a>
                         }
                     </td>
@@ -76,7 +76,8 @@ else
 
     protected async Task GetVendorSubmissionAsync()
     {
-        var result = await Http.GetFromJsonAsync<PaginatedList<VendorSubmissionDto>>($"/vendor/api/VendorSubmissions?offset={CurrentOffset}&limit={defaultLimit}");
+        var vendorId = Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1"); // ToDo
+        var result = await Http.GetFromJsonAsync<PaginatedList<VendorSubmissionDto>>($"/vendor/api/VendorSubmissions/{vendorId}/submissions?offset={CurrentOffset}&limit={defaultLimit}");
 
         submissions.Clear();
         submissions.AddRange(result.Items.ToList());

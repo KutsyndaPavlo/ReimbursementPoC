@@ -42,19 +42,15 @@ else
                 <th>Name</th>
                 <th>Description</th>
                 <th>Is canceled?</th>
-                <th>Program name</th>
-                <th>Is program canceled?</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in serviceList)
             {
                 <tr>
-                    <td>@item.Name</td>
+                    <td>@item.FullName</td>
                     <td>@item.Description</td>
                     <td>@item.IsCanceled</td>
-                    <td>@item.Program?.Name</td>
-                    <td>@item.Program?.IsCanceled</td>
                     <td>
                         @if (!item.IsCanceled)
                         {

@@ -8,9 +8,11 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
 
         public string Name { get; set; }
 
+        public string FullName { get; set; }
+
         public string? Description { get; set; }
 
-        public ProgramDto Program { get; set; }
+        //public ProgramDto Program { get; set; }
 
         public DateTime Created { get; set; }
 

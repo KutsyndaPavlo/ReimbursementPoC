@@ -8,7 +8,7 @@
 
         public string? Description { get; set; }
 
-        public ProgramDto Program { get; set; }
+        public string FullName { get; set; }
 
         public DateTime Created { get; set; }
 

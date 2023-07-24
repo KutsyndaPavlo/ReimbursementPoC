@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 
 namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServices
 {
-    public class GetServicesQuery : IRequest<PaginatedList<ServiceDto>>
+    public class GetActiveServicesQuery : IRequest<PaginatedList<ServiceDto>>
     {
         [DataMember]
         public int Limit { get; set; }
@@ -14,12 +14,12 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
         [DataMember]
         public int Offset { get; set; }
 
-        public GetServicesQuery()
+        public GetActiveServicesQuery()
         {
 
         }
 
-        public GetServicesQuery(int offset, int limit)
+        public GetActiveServicesQuery(int offset, int limit)
         {
             Offset = offset;
             Limit = limit;

@@ -8,21 +8,26 @@ using ReimbursementPoC.Administration.Domain.Service;
 
 namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServices
 {
-    public class GetServicesCommandHandler
-        : IRequestHandler<GetServicesQuery, PaginatedList<ServiceDto>>
+    public class GetActiveServicesCommandHandler
+        : IRequestHandler<GetActiveServicesQuery, PaginatedList<ServiceDto>>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
 
-        public GetServicesCommandHandler(IApplicationDbContext applicationDbContext, IMapper mapper)
+        public GetActiveServicesCommandHandler(IApplicationDbContext applicationDbContext, IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
         }
 
-        public async Task<PaginatedList<ServiceDto>> Handle(GetServicesQuery query, CancellationToken cancellationToken)
+        public async Task<PaginatedList<ServiceDto>> Handle(GetActiveServicesQuery query, CancellationToken cancellationToken)
         {
-            var root = (IQueryable<ServiceEntity>)_applicationDbContext.Services.Include(x => x.Program) ;
+            var root = (IQueryable<ServiceEntity>)_applicationDbContext.Services.Include(x => x.Program)
+                .Where(x => !x.IsCanceled 
+                && !x.Program.IsCanceled 
+                && (x.Program.Period.StartDate >= DateTime.Now || x.Program.Period.EndDate >= DateTime.Now));
+
+            // ToDo add specification
             var total = await root.LongCountAsync();
 
             var data = await root

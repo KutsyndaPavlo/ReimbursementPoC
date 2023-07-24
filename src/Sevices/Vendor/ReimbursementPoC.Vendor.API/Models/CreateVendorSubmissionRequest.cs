@@ -2,6 +2,8 @@
 {
     public class CreateVendorSubmissionRequest
     {
-        public Guid ServiceId { get; private set; }
+        public Guid ServiceId { get; set; }
+
+        public Guid VendorId { get; set; }
     }
 }

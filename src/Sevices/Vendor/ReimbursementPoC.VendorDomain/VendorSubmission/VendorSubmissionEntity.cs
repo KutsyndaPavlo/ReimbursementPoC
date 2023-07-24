@@ -26,14 +26,14 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
 
         public static VendorSubmissionEntity CreateNew(Guid vendorId, Guid serviceId)
         {
-            //CheckRule(new VendorNameMustBeUniqueRule(programUniquenessChecker, name));
+            //ToDo CheckRule(new VendorNameMustBeUniqueRule(programUniquenessChecker, name));
 
             return new VendorSubmissionEntity(vendorId, serviceId);
         }
 
         public void Cancel()
         {
-            IsCanceled = false;
+            IsCanceled = true;
             this.LastModified = DateTime.UtcNow;
             this._domainEvents.Add(new VendorSubmissionCanceledEvent(this));
         }

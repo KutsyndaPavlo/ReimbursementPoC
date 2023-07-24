@@ -29,7 +29,7 @@
                 <option value="">Select service ...</option>
                 @foreach (var item in serviceList)
                 {
-                    <option value="@item.Id">@item.Name (program @item.Program.Name @item.Program.StartDate - @item.Program.EndDate)</option>
+                    <option value="@item.Id">@item.FullName</option>
                 }
             </InputSelect>
         </div>
@@ -53,7 +53,7 @@
     protected string Title = "Add";
     protected CreateVendorSubmissionRequest vendorSubmission = new CreateVendorSubmissionRequest()
         {
-            VendorId = Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1")
+           VendorId =  Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1") // ToDo
         };
 
     protected List<ServiceDto> serviceList = new();
@@ -64,7 +64,7 @@
 
     protected async Task GetServices()
     {
-        var result = await Http.GetFromJsonAsync<PaginatedList<ServiceDto>>("/administration/api/services");
+        var result = await Http.GetFromJsonAsync<PaginatedList<ServiceDto>>("/administration/api/services/active");
         serviceList = result.Items.ToList();
     }
 

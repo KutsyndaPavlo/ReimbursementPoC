@@ -21,6 +21,14 @@ namespace ReimbursementPoC.Administration.Domain.Service
 
         public string Name { get; private set; }
 
+        public string FullName 
+        { 
+            get 
+            {
+                return $"{Name} ({Program.Name}: {Program.Period.StartDate} - {Program.Period.EndDate})";
+            } 
+        }
+
         public string? Description { get; private set; }
 
         public bool IsCanceled { get; private set; }

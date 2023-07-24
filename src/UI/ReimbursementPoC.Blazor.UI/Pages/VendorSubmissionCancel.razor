@@ -24,8 +24,8 @@
     <table class="table">
         <tbody>
             <tr>
-                <td>ServiceId</td>
-                <td>@submission.ServiceId</td>
+                <td>Service</td>
+                <td>@submission.ServiceFullName</td>
             </tr>
         </tbody>
     </table>
@@ -49,7 +49,7 @@
 
     protected async Task CancelVendorSubmission(Guid id)
     {
-        var result = await Http.PutAsJsonAsync("/administration/api/vendor/api/VendorSubmissions/" + id + "/cancel", submission);
+        var result = await Http.PutAsJsonAsync("/vendor/api/VendorSubmissions/" + id + "/cancel", submission);
         if (result.IsSuccessStatusCode)
         {
             Error = "";
