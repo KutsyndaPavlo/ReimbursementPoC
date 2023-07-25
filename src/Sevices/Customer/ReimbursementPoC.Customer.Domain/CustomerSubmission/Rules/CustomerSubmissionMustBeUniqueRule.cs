@@ -1,30 +1,29 @@
 ﻿using ReimbursementPoC.Customer.Domain.Common;
-using ReimbursementPoC.Customer.Domain.Customer;
+using ReimbursementPoC.Customer.Domain.CustomerSubmission.DomainServices;
 
 namespace ReimbursementPoC.Customer.Domain.Product.Rules
 {
     public class CustomerSubmissionNameMustBeUniqueRule : IBusinessRule
     {
-        //private readonly ICustomerService _programUniquenessChecker;
+        private readonly ICustomerSubmissionService _customerSubmissionService;
+        private readonly Guid _customerId;
+        private readonly Guid _vendorSubmissionId;
 
-        //private readonly string _name;
+        public CustomerSubmissionNameMustBeUniqueRule(
+            ICustomerSubmissionService customerSubmissionService,
+            Guid customerId,
+            Guid vendorSubmissionId)
+        {
+            _customerSubmissionService = customerSubmissionService;
+            _customerId = customerId;
+            _vendorSubmissionId = vendorSubmissionId;
+        }
 
-        //public CustomerNameMustBeUniqueRule(
-        //    ICustomerService productUniquenessChecker,
-        //    string name)
-        //{
-        //    _programUniquenessChecker = productUniquenessChecker;
-        //    _name = name;
-        //}
-
-        //public bool IsBroken() => !_programUniquenessChecker.IsUniqueName(_name);
-
-        //public string Message => "Customer with this name already exists.";
-        public string Message => throw new NotImplementedException();
+        public string Message => $"Customer submission over vendor submisssion {_vendorSubmissionId} already exists.";
 
         public bool IsBroken()
         {
-            throw new NotImplementedException();
+           return _customerSubmissionService.CheckIfCustomerSubmissionExists(_vendorSubmissionId, _customerId);
         }
     }
 }

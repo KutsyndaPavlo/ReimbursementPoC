@@ -6,6 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ReimbursementPoC.Customer.Application.Common.Behaviours;
 using ReimbursementPoC.Customer.Application.Common.Mappings;
+using ReimbursementPoC.Customer.Application.CustomerSubmission.DomainServices;
+using ReimbursementPoC.Customer.Domain.CustomerSubmission.DomainServices;
 using ReimbursementPoC.Infrustructure.EventBus;
 using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
 using ReimbursementPoC.Infrustructure.EventBusServiceBus;
@@ -22,6 +24,7 @@ namespace ReimbursementPoC.Customer.Application
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+            services.AddScoped<ICustomerSubmissionService, CustomerSubmissionService>();
             //services.AddEventBus(configuration);
 
             return services;

@@ -1,5 +1,7 @@
 ﻿using ReimbursementPoC.Customer.Domain.Common;
 using ReimbursementPoC.Customer.Domain.Customer.Events;
+using ReimbursementPoC.Customer.Domain.CustomerSubmission.DomainServices;
+using ReimbursementPoC.Customer.Domain.Product.Rules;
 
 namespace ReimbursementPoC.Customer.Domain.Customer
 {
@@ -43,10 +45,11 @@ namespace ReimbursementPoC.Customer.Domain.Customer
             Guid vendorSubmissionId,
             string vendorName,
             string serviceFullName,
-            string description)
+            string description,
+            ICustomerSubmissionService customerSubmissionService)
         {
             //ToDo add unique rule
-            //CheckRule(new CustomerNameMustBeUniqueRule(programUniquenessChecker, name));
+            CheckRule(new CustomerSubmissionNameMustBeUniqueRule(customerSubmissionService, customerId, vendorSubmissionId));
 
             return new CustomerSubmissionEntity(customerId, vendorSubmissionId, vendorName, serviceFullName, description);
         }
