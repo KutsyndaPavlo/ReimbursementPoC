@@ -13,7 +13,7 @@ namespace ReimbursementPoC.Customer.Application.Customer.Commands.CreateCustomer
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
 
-        public CreateCustomerSubmissionCommandHandler(IApplicationDbContext applicationDbContext, 
+        public CreateCustomerSubmissionCommandHandler(IApplicationDbContext applicationDbContext,
                                                     IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
@@ -24,7 +24,10 @@ namespace ReimbursementPoC.Customer.Application.Customer.Commands.CreateCustomer
         {
             var entity = CustomerSubmissionEntity.CreateNew(
                 command.CustomerId,
-                command.VendorSubmissionId);
+                command.VendorSubmissionId,
+                command.VendorName,
+                command.ServiceFullName,
+                command.Description);
 
             _applicationDbContext.CustomerSubmissions.Add(entity);
 

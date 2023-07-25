@@ -22,7 +22,9 @@ namespace ReimbursementPoC.Vendor.Application.Vendor.Queries.GetVendors
 
         public async Task<PaginatedList<VendorSubmissionDto>> Handle(GetVendorSubmissionsQuery query, CancellationToken cancellationToken)
         {
-            var root = (IQueryable<VendorSubmissionEntity>)_applicationDbContext.VendorSubmissions;
+            // ToDo
+            var root = (IQueryable<VendorSubmissionEntity>)_applicationDbContext.VendorSubmissions
+                .Where(x=>! x.IsCanceled); //Todo service is not canceled
 
             var total = await root.LongCountAsync();
 

@@ -7,13 +7,21 @@ namespace ReimbursementPoC.Customer.Domain.Customer
     {
         private CustomerSubmissionEntity()
         {
-
+            // only for EF
         }
 
-        private CustomerSubmissionEntity(Guid customerId, Guid vendorSubmissionId) : base()
+        private CustomerSubmissionEntity(
+            Guid customerId,
+            Guid vendorSubmissionId,
+            string vendorName,
+            string serviceFullName,
+            string description) : base()
         {
             this.CustomerId = customerId;
             this.VendorSubmissionId = vendorSubmissionId;
+            this.VendorName = vendorName;
+            this.ServiceFullName = serviceFullName;
+            this.Description = description;
 
             this._domainEvents.Add(new CustomerSubmissionCreatedEvent(this));
         }
@@ -22,18 +30,29 @@ namespace ReimbursementPoC.Customer.Domain.Customer
 
         public Guid VendorSubmissionId { get; private set; }
 
-        public bool IsActive { get; private set; }
+        public bool IsCanceled { get; private set; }
 
-        public static CustomerSubmissionEntity CreateNew(Guid customerId, Guid vendorSubmissionId)
+        public string VendorName { get; set; }
+
+        public string ServiceFullName { get; set; }
+
+        public string? Description { get; set; }
+
+        public static CustomerSubmissionEntity CreateNew(
+            Guid customerId,
+            Guid vendorSubmissionId,
+            string vendorName,
+            string serviceFullName,
+            string description)
         {
             //CheckRule(new CustomerNameMustBeUniqueRule(programUniquenessChecker, name));
 
-            return new CustomerSubmissionEntity(customerId, vendorSubmissionId);
+            return new CustomerSubmissionEntity(customerId, vendorSubmissionId, vendorName, serviceFullName, description);
         }
 
         public void DeActivate()
         {
-            IsActive = false;
+            IsCanceled = true;
             this.LastModified = DateTime.UtcNow;
             this._domainEvents.Add(new CustomerSubmissionDeactivatedEvent(this));
         }

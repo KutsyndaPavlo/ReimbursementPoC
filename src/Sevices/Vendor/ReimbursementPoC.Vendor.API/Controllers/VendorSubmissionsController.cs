@@ -52,13 +52,13 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         ///      <p>Wiil be an integer, an example would be:50</p>
         /// </param>
         /// <returns>Returns an <see cref="PaginatedList<VendorSubmissionDto>"/>.</returns>
-        [HttpGet]
+        [HttpGet("active")]
         [SwaggerOperation(Tags = new[] { "VendorSubmission" }, Summary = "Get all VendorSubmissions.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<VendorSubmissionDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> GetSubmissionsByVendorIdAsync([FromQuery] string? name, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
+        public async Task<IActionResult> GetSubmissionsdAsync([FromQuery] int offset = 0, [FromQuery] int limit = 50)
         {
             var query = new GetVendorSubmissionsQuery(offset, limit);
             var result = await _mediator.Send(query);
@@ -81,7 +81,7 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<VendorSubmissionDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> GetAsync([FromRoute] Guid vendorId, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
+        public async Task<IActionResult> GetSubmissionsByVendorIdAsync([FromRoute] Guid vendorId, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
         {
             if (vendorId != GetVendorId())
             {

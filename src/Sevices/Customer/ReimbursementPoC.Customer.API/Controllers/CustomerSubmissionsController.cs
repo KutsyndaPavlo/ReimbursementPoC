@@ -8,6 +8,7 @@ using ReimbursementPoC.Customer.Application.Customer.Commands.DeactivateCustomer
 using ReimbursementPoC.Customer.Application.Customer.Commands.DeleteCustomer;
 using ReimbursementPoC.Customer.Application.Customer.Queries.GetCustomerById;
 using ReimbursementPoC.Customer.Application.Customer.Queries.GetCustomers;
+using ReimbursementPoC.Customer.Application.CustomerSubmission.Queries.GetCustomerSubmissionsByCustomerId;
 using Swashbuckle.AspNetCore.Annotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -66,6 +67,63 @@ namespace ReimbursementPoC.Customer.API.Controllers
         }
 
         /// <summary>
+        /// Used to get all CustomerSubmissions
+        /// </summary>
+        /// <param name="offset">The page offset.
+        ///      <p>Wiil be an integer, an example would be:0</p>
+        /// </param>
+        /// <param name="limit">The page limit.
+        ///      <p>Wiil be an integer, an example would be:50</p>
+        /// </param>
+        /// <returns>Returns an <see cref="PaginatedList<CustomerSubmissionDto>"/>.</returns>
+        [HttpGet("{customerId}/submissions")]
+        [SwaggerOperation(Tags = new[] { "CustomerSubmission" }, Summary = "Get all CustomerSubmissions.")]
+        [Produces("application/json")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<CustomerSubmissionDto>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
+        public async Task<IActionResult> GetByCustomerIdAsync([FromRoute] Guid customerId, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
+        {
+            if (customerId != GetCustomerId())
+            {
+                return Forbid();
+            }
+
+            var query = new GetCustomerSubmissionsByCustomerIdQuery(customerId, offset, limit);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        ///// <summary>
+        ///// Used to get all VendorSubmissions
+        ///// </summary>
+        ///// <param name="offset">The page offset.
+        /////      <p>Wiil be an integer, an example would be:0</p>
+        ///// </param>
+        ///// <param name="limit">The page limit.
+        /////      <p>Wiil be an integer, an example would be:50</p>
+        ///// </param>
+        ///// <returns>Returns an <see cref="PaginatedList<VendorSubmissionDto>"/>.</returns>
+        //[HttpGet("{vendorId}/submissions")]
+        //[SwaggerOperation(Tags = new[] { "VendorSubmission" }, Summary = "Get all VendorSubmissions by Vendor id.")]
+        //[Produces("application/json")]
+        //[SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<VendorSubmissionDto>))]
+        //[SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
+        //[SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
+        //public async Task<IActionResult> GetSubmissionsByVendorIdAsync([FromRoute] Guid vendorId, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
+        //{
+        //    if (vendorId != GetVendorId())
+        //    {
+        //        return Forbid();
+        //    }
+
+        //    var query = new GetVendorSubmissionsByVendorIdQuery(offset, limit, vendorId);
+        //    var result = await _mediator.Send(query);
+        //    return Ok(result);
+        //}
+
+
+        /// <summary>
         /// Gets a specific Customer  by the supplied Id.
         /// </summary>
         /// <param name="id">System generated ID returned when create a CustomerSubmission.</param>
@@ -99,7 +157,7 @@ namespace ReimbursementPoC.Customer.API.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status409Conflict, "Customer already exist")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> PostAsync([FromBody] CreateCustomerRequest request)
+        public async Task<IActionResult> PostAsync([FromBody] CreateCustomerSubmissionRequest request)
         {
             var result = await _mediator.Send(_mapper.Map<CreateCustomerSubmissionCommand>(request));
 
@@ -135,5 +193,12 @@ namespace ReimbursementPoC.Customer.API.Controllers
         }
 
         #endregion
+
+        private Guid GetCustomerId()
+        {
+            return HttpContext.Request.Headers.Keys.Contains("X-UserId")
+                ? Guid.Parse(HttpContext.Request.Headers["X-UserId"])
+                : Guid.Empty;
+        }
     }
 }

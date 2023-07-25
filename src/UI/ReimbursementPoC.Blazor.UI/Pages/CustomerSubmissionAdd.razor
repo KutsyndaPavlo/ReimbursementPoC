@@ -21,20 +21,26 @@
 }
 
 <EditForm Model="@customerSubmission" OnValidSubmit="SaveCustomerSubmission">
-    <DataAnnotationsValidator />
+   @* <DataAnnotationsValidator />*@
     <div class="mb-3">
-        <label for="State" class="form-label">Customer Submission</label>
+        <label for="State" class="form-label">Vendor Submission</label>
         <div class="col-md-4">
             <InputSelect @bind-Value="customerSubmission.VendorSubmissionId">
-                <option value="">Select service ...</option>
-
-                @foreach (var item in list)
+                <option value="">Select vendor submission ...</option>
+                @foreach (var item in vendorSubmissionsList)
                 {
-                    <option value="@item.Id">@item.VendorSubmissionId</option>
+                    <option value="@item.Id">@item.VendorId - @item.ServiceFullName</option>
                 }
             </InputSelect>
         </div>
         <ValidationMessage For="@(() => customerSubmission.VendorSubmissionId)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="State" class="form-label">Description</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="customerSubmission.Description" />
+        </div>
     </div>
 
     <div class="form-group">
@@ -54,10 +60,11 @@
     protected string Title = "Add";
     protected CreateCustomerSubmissionRequest customerSubmission = new CreateCustomerSubmissionRequest()
         {
-            CustomerId = Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1")
+           CustomerId =  Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1"), // ToDo
+           VendorName = "Alice",
         };
 
-    protected List<CustomerSubmissionDto> list = new();
+    protected List<VendorSubmissionDto> vendorSubmissionsList = new();
     protected override async Task OnInitializedAsync()
     {
         await GetVendorSubmissions();
@@ -65,12 +72,13 @@
 
     protected async Task GetVendorSubmissions()
     {
-        var result = await Http.GetFromJsonAsync<PaginatedList<CustomerSubmissionDto>>("/vendor/api/VendorSubmissions");
-        list = result.Items.ToList();
+        var result = await Http.GetFromJsonAsync<PaginatedList<VendorSubmissionDto>>("/vendor/api/vendorsubmissions/active");
+        vendorSubmissionsList = result.Items.ToList();
     }
 
     protected async Task SaveCustomerSubmission()
     {
+        customerSubmission.ServiceFullName = vendorSubmissionsList.FirstOrDefault(x => x.Id == customerSubmission.VendorSubmissionId)?.ServiceFullName;
         var result = await Http.PostAsJsonAsync("/customer/api/CustomerSubmissions", customerSubmission);
 
         if (result.IsSuccessStatusCode)

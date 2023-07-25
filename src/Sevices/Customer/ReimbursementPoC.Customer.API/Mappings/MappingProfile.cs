@@ -12,7 +12,7 @@ namespace ReimbursementPoC.Customer.API.Mappings
                 //config.CreateMap<GetCustomerByIdQuery, ReimbursementPoC.Customer.Application.Customer.Queries.GetCustomerById.GetCustomerByIdQuery>().ReverseMap();
                 //config.CreateMap<PriceAnalytics.Administration.Services.Customer.Page, ReimbursementPoC.Customer.Application.Common.Model.Page>().ReverseMap();
                 //config.CreateMap<CustomerPaginatedList, PaginatedList<ReimbursementPoC.Customer.Application.Customer.Queries.GetCustomerById.CustomerSubmissionDto>>().ReverseMap();// ToDo
-                config.CreateMap<CreateCustomerRequest, ReimbursementPoC.Customer.Application.Customer.Commands.CreateCustomer.CreateCustomerSubmissionCommand>().ReverseMap();
+                config.CreateMap<CreateCustomerSubmissionRequest, ReimbursementPoC.Customer.Application.Customer.Commands.CreateCustomer.CreateCustomerSubmissionCommand>().ReverseMap();
       
                 // config.CreateMap<UpdateServiceRequest, UpdateServiceCommand>().ReverseMap();
                 //.ForMember(dest => dest.LastModified, opt => opt.MapFrom(src => src.LastModified.ToDateTime()));
