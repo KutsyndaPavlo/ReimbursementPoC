@@ -60,9 +60,6 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> GetSubmissionsByVendorIdAsync([FromQuery] string? name, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
         {
-            var rr = HttpContext.Request.Headers["X-UserId"];
-            // todo check vendor id
-
             var query = new GetVendorSubmissionsQuery(offset, limit);
             var result = await _mediator.Send(query);
             return Ok(result);
@@ -86,6 +83,11 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> GetAsync([FromRoute] Guid vendorId, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
         {
+            if (vendorId != GetVendorId())
+            {
+                return Forbid();
+            }
+
             var query = new GetVendorSubmissionsByVendorIdQuery(offset, limit, vendorId);
             var result = await _mediator.Send(query);
             return Ok(result);
@@ -107,7 +109,10 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> Get(Guid id)
         {
-            //ToDo check id Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1") // ToDo//VendorId 
+            if (id != GetVendorId())
+            {
+                return Forbid();
+            }
 
             var query = new GetVendorSubmissionByIdQuery(id);
             var result = await _mediator.Send(query);
@@ -129,8 +134,10 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> PostAsync([FromBody] CreateVendorSubmissionRequest request)
         {
-            var rr = HttpContext.Request.Headers["X-UserId"];
-            // todo check vendor id
+            if (request.VendorId != GetVendorId())
+            {
+                return Forbid();
+            }
 
             var result = await _mediator.Send(new CreateVendorSubmissionCommand
             {
@@ -152,18 +159,26 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> CancelAsync(Guid id)
         {
-
-            var rr = HttpContext.Request.Headers["X-UserId"];
-            // todo check vendor id
+            //if (id != GetVendorId())
+            //{
+            //    return Forbid();
+            //}
 
             var result = await _mediator.Send(new CancelVendorSubmissionCommand
             {
                 SubmissionId = id,
-                // VendorId = VendorId
+                VendorId = GetVendorId()
             });
             return Ok(result);
         }
 
         #endregion
+
+        private Guid GetVendorId()
+        {
+            return HttpContext.Request.Headers.Keys.Contains("X-UserId")
+                ? Guid.Parse(HttpContext.Request.Headers["X-UserId"])
+                : Guid.Empty;
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.DeactivateVendor
 
         public async Task<VendorSubmissionDto> Handle(CancelVendorSubmissionCommand command, CancellationToken cancellationToken)
         {
-            // ToDo check if vendor exists and vendor's submission
+            // ToDo check if vendor exists and vendor's submission and if created by requesting vendor
 
             var entity = await _applicationDbContext.VendorSubmissions.FirstOrDefaultAsync(new VendorSubmissionByIdSpecification(command.SubmissionId).ToExpression());
 
