@@ -21,7 +21,7 @@
         "DELETE"
       ],
       "AuthenticationOptions": {
-      // "AuthenticationProviderKey": "Bearer",
+       "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": [ "apiscope" ]
       },
       "RouteClaimsRequirement": {

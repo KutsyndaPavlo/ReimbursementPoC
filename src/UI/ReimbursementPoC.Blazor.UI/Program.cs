@@ -18,7 +18,7 @@ builder.Services.AddHttpClient("api", client =>
                 {
                     var handler = sp.GetService<AuthorizationMessageHandler>()
                         .ConfigureHandler(
-                            authorizedUrls: new[] { builder.Configuration.GetSection("IdentityApi").Value },
+                            authorizedUrls: new[] { builder.Configuration.GetSection("GatewayApi").Value },
                             scopes: new[] { "apiscope" });
 
                     return handler;

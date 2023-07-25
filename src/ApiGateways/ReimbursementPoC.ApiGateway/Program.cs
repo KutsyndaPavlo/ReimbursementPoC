@@ -8,10 +8,23 @@ using Ocelot.DownstreamRouteFinder.UrlMatcher;
 using Ocelot.Middleware;
 using Ocelot.Provider.Polly;
 using Ocelot.Responses;
+using Ocelot.Values;
 using ReimbursementPoC.ApiGateway;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer("Bearer",  options =>
+               
+               {
+                   options.Authority = "https://localhost:5000";
+                   options.Audience = "apiscope";
+                   options.TokenValidationParameters = new TokenValidationParameters()
+                   {
+                       NameClaimType = "name"
+                   };
+               });
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -28,18 +41,6 @@ hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
 //        x.WithDictionaryHandle();
 //    });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(
-               // "Bearer", 
-                options =>
-                {
-                    options.Authority = "https://localhost:5000";
-                    options.Audience = "apiscope";
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        NameClaimType = "name"
-                    };
-                });
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 var routes = Directory.Exists(Path.Combine("Routes", environment)) ? Path.Combine("Routes", environment)  : "Routes";
@@ -109,8 +110,6 @@ public class SetGuidMiddleware
         {
             context.Request.Headers.Add("X-UserId", userId);
         }
-
-        context.Request.Headers.Add("X-UserId", "b2c95337-499f-4aca-b2d2-f8235603b8d1");  // ToDo temporary fix
 
         await _next(context);
     }
