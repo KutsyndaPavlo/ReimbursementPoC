@@ -45,12 +45,13 @@ namespace ReimbursementPoC.Customer.Domain.Customer
             string serviceFullName,
             string description)
         {
+            //ToDo add unique rule
             //CheckRule(new CustomerNameMustBeUniqueRule(programUniquenessChecker, name));
 
             return new CustomerSubmissionEntity(customerId, vendorSubmissionId, vendorName, serviceFullName, description);
         }
 
-        public void DeActivate()
+        public void Cancel()
         {
             IsCanceled = true;
             this.LastModified = DateTime.UtcNow;

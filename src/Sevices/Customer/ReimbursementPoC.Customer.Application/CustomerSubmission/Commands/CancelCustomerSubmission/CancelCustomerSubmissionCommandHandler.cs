@@ -8,29 +8,29 @@ using ReimbursementPoC.Customer.Domain.CustomerSubmission.Specification;
 
 namespace ReimbursementPoC.Customer.Application.Customer.Commands.DeactivateCustomer
 {
-    public class DeactivateCustomerSubmissionCommandHandler : IRequestHandler<DeactivateCustomerSubmissionCommand, CustomerSubmissionDto>
+    public class CancelCustomerSubmissionCommandHandler : IRequestHandler<CancelCustomerSubmissionCommand, CustomerSubmissionDto>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
 
-        public DeactivateCustomerSubmissionCommandHandler(IApplicationDbContext applicationDbContext, 
+        public CancelCustomerSubmissionCommandHandler(IApplicationDbContext applicationDbContext, 
                                               IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
         }
 
-        public async Task<CustomerSubmissionDto> Handle(DeactivateCustomerSubmissionCommand command, CancellationToken cancellationToken)
+        public async Task<CustomerSubmissionDto> Handle(CancelCustomerSubmissionCommand command, CancellationToken cancellationToken)
         {
             var entity = await _applicationDbContext.CustomerSubmissions.FirstOrDefaultAsync(new CustomerSubmissionByIdSpecification(command.Id).ToExpression());
 
 
             if (entity == null)
             {
-                throw new CustomerSubmissionNotFoundException($"Customer with id {command.Id} doesn't exist.");
+                throw new CustomerSubmissionNotFoundException($"Customer submission with id {command.Id} doesn't exist.");
             }
 
-            entity.DeActivate();
+            entity.Cancel();
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 

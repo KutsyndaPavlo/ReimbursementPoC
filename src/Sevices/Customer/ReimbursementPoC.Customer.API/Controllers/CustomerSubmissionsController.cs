@@ -94,35 +94,6 @@ namespace ReimbursementPoC.Customer.API.Controllers
             return Ok(result);
         }
 
-        ///// <summary>
-        ///// Used to get all VendorSubmissions
-        ///// </summary>
-        ///// <param name="offset">The page offset.
-        /////      <p>Wiil be an integer, an example would be:0</p>
-        ///// </param>
-        ///// <param name="limit">The page limit.
-        /////      <p>Wiil be an integer, an example would be:50</p>
-        ///// </param>
-        ///// <returns>Returns an <see cref="PaginatedList<VendorSubmissionDto>"/>.</returns>
-        //[HttpGet("{vendorId}/submissions")]
-        //[SwaggerOperation(Tags = new[] { "VendorSubmission" }, Summary = "Get all VendorSubmissions by Vendor id.")]
-        //[Produces("application/json")]
-        //[SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<VendorSubmissionDto>))]
-        //[SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
-        //[SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        //public async Task<IActionResult> GetSubmissionsByVendorIdAsync([FromRoute] Guid vendorId, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
-        //{
-        //    if (vendorId != GetVendorId())
-        //    {
-        //        return Forbid();
-        //    }
-
-        //    var query = new GetVendorSubmissionsByVendorIdQuery(offset, limit, vendorId);
-        //    var result = await _mediator.Send(query);
-        //    return Ok(result);
-        //}
-
-
         /// <summary>
         /// Gets a specific Customer  by the supplied Id.
         /// </summary>
@@ -164,16 +135,21 @@ namespace ReimbursementPoC.Customer.API.Controllers
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
 
-        [HttpPut("{id}/deactivate")]
+        [HttpPut("{id}/cancel")]
         [SwaggerOperation(Tags = new[] { "CustomerSubmission" }, Summary = "Deactivate a CustomerSubmission.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(CustomerSubmissionDto))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "CustomerSubmission does not exist")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> DeactivateAsync(Guid id)
+        public async Task<IActionResult> CancelAsync(Guid id)
         {
-            var result = await _mediator.Send(new DeactivateCustomerSubmissionCommand { Id = id });
+            //if (id != GetVendorId())
+            //{
+            //    return Forbid();
+            //}
+
+            var result = await _mediator.Send(new CancelCustomerSubmissionCommand { Id = id });
             return Ok(result);
         }
 
