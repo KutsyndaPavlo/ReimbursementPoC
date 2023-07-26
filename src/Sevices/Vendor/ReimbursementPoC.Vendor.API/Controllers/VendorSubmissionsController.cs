@@ -109,10 +109,10 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> Get(Guid id)
         {
-            if (id != GetVendorId())
-            {
-                return Forbid();
-            }
+            //if (id != GetVendorId())
+            //{
+            //    return Forbid();
+            //}
 
             var query = new GetVendorSubmissionByIdQuery(id);
             var result = await _mediator.Send(query);

@@ -7,6 +7,14 @@
 <h2>Cancel Program</h2>
 <br />
 
+<AuthorizeView>
+    <Authorized>
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
+
 @if (!string.IsNullOrWhiteSpace(Notification))
 {
     <div class="col-md-4 text-success">

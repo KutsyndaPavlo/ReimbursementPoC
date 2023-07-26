@@ -130,6 +130,11 @@ namespace ReimbursementPoC.Customer.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> PostAsync([FromBody] CreateCustomerSubmissionRequest request)
         {
+            if (request.CustomerId != GetCustomerId())
+            {
+                return Forbid();
+            }
+
             var result = await _mediator.Send(_mapper.Map<CreateCustomerSubmissionCommand>(request));
 
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
@@ -144,28 +149,13 @@ namespace ReimbursementPoC.Customer.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> CancelAsync(Guid id)
         {
-            //if (id != GetVendorId())
+            //if (id != GetCustomerId())
             //{
             //    return Forbid();
             //}
 
             var result = await _mediator.Send(new CancelCustomerSubmissionCommand { Id = id });
             return Ok(result);
-        }
-
-        [HttpDelete("{id}")]
-        [SwaggerOperation(Tags = new[] { "CustomerSubmission" }, Summary = "Delete CustomerSubmission by id.")]
-        [Produces("application/json")]
-        [SwaggerResponse(StatusCodes.Status204NoContent)]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
-        [SwaggerResponse(StatusCodes.Status404NotFound, "CustomerSubmission does not exist")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var command = new DeleteCustomerSubmissionCommand { Id = id };
-
-            await _mediator.Send(command);
-            return NoContent();
         }
 
         #endregion

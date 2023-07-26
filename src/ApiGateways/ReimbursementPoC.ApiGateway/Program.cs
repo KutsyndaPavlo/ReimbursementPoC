@@ -2,15 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using MMLib.SwaggerForOcelot.DependencyInjection;
-using Ocelot.Authorization;
 using Ocelot.DependencyInjection;
-using Ocelot.DownstreamRouteFinder.UrlMatcher;
 using Ocelot.Middleware;
 using Ocelot.Provider.Polly;
-using Ocelot.Responses;
-using Ocelot.Values;
 using ReimbursementPoC.ApiGateway;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 

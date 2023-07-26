@@ -8,6 +8,14 @@
 <p>Blazor CRUD operation</p>
 <hr />
 
+<AuthorizeView>
+    <Authorized>
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
+
 <div class="row">
     <div class="col-md-6">
         <a href='/program/add' class="btn btn-primary" role="button">
