@@ -8,14 +8,6 @@
 <p>Blazor CRUD operation</p>
 <hr />
 
-<AuthorizeView>
-    <Authorized>
-    </Authorized>
-    <NotAuthorized>
-        <p>I'm sorry, I can't display anything until you log in</p>
-    </NotAuthorized>
-</AuthorizeView>
-
 <div class="row">
     <div class="col-md-6">
         <a href='/program/add' class="btn btn-primary" role="button">
@@ -25,89 +17,98 @@
     </div>
 </div>
 <br />
-<div class="row">
-    <div class="input-group col">
-        <input type="text" class="form-control" placeholder="Search program by name (begin with, case-insensitive)"
-               @bind="NameSearchString" @bind:event="oninput" @onkeyup="FilterProgramsAsync" />
-        @if (NameSearchString.Length > 0)
-        {
-            <div class="input-group-append">
-                <button class="btn btn-danger" @onclick="ResetSearchFilterAsync">
-                    <i class="fas fa-times">Reset search</i>
-                </button>
+
+<AuthorizeView>
+    <Authorized>
+       
+        <div class="row">
+            <div class="input-group col">
+                <input type="text" class="form-control" placeholder="Search program by name (begin with, case-insensitive)"
+                       @bind="NameSearchString" @bind:event="oninput" @onkeyup="FilterProgramsAsync" />
+                @if (NameSearchString.Length > 0)
+                {
+                    <div class="input-group-append">
+                        <button class="btn btn-danger" @onclick="ResetSearchFilterAsync">
+                            <i class="fas fa-times">Reset search</i>
+                        </button>
+                    </div>
+                }
             </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="input-group col">
+                <select @onchange="SortProgramsAsync">
+                    <option value="">- Sort By -</option>
+                    <option value="nameAsc">Name ASC</option>
+                    <option value="nameDesc">Name DESC</option>
+                    <option value="dateAsc">Start date ASC</option>
+                    <option value="dateDesc">Start date Desc</option>
+                </select>
+            </div>
+        </div>
+        <br />
+
+        @if (programList == null)
+        {
+            <p><em>Loading...</em></p>
         }
-    </div>
-</div>
-<br />
-<div class="row">
-    <div class="input-group col">
-        <select @onchange="SortProgramsAsync">
-            <option value="">- Sort By -</option>
-            <option value="nameAsc">Name ASC</option>
-            <option value="nameDesc">Name DESC</option>
-            <option value="dateAsc">Start date ASC</option>
-            <option value="dateDesc">Start date Desc</option>
-        </select>
-    </div>
-</div>
-<br />
+        else
+        {
+            <table class="table table-striped align-middle table-bordered">
+                <thead class="table-success">
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>StartDate</th>
+                        <th>EndDate</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in programList)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                            <td>@item.StartDate</td>
+                            <td>@item.EndDate</td>
+                            <td>@item.State</td>
+                            <td>
+                                <a href='/program/@item.Id/services' class="btn btn-outline-dark" role="button">
+                                    Services
+                                </a>
 
-@if (programList == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table table-striped align-middle table-bordered">
-        <thead class="table-success">
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>StartDate</th>
-                <th>EndDate</th>
-                <th>State</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in programList)
-            {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>@item.Description</td>
-                    <td>@item.StartDate</td>
-                    <td>@item.EndDate</td>
-                    <td>@item.State</td>
-                    <td>
-                        <a href='/program/@item.Id/services' class="btn btn-outline-dark" role="button">
-                            Services
-                        </a>
-
-                        @if (!item.IsCanceled)
-                        {
-                            <a href='/program/@item.Id/edit' class="btn btn-outline-dark" role="button">
-                                Edit
-                            </a>
-                            <a href='/program/@item.Id/cancel' class="btn btn-outline-dark" role="button">
-                                Cancel
-                            </a>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            @foreach (var link in _links)
-            {
-                <li @onclick="() => OnSelectedPage(link)" style="cursor: pointer;" class="page-item  @(link.Active ? "active" : null)">
-                    <span class="page-link" href="#">@link.Text</span>
-                </li>
-            }
-        </ul>
-    </nav>
-}
+                                @if (!item.IsCanceled)
+                                {
+                                    <a href='/program/@item.Id/edit' class="btn btn-outline-dark" role="button">
+                                        Edit
+                                    </a>
+                                    <a href='/program/@item.Id/cancel' class="btn btn-outline-dark" role="button">
+                                        Cancel
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    @foreach (var link in _links)
+                    {
+                        <li @onclick="() => OnSelectedPage(link)" style="cursor: pointer;" class="page-item  @(link.Active ? "active" : null)">
+                            <span class="page-link" href="#">@link.Text</span>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     protected List<ProgramDto> programList = new();
