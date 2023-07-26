@@ -9,43 +9,42 @@
 
 <AuthorizeView>
     <Authorized>
+        @if (!string.IsNullOrWhiteSpace(Notification))
+        {
+            <div class="col-md-4 text-success">
+                @Notification
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Error))
+        {
+            <div class="col-md-4 text-danger">
+                @Error
+            </div>
+        }
+        <div class="form-group">
+            <h4>Do you want to cancel this Vendor Submission?</h4>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Service</td>
+                        <td>@submission.ServiceFullName</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>@submission.Description</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Confirm" @onclick="(async () => await CancelVendorSubmission(submission.Id))" class="btn btn-danger" />
+            <input type="submit" value="Return" @onclick="(() => Cancel())" class="btn btn-warning" />
+        </div>
     </Authorized>
     <NotAuthorized>
         <p>I'm sorry, I can't display anything until you log in</p>
     </NotAuthorized>
 </AuthorizeView>
-
-@if (!string.IsNullOrWhiteSpace(Notification))
-{
-    <div class="col-md-4 text-success">
-        @Notification
-    </div>
-}
-@if (!string.IsNullOrWhiteSpace(Error))
-{
-    <div class="col-md-4 text-danger">
-        @Error
-    </div>
-}
-<div class="form-group">
-    <h4>Do you want to cancel this Vendor Submission?</h4>
-    <table class="table">
-        <tbody>
-            <tr>
-                <td>Service</td>
-                <td>@submission.ServiceFullName</td>
-            </tr>
-            <tr>
-                <td>Description</td>
-                <td>@submission.Description</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div class="form-group">
-    <input type="submit" value="Confirm" @onclick="(async () => await CancelVendorSubmission(submission.Id))" class="btn btn-danger" />
-    <input type="submit" value="Return" @onclick="(() => Cancel())" class="btn btn-warning" />
-</div>
 
 @code {
     [Parameter]

@@ -8,14 +8,6 @@
 <p>Blazor CRUD operation</p>
 <hr />
 
-<AuthorizeView>
-    <Authorized>
-    </Authorized>
-    <NotAuthorized>
-        <p>I'm sorry, I can't display anything until you log in</p>
-    </NotAuthorized>
-</AuthorizeView>
-
 <div class="row">
     <div class="col-md-6">
         <a href='/vendorSubmission/add' class="btn btn-primary" role="button">
@@ -26,40 +18,51 @@
 </div>
 <br />
 
-@if (submissions == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <table class="table table-striped align-middle table-bordered">
-        <thead class="table-success">
-            <tr>
-                <th>Service</th>
-                <th>Description</th>
-                <th>Is canceled ?</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in submissions)
-            {
-                <tr>
-                    <td>@item.ServiceFullName</td>
-                    <td>@item.Description</td>
-                    <td>@item.IsCanceled</td>
-                    <td>
-                        @if (!item.IsCanceled)
-                        {
-                            <a href='/vendorSubmission/@item.Id/cancel' class="btn btn-outline-danger" role="button">
-                                Cancel
-                            </a>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<AuthorizeView>
+    <Authorized>
+
+        
+
+        @if (submissions == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table table-striped align-middle table-bordered">
+                <thead class="table-success">
+                    <tr>
+                        <th>Service</th>
+                        <th>Description</th>
+                        <th>Is canceled ?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in submissions)
+                    {
+                        <tr>
+                            <td>@item.ServiceFullName</td>
+                            <td>@item.Description</td>
+                            <td>@item.IsCanceled</td>
+                            <td>
+                                @if (!item.IsCanceled)
+                                {
+                                    <a href='/vendorSubmission/@item.Id/cancel' class="btn btn-outline-danger" role="button">
+                                        Cancel
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     protected List<VendorSubmissionDto> submissions = new();
