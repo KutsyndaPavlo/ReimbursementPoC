@@ -3,6 +3,7 @@
 @using ReimbursementPoC.Blazor.UI.Model;
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
 @attribute [Authorize(Roles = "Admin")]
 <h1>Vendor Submission List</h1>
 <p>Blazor CRUD operation</p>
@@ -19,7 +20,7 @@
 <br />
 
 <AuthorizeView>
-    <Authorized>       
+    <Authorized>
 
         @if (submissions == null)
         {
@@ -75,7 +76,9 @@
 
     protected async Task GetVendorSubmissionAsync()
     {
-        var vendorId = Guid.Parse("b2c95337-499f-4aca-b2d2-f8235603b8d1"); // ToDo
+        var authenticationState = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var vendorId = Guid.Parse(authenticationState.User.Claims.FirstOrDefault(x => x.Type == "sub").Value);
+
         var result = await Http.GetFromJsonAsync<PaginatedList<VendorSubmissionDto>>($"/vendor/api/VendorSubmissions/{vendorId}/submissions?offset={CurrentOffset}&limit={defaultLimit}");
 
         submissions.Clear();

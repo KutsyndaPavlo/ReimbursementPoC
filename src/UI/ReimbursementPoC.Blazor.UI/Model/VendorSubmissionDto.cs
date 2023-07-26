@@ -6,6 +6,8 @@
 
         public Guid VendorId { get; set; }
 
+        public string VendorName { get; set; } = "Vendor name";// ToDo
+
         public Guid ServiceId { get; set; }
 
         public string ServiceFullName { get; set; }
