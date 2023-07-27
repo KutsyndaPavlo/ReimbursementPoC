@@ -18,12 +18,12 @@
         "DELETE"
       ],
       "AuthenticationOptions": {
-        //"AuthenticationProviderKey": "Bearer",
+        "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": [ "apiscope" ]
       },
       "RouteClaimsRequirement": {
-        //"UserType": "registered"
-        //"http///schemas.microsoft.com/ws/2008/06/identity/claims/role": "Admin"
+        //"UserType": "registered",
+       // "http///schemas.microsoft.com/ws/2008/06/identity/claims/role": "vendor"
       },
       "RateLimitOptions": {
         "ClientWhitelist": [],
