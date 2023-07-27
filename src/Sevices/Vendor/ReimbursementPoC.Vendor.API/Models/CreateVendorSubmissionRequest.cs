@@ -2,9 +2,11 @@
 {
     public class CreateVendorSubmissionRequest
     {
-        public Guid ServiceId { get; set; }
-
         public Guid VendorId { get; set; }
+
+        public string VendorName { get; set; }
+
+        public Guid ServiceId { get; set; }
 
         public string ServiceFullName { get; set; }
 

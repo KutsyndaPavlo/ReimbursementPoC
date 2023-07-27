@@ -23,7 +23,7 @@
       },
       "RouteClaimsRequirement": {
         //"UserType": "registered"
-        "http///schemas.microsoft.com/ws/2008/06/identity/claims/role": "admin"
+       // "http///schemas.microsoft.com/ws/2008/06/identity/claims/role": "admin"
       },
       "RateLimitOptions": {
         "ClientWhitelist": [],

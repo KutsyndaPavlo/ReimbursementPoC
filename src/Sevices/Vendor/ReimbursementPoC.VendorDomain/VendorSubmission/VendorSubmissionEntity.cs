@@ -12,17 +12,20 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
             // oly for EF
         }
 
-        private VendorSubmissionEntity(Guid vendorId, Guid serviceId, string serviceFullName, string description) : base()
+        private VendorSubmissionEntity(Guid vendorId, string vendorName, Guid serviceId, string serviceFullName, string description) : base()
         {
             this.VendorId = vendorId;
+            this.VendorName = vendorName;
             this.ServiceId = serviceId;
-
-            this._domainEvents.Add(new VendorSubmissionCreatedEvent(this));
             ServiceFullName = serviceFullName;
             Description = description;
+
+            this._domainEvents.Add(new VendorSubmissionCreatedEvent(this));
         }
 
         public Guid VendorId { get; private set; }
+
+        public string VendorName { get; private set; }
 
         public Guid ServiceId { get; private set; }
 
@@ -34,6 +37,7 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
 
         public static VendorSubmissionEntity CreateNew(
             Guid vendorId, 
+            string vendorName,
             Guid serviceId, 
             string serviceFullName, 
             string description,
@@ -41,7 +45,7 @@ namespace ReimbursementPoC.Vendor.Domain.Vendor
         {
             CheckRule(new VendorSubmissionMustBeSinglePerServiceRule(serviceId, vendorId, vendorSubmissionService));
 
-            return new VendorSubmissionEntity(vendorId, serviceId, serviceFullName, description);
+            return new VendorSubmissionEntity(vendorId, vendorName, serviceId, serviceFullName, description);
         }
 
         public void Cancel()

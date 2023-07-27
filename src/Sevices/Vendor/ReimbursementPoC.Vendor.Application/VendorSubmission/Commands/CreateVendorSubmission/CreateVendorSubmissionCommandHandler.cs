@@ -15,7 +15,7 @@ namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor
         private readonly IMapper _mapper;
         private readonly IVendorSubmissionService _vendorSubmissionService;
 
-        public CreateVendorSubmissionCommandHandler(IApplicationDbContext applicationDbContext, 
+        public CreateVendorSubmissionCommandHandler(IApplicationDbContext applicationDbContext,
                                                     IMapper mapper,
                                                     IVendorSubmissionService vendorSubmissionService)
         {
@@ -28,6 +28,7 @@ namespace ReimbursementPoC.Vendor.Application.Vendor.Commands.CreateVendor
         {
             var entity = VendorSubmissionEntity.CreateNew(
                 command.VendorId,
+                command.VendorName,
                 command.ServiceId,
                 command.ServiceFullName,
                 command.Description,

@@ -141,8 +141,9 @@ namespace ReimbursementPoC.Vendor.API.Controllers
 
             var result = await _mediator.Send(new CreateVendorSubmissionCommand
             {
-                ServiceId = request.ServiceId,
                 VendorId = request.VendorId,
+                VendorName = request.VendorName,
+                ServiceId = request.ServiceId,
                 ServiceFullName = request.ServiceFullName,
                 Description = request.Description
             });
