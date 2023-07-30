@@ -1,18 +1,14 @@
 variables:
 - name: BuildParameters.RestoreBuildProjects
-  value: '**/ReimbursementPoC.Vendor.API.csproj'
+  value: '**/ReimbursementPoC.Identity.API.csproj'
 - name: BuildParameters.TestProjects
-  value: '**/Vendor/UnitTests/*.csproj'
-trigger:
-  branches:
-    include:
-    - main
+  value: '**/*[Tt]ests/ReimbursementPoC.Identity.API.csproj'
 name: $(date:yyyyMMdd)$(rev:.r)
 resources:
   repositories:
   - repository: self
     type: git
-    ref: refs/heads/main
+    ref: main
 jobs:
 - job: Job_1
   displayName: Agent job 1
