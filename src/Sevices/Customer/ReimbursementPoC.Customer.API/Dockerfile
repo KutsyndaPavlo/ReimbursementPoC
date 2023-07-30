@@ -14,6 +14,7 @@ COPY ["Sevices/Customer/ReimbursementPoC.Customer.Domain/ReimbursementPoC.Custom
 COPY ["Sevices/Customer/ReimbursementPoC.Customer.Infrastructure/ReimbursementPoC.Customer.Infrastructure.csproj", "Sevices/Customer/ReimbursementPoC.Customer.Infrastructure/"]
 RUN dotnet restore "Sevices/Customer/ReimbursementPoC.Customer.API/ReimbursementPoC.Customer.API.csproj"
 COPY . .
+
 WORKDIR "/src/Sevices/Customer/ReimbursementPoC.Customer.API"
 RUN dotnet build "ReimbursementPoC.Customer.API.csproj" -c Release -o /app/build
 
@@ -22,5 +23,7 @@ RUN dotnet publish "ReimbursementPoC.Customer.API.csproj" -c Release -o /app/pub
 
 FROM base AS final
 WORKDIR /app
+
 COPY --from=publish /app/publish .
+
 ENTRYPOINT ["dotnet", "ReimbursementPoC.Customer.API.dll"]
