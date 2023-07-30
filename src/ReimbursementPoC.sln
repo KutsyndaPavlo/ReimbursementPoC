@@ -67,19 +67,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReimbursementPoC.Administra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{EB55C915-299E-4656-B24A-5A5CBD804E36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReimbursementPoC.Administration.Domain.UnitTests", "Sevices\Administration\UnitTests\ReimbursementPoC.Administration.API.UnitTests\ReimbursementPoC.Administration.Domain.UnitTests.csproj", "{77082AE2-21D1-4362-803A-8D077DD0C91B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReimbursementPoC.Administration.Domain.UnitTests", "Sevices\Administration\UnitTests\ReimbursementPoC.Administration.API.UnitTests\ReimbursementPoC.Administration.Domain.UnitTests.csproj", "{77082AE2-21D1-4362-803A-8D077DD0C91B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{7FD8ADFC-D458-46E0-B7CF-E0A34C1FE86F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReimbursementPoC.Customer.Domain.UnitTests", "Sevices\Customer\UnitTests\ReimbursementPoC.Customer.Domain.UnitTests\ReimbursementPoC.Customer.Domain.UnitTests.csproj", "{18010F8D-E854-4DE9-8A50-39F23419F17F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReimbursementPoC.Customer.Domain.UnitTests", "Sevices\Customer\UnitTests\ReimbursementPoC.Customer.Domain.UnitTests\ReimbursementPoC.Customer.Domain.UnitTests.csproj", "{18010F8D-E854-4DE9-8A50-39F23419F17F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{E83FF943-11D5-4CAC-A359-6895700EB7E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReimbursementPoC.Vendor.Domain.UnitTests", "Sevices\Vendor\UnitTests\ReimbursementPoC.Vendor.Domain.UnitTests\ReimbursementPoC.Vendor.Domain.UnitTests.csproj", "{7946BFF9-4BF9-4E2C-8AC7-5E3882A9CEF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReimbursementPoC.Vendor.Domain.UnitTests", "Sevices\Vendor\UnitTests\ReimbursementPoC.Vendor.Domain.UnitTests\ReimbursementPoC.Vendor.Domain.UnitTests.csproj", "{7946BFF9-4BF9-4E2C-8AC7-5E3882A9CEF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{93F343D9-911D-4EE3-920E-3DC06E5D15E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReimbursementPoC.Identity.API.UnitTests", "Sevices\Identity\UnitTests\ReimbursementPoC.Identity.API.UnitTests\ReimbursementPoC.Identity.API.UnitTests.csproj", "{1C87361B-9E2F-4C94-874C-B49F92E847ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReimbursementPoC.Identity.API.UnitTests", "Sevices\Identity\UnitTests\ReimbursementPoC.Identity.API.UnitTests\ReimbursementPoC.Identity.API.UnitTests.csproj", "{1C87361B-9E2F-4C94-874C-B49F92E847ED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -192,6 +192,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A00FE917-B4FA-471C-B880-59279411464A} = {44FDF9A6-65D1-4342-910B-3E9CA17EF479}
 		{F9C6E054-7E02-44E8-B210-B2636DFD78B8} = {8491F429-EB05-40A2-A659-B16BA39DECD5}
 		{05CAD9C0-A3E3-49BA-8970-53A72B71E974} = {0C091BDF-0C08-4E9A-A128-94B4B9859C8D}
 		{DF983D10-A86E-41A8-B20E-05EF5F20FDE6} = {8491F429-EB05-40A2-A659-B16BA39DECD5}
