@@ -1,0 +1,40 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "SwaggerKey": "administration",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5137"
+        }
+      ],
+      //"UpstreamHeaderTransform": {
+      //  "Uncle": "Bob"
+      //},
+      "UpstreamPathTemplate": "/administration/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "AuthenticationOptions": {
+       "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "apiscope" ]
+      },
+      "RouteClaimsRequirement": {
+        //"UserType": "registered"
+        //"http///schemas.microsoft.com/ws/2008/06/identity/claims/role": "admin"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 50
+      }
+    }
+  ]
+}

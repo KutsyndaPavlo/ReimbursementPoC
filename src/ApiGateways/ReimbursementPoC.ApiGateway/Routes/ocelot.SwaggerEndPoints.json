@@ -1,0 +1,37 @@
+{
+  "SwaggerEndPoints": [
+    {
+      "Key": "customer",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Customer.API",
+          "Version": "1.0",
+          "Url": "https://ri-getaway-apisu445yrz7ulry.azurewebsites.net/customer/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "vendor",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Vendor.API",
+          "Version": "1.0",
+          "Url": "https://ri-getaway-apisu445yrz7ulry.azurewebsites.net/vendor/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "administration",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Administration.API",
+          "Version": "1.0",
+          "Url": "https://ri-getaway-apisu445yrz7ulry.azurewebsites.net/administration/swagger/v1/swagger.json"
+        }
+      ]
+    }
+  ]
+}

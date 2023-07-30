@@ -1,0 +1,20 @@
+az login
+
+# Create a resource group
+az group create --n reimbursement-poc-rg -l eastus
+
+# Create a container registry
+az acr create --resource-group reimbursement-poc-rg --name reimbursementpoccontainerregistry --sku Basic
+
+# Create a Kubernetes cluster
+az aks create --resource-group reimbursement-poc-rg --name reimbursement-poc --node-count 1 --enable-addons monitoring --generate-ssh-keys
+
+
+az group deployment create -g reimbursement-poc --template-file app-service\deloy-app-service.json --parameters app-service-program\deloy-app-service.parameters.json
+az group deployment create -g reimbursement-poc --template-file app-service\deloy-app-service.json --parameters app-service-vendor\deloy-app-service.parameters.json
+az group deployment create -g reimbursement-poc --template-file app-service\deloy-app-service.json --parameters app-service-customer\deloy-app-service.parameters.json
+az group deployment create -g reimbursement-poc --template-file app-service\deloy-app-service.json --parameters app-service-gateway\deloy-app-service.parameters.json
+
+az group deployment create -g reimbursement-poc --template-file servicebus\sbusdeploy.json --parameters servicebus\sbusdeploy.parameters.json
+az group deployment create -g reimbursement-poc --template-file storage\deploystorage.json --parameters storage\deploystorage.parameters.json
+az group deployment create -g reimbursement-poc --template-file cosmos\deploycosmos.json --parameters cosmos\deploycosmos.parameters.json

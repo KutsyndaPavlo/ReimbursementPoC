@@ -1,0 +1,37 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "https",
+      "SwaggerKey": "vendor",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ri-vendor-apisu445yrz7ulry.azurewebsites.net",
+          "Port": "80"
+        }
+      ],
+      "UpstreamPathTemplate": "/vendor/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "apiscope" ]
+      },
+      "RouteClaimsRequirement": {
+        //"UserType": "registered",
+       // "http///schemas.microsoft.com/ws/2008/06/identity/claims/role": "vendor"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 50
+      }
+    }
+  ]
+}

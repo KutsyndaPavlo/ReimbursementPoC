@@ -1,0 +1,108 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+  ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+      tag: 'release-$(Build.BuildId)'
+      latesttag: 'release-latest'
+  ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+      tag: 'develop-$(Build.BuildId)'
+      latesttag: 'develop-latest'      
+  ${{ if and(ne(variables['Build.SourceBranchName'], 'main'), ne(variables['Build.SourceBranchName'], 'develop')) }}:
+      tag: 'snapshot-$(Build.BuildId)'
+      latesttag: 'snapshot-latest'
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'fa6d4660-2a47-4898-88e5-c923174cd753'
+  imageRepository: 'vendor-api'
+  containerRegistry: 'reimbursementpoccontainerregistry.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/src/Sevices/Vendor/ReimbursementPoC.Vendor.APIDockerfile'  
+  buildContext: '$(Build.SourcesDirectory)/src'
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an api-gateway image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        buildContext: $(buildContext)
+        tags: |
+          $(tag)
+          $(latesttag)
+# variables:
+# - name: BuildParameters.RestoreBuildProjects
+  # value: '**/ReimbursementPoC.Vendor.API.csproj'
+# - name: BuildParameters.TestProjects
+  # value: '**/*[Tt]ests/ReimbursementPoC.Vendor.UnitTests.csproj'
+# trigger:
+  # branches:
+    # include:
+    # - refs/heads/main
+  # paths:
+    # include:
+    # - vendor
+# name: $(date:yyyyMMdd)$(rev:.r)
+# resources:
+  # repositories:
+  # - repository: self
+    # type: git
+    # ref: refs/heads/main
+# jobs:
+# - job: Job_1
+  # displayName: Agent job 1
+  # pool:
+    # vmImage: ubuntu-latest
+  # steps:
+  # - checkout: self
+    # clean: true
+    # fetchTags: false
+  # - task: DotNetCoreCLI@2
+    # displayName: Restore
+    # inputs:
+      # command: restore
+      # projects: $(BuildParameters.RestoreBuildProjects)
+  # - task: DotNetCoreCLI@2
+    # displayName: Build
+    # inputs:
+      # projects: $(BuildParameters.RestoreBuildProjects)
+      # arguments: --configuration $(BuildConfiguration)
+  # - task: DotNetCoreCLI@2
+    # displayName: Test
+    # inputs:
+      # command: test
+      # projects: $(BuildParameters.TestProjects)
+      # arguments: --configuration $(BuildConfiguration)
+  # - task: DotNetCoreCLI@2
+    # displayName: Publish
+    # inputs:
+      # command: publish
+      # publishWebProjects: True
+      # projects: $(BuildParameters.RestoreBuildProjects)
+      # arguments: --configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)
+      # zipAfterPublish: True
+  # - task: PublishBuildArtifacts@1
+    # displayName: Publish Artifact
+    # condition: succeededOrFailed()
+    # inputs:
+      # PathtoPublish: $(build.artifactstagingdirectory)
+      # TargetPath: '\\my\share\$(Build.DefinitionName)\$(Build.BuildNumber)'
+# ...
