@@ -11,7 +11,7 @@ COPY . ./
 RUN dotnet restore "ReimbursementPoC.sln"
 
 COPY . .
-WORKDIR /src\Sevices\Vendor\ReimbursementPoC.Vendor.API
+WORKDIR /src/Sevices/Vendor/ReimbursementPoC.Vendor.API
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish

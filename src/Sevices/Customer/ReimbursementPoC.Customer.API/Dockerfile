@@ -11,7 +11,7 @@ COPY . ./
 RUN dotnet restore "ReimbursementPoC.sln"
 
 COPY . .
-WORKDIR /src\Sevices\Program\ReimbursementPoC.Customer.API
+WORKDIR /src/Sevices/Customer/ReimbursementPoC.Customer.API
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish
@@ -19,4 +19,4 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "ReimbursementPoC.Administration.API.dll"]
+ENTRYPOINT ["dotnet", "ReimbursementPoC.Customer.API.dll"]

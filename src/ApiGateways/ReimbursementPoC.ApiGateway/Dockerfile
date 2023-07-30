@@ -11,7 +11,7 @@ COPY . ./
 RUN dotnet restore "ReimbursementPoC.sln"
 
 COPY . .
-WORKDIR /src\ApiGateways\ReimbursementPoC.ApiGateway
+WORKDIR /src/ApiGateways/ReimbursementPoC.ApiGateway
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish
