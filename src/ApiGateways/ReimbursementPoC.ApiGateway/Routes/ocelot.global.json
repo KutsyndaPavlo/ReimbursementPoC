@@ -1,0 +1,10 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7120",
+    "Hosts": {
+      "AdministrationAPI": "http://localhost:5137",
+      "CustomerAPI": "http://localhost:5138",
+      "VendorAPI": "http://localhost:5139"
+    }
+  }
+}

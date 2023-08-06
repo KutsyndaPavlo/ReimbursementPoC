@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "ReimbursementPoC.ApiGateway": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "GlobalConfiguration__BaseUrl": "https://localhost:7120",
+        "GlobalConfiguration__Hosts__AdministrationAPI": "http://localhost:5137",
+        "GlobalConfiguration__Hosts__VendorAPI": "http://localhost:5138",
+        "GlobalConfiguration__Hosts__CustomerAPI": "http://localhost:5139",
+        "BaseUrl": "https://localhost:7120"
+      },
+      "applicationUrl": "https://localhost:7120",
+      "dotnetRunMessages": true
+    }
+    //"Docker": {
+    //  "commandName": "Docker",
+    //  "launchBrowser": true,
+    //  "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+    //  "publishAllPorts": true,
+    //  "useSSL": true
+    //}
+  }
+}
