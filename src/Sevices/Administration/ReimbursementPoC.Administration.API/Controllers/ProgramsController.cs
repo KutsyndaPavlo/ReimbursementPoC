@@ -10,6 +10,7 @@ using ReimbursementPoC.Administration.Application.Program.Commands.UpdateProgram
 using ReimbursementPoC.Administration.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Administration.Application.Program.Queries.GetPrograms;
 using Swashbuckle.AspNetCore.Annotations;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -49,23 +50,30 @@ namespace ReimbursementPoC.Administration.API.Controllers
         /// <param name="name">The name filter.
         ///      <p>Wiil be a string, an example would be: someName</p>
         /// </param>
+        /// <param name="sort">The sorting option.
+        ///      <p>Wiil be a string, available values are: nameAsc, nameDesc, dateAsc, dateDesc</p>
+        /// </param>
         /// <param name="offset">The page offset.
         ///      <p>Wiil be an integer, an example would be:0</p>
         /// </param>
         /// <param name="limit">The page limit.
         ///      <p>Wiil be an integer, an example would be:50</p>
         /// </param>
-        /// <returns>Returns an <see cref="PaginatedList<ProgramDto>"/>.</returns>
+        /// <returns>Returns an PaginatedList ProgramDto </returns>
         [HttpGet]
         [SwaggerOperation(Tags = new[] { "Program" }, Summary = "Get all programs.")]
         [Produces("application/json")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<ProgramDto>))]
+        [SwaggerResponse(
+            StatusCodes.Status200OK, 
+            @"Success.
+            <p style=""font - size:13px""> An example: ToDo</p>", 
+            Type = typeof(PaginatedList<ProgramDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> GetAsync(
-            [FromQuery] string? name, 
-            [FromQuery] string? sort, 
-            [FromQuery] int offset = 0, 
+            [FromQuery] string? name,
+            [FromQuery] string? sort,
+            [FromQuery] int offset = 0,
             [FromQuery] int limit = 50)
         {
             var query = new GetProgramsQuery(name, offset, limit, sort);
@@ -78,7 +86,7 @@ namespace ReimbursementPoC.Administration.API.Controllers
         /// </summary>
         /// <param name="id">System generated ID returned when create a program.</param>
         /// <returns>
-        /// A <see cref="ServiceDto" /> which matches the input id.
+        /// A <see cref="ProgramDto" /> which matches the input id.
         /// </returns>
         [HttpGet("{id}")]
         [SwaggerOperation(Tags = new[] { "Program" }, Summary = "Get program by id.")]

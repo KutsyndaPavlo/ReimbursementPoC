@@ -7,6 +7,8 @@ using ReimbursementPoC.Administration.API;
 using ReimbursementPoC.Administration.API.Mappings;
 using ReimbursementPoC.Administration.Application;
 using ReimbursementPoC.Administration.Infrastructure;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +26,7 @@ builder.Services.AddControllers();
 //                });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(o => AddSwaggerDocumentation(o));
 builder.Services.AddApplication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAutoMapper(MappingProfile.AutoMapperConfig, typeof(MappingProfile).Assembly);
@@ -68,3 +70,9 @@ app.MapHealthChecks("/liveness", new HealthCheckOptions
 app.ConfigureEventBus();
 
 app.Run();
+
+static void AddSwaggerDocumentation(SwaggerGenOptions o)
+{
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+}

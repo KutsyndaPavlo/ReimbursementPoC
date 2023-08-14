@@ -1,0 +1,38 @@
+version: '3.4'
+
+services:
+
+  administration.api:
+    image: ${DOCKER_REGISTRY:-ri}/administration
+    build:
+      context: .
+      dockerfile: Sevices/Administration/ReimbursementPoC.Administration.API/Dockerfile
+      
+  customer.api:
+    image: ${DOCKER_REGISTRY:-ri}/customer
+    build:
+      context: .
+      dockerfile: Sevices/Customer/ReimbursementPoC.Customer.API/Dockerfile
+      
+  vendor.api:
+    image: ${DOCKER_REGISTRY:-ri}/vendor
+    build:
+      context: .
+      dockerfile: Sevices/Vendor/ReimbursementPoC.Vendor.API/Dockerfile
+      
+  identity.api:
+    image: ${DOCKER_REGISTRY:-ri}/identity
+    build:
+      context: .
+      dockerfile: Sevices/Identity/ReimbursementPoC.Identity.API/Dockerfile
+      
+  apigateway:
+    image: ${DOCKER_REGISTRY:-ri}/api-gateway
+    build:
+      context: .
+      dockerfile: ApiGateways/ReimbursementPoC.ApiGateway/Dockerfile
+    depends_on:
+      - administration.api
+      - customer.api
+      - vendor.api
+      - identity.api

@@ -9,6 +9,9 @@ using ReimbursementPoC.Administration.Domain.ValueObjects;
 
 namespace ReimbursementPoC.Administration.Domain.Program
 {
+    /// <summary>
+    /// Represents a program entity with a name, description, state and date period.
+    /// </summary>
     public class ProgramEntity : BaseEntity, IAggregateRoot
     {
         private ProgramEntity()
@@ -16,6 +19,11 @@ namespace ReimbursementPoC.Administration.Domain.Program
             // only for EF
         }
 
+        /// <summary>
+        /// This constructor initializes the new <see cref="ProgramEntity"/> 
+        /// </summary>
+        /// <param><c>name</c> The name of a program.</param>
+        /// <param><c>description</c> The description of a program.</param>
         private ProgramEntity(string name, string description, int stateId, Period period): base()
         {
             this.Name = name;
@@ -27,8 +35,14 @@ namespace ReimbursementPoC.Administration.Domain.Program
             this._domainEvents.Add(new ProgramCreatedEvent(this));
         }
 
+        /// <summary>
+        /// The programs's name.
+        /// </summary>
         public string Name { get; private set; }
 
+        /// <summary>
+        /// The programs's description.
+        /// </summary>
         public string? Description { get; private set; }
 
         public Period Period { get; private set; }
@@ -43,6 +57,19 @@ namespace ReimbursementPoC.Administration.Domain.Program
 
         public IReadOnlyCollection<ServiceEntity> Services => _services;
 
+        /// <summary>
+        /// Creates new program.
+        /// </summary>
+        /// <param name="name">The programs's namme.</param>
+        /// <param name="description">The programs's description.</param>
+        /// <param name="stateId"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="programService"></param>
+        /// <returns>The new <see cref="ProgramEntity"</returns>
+        /// <exception cref="BusinessRuleValidationException">
+        /// When program is not single per state (<paramref name="stateId"/> ) per period (<paramref name="startDate"/>, <paramref name="endDate"/>  ).
+        /// </exception>
         public static ProgramEntity CreateNew(string name,
                                               string description,
                                               int stateId,
