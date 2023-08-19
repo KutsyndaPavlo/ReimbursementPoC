@@ -5,11 +5,11 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "applicationUrl": "https://localhost:7231",
+      "applicationUrl": "https://localhost:8505",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        //"oidc__Authority": "https://localhost:5000/",
-        //"GatewayApi": "https://localhost:7120"
+        "oidc__Authority": "https://localhost:8500/",
+        "GatewayApi": "https://localhost:8504"
       }
     }
   }

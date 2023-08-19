@@ -83,10 +83,10 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> GetSubmissionsByVendorIdAsync([FromRoute] Guid vendorId, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
         {
-            if (vendorId != GetVendorId())
-            {
-                return Forbid();
-            }
+            //if (vendorId.ToString() != GetVendorId().ToString())
+            //{
+            //    return Forbid();
+            //}
 
             var query = new GetVendorSubmissionsByVendorIdQuery(offset, limit, vendorId);
             var result = await _mediator.Send(query);
@@ -134,10 +134,10 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> PostAsync([FromBody] CreateVendorSubmissionRequest request)
         {
-            if (request.VendorId != GetVendorId())
-            {
-                return Forbid();
-            }
+            //if (request.VendorId.ToString() != GetVendorId().ToString())
+            //{
+            //    return Forbid();
+            //}
 
             var result = await _mediator.Send(new CreateVendorSubmissionCommand
             {

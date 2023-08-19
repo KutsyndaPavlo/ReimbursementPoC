@@ -3,8 +3,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Administration.Application.Common.Interfaces;
 using ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById;
-using ReimbursementPoC.Administration.Domain;
-using ReimbursementPoC.Administration.Domain.Program;
 using ReimbursementPoC.Administration.Domain.Service;
 using ReimbursementPoC.Administration.Domain.Service.Exeption;
 using ReimbursementPoC.Administration.Domain.Service.Specifications;
@@ -15,21 +13,18 @@ namespace ReimbursementPoC.Administration.Application.Services.Commands.UpdateSe
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
-        private readonly IProgramService _ProgramUniquenessChecker;
 
         public UpdateServiceCommandHandler(
             IApplicationDbContext applicationDbContext,
-            IMapper mapper,
-            IProgramService ProgramUniquenessChecker)
+            IMapper mapper)
         {
             _applicationDbContext = applicationDbContext;
             _mapper = mapper;
-            _ProgramUniquenessChecker = ProgramUniquenessChecker;
         }
 
         public async Task<ServiceDto> Handle(UpdateServiceCommand command, CancellationToken cancellationToken)
         {
-            var service = await _applicationDbContext.Services.FirstOrDefaultAsync(new ServiceByIdSpecification(command.Id).ToExpression());
+            var service = await _applicationDbContext.Services.Include(x => x.Program).FirstOrDefaultAsync(new ServiceByIdSpecification(command.Id).ToExpression());
 
             if (service == null)
             {

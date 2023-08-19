@@ -40,6 +40,7 @@ namespace EndToEndTests.StepDefinitions
     public class ServiceStepDefinitions
     {
         private readonly ScenarioContext _context;
+        private readonly TokenProvider _tokenProvider = new TokenProvider();
 
         public ServiceStepDefinitions(ScenarioContext context)
         {
@@ -54,10 +55,8 @@ namespace EndToEndTests.StepDefinitions
         [Given(@"program  was created")]
         public async Task GivenProductWasCreated()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
+
             var requestData = new CreateProgramRequest
             {
                 Name = "Program" + Guid.NewGuid(),
@@ -68,7 +67,17 @@ namespace EndToEndTests.StepDefinitions
                 EndDate = DateTime.Now.AddDays(365)
             };
 
-            var response = await httpClient.PostAsync("program/api/Programs", JsonContent.Create(requestData));
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Programs"),
+                Content = JsonContent.Create(requestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
             var data = JsonConvert.DeserializeObject<ProgramDto>(await response.Content.ReadAsStringAsync());
             _context.Set(requestData, "created_program_request_data");
             _context.Set(response, "created_program_response");
@@ -80,10 +89,8 @@ namespace EndToEndTests.StepDefinitions
         [When(@"I make a POST request in order to create a service")]
         public async Task WhenIMakeAPOSTRequestInOrderToCreateAService()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
+
             var requestData = new CreateServiceRequest
             {
                 Name = "Service" + Guid.NewGuid(),
@@ -91,7 +98,16 @@ namespace EndToEndTests.StepDefinitions
                 ProgramId = _context.Get<Guid>("created_program_id")
             };
 
-            var response = await httpClient.PostAsync("program/api/Services", JsonContent.Create(requestData));
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Services"),
+                Content = JsonContent.Create(requestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
             var data = JsonConvert.DeserializeObject<ServiceDto>(await response.Content.ReadAsStringAsync());
 
             _context.Set(requestData, "created_service_request_data");
@@ -105,12 +121,19 @@ namespace EndToEndTests.StepDefinitions
         {
             var id = _context.Get<Guid>("service_id");
 
-            using var httpClient = new HttpClient
+            using var httpClient = GetHttpClient();
+
+            var httpRequestMessage = new HttpRequestMessage()
             {
-                BaseAddress = new Uri("https://localhost:7120")
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Services/{id}")
             };
 
-            var response = await httpClient.DeleteAsync($"program/api/Services/{id}");
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+
         }
 
         [Then(@"program was deleted")]
@@ -118,12 +141,17 @@ namespace EndToEndTests.StepDefinitions
         {
             var id = _context.Get<Guid>("program_id");
 
-            using var httpClient = new HttpClient
+            using var httpClient = GetHttpClient();
+
+            var httpRequestMessage = new HttpRequestMessage()
             {
-                BaseAddress = new Uri("https://localhost:7120")
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Programs/{id}")
             };
 
-            var response = await httpClient.DeleteAsync($"program/api/Programs/{id}");
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
         }
 
         [Then(@"the response status code is '([^']*)' and the service response data are valid")]
@@ -148,10 +176,8 @@ namespace EndToEndTests.StepDefinitions
         [Given(@"service was created")]
         public async Task GivenServiceWasCreated()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
+
             var requestData = new CreateServiceRequest
             {
                 Name = "Service" + Guid.NewGuid(),
@@ -159,7 +185,17 @@ namespace EndToEndTests.StepDefinitions
                 ProgramId = _context.Get<Guid>("program_id")
             };
 
-            var response = await httpClient.PostAsync("Program/api/Services", JsonContent.Create(requestData));
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Services"),
+                Content = JsonContent.Create(requestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
             _context.Set(requestData, "created_service_request_data");
             _context.Set(response, "created_service_response");
             var data = JsonConvert.DeserializeObject<ServiceDto>(await response.Content.ReadAsStringAsync());
@@ -170,22 +206,29 @@ namespace EndToEndTests.StepDefinitions
         [When(@"I make a PUT request in order to update an existing service")]
         public async Task WhenIMakeAPUTRequestInOrderToUpdateAnExistingService()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
+
             var createdService = _context.Get<ServiceDto>("created_service_response_data");
 
             var updatedProgramRequestData = new UpdateServiceRequest
             {
                 Id = createdService.Id,
                 Name = createdService.Name + "updated",
-                  
+
                 Description = createdService.Description,
                 LastModified = createdService.LastModified
             };
 
-            var response = await httpClient.PutAsync($"program/api/Services/{createdService.Id}", JsonContent.Create(updatedProgramRequestData));
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Services/{createdService.Id}"),
+                Content = JsonContent.Create(updatedProgramRequestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
             _context.Set(updatedProgramRequestData, "updated_service_request_data");
             _context.Set(response, "updated_service_response");
         }
@@ -193,13 +236,18 @@ namespace EndToEndTests.StepDefinitions
         [When(@"I make a Delete request in order to delete an existing service")]
         public async Task WhenIMakeADeleteRequestInOrderToDeleteAnExistingService()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
             var createdService = _context.Get<ServiceDto>("created_service_response_data");
+            using var httpClient = GetHttpClient();
+           
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Services/{createdService.Id}")
+            };
 
-            var response = await httpClient.DeleteAsync($"program/api/Services/{createdService.Id}");
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
             _context.Set(response, "deleted_service_response");
         }
 
@@ -217,13 +265,17 @@ namespace EndToEndTests.StepDefinitions
         [When(@"I make a Get by id request in order to get an existing service")]
         public async Task WhenIMakeAGetByIdRequestInOrderToGetAnExistingService()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
             var createdService = _context.Get<ServiceDto>("created_service_response_data");
+            using var httpClient = GetHttpClient();
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Services/{createdService.Id}")
+            };
 
-            var response = await httpClient.GetAsync($"program/api/Services/{createdService.Id}");
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
             _context.Set(response, "get_by_id_service_response");
         }
 
@@ -276,6 +328,15 @@ namespace EndToEndTests.StepDefinitions
             Assert.IsNotNull(responseData.Id);
             Assert.IsNotNull(responseData.Name);
             _context.Set(responseData.Id, "service_id");
+        }
+
+        private HttpClient GetHttpClient()
+        {
+            HttpClientHandler clientHandler = new()
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            };
+            return new HttpClient(clientHandler);
         }
     }
 }

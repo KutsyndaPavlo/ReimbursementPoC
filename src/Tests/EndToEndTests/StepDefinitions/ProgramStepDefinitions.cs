@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 
 namespace EndToEndTests.StepDefinitions
 {
+
     public class CreateServiceRequest
     {
         public Guid ProgramId { get; set; }
@@ -72,6 +73,7 @@ namespace EndToEndTests.StepDefinitions
     public class ProgramStepDefinitions
     {
         private readonly ScenarioContext _context;
+        private readonly TokenProvider _tokenProvider = new TokenProvider();
 
         public ProgramStepDefinitions(ScenarioContext context)
         {
@@ -86,10 +88,8 @@ namespace EndToEndTests.StepDefinitions
         [When(@"I make a POST request in order to create a program")]
         public async Task WhenIMakeAPOSTRequestInOrderToCreateAProgram()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
+
             var requestData = new CreateProgramRequest
             {
                 Name = "Program" + Guid.NewGuid(),
@@ -100,7 +100,16 @@ namespace EndToEndTests.StepDefinitions
                 EndDate = DateTime.Now.AddDays(365)
             };
 
-            var response = await httpClient.PostAsync("program/api/Programs", JsonContent.Create(requestData));
+            var httpRequestMessage = new HttpRequestMessage() 
+            { 
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Programs"),
+                Content = JsonContent.Create(requestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
             _context.Set(requestData, "created_program_request_data");
             _context.Set(response, "created_program_response");
         }
@@ -129,21 +138,24 @@ namespace EndToEndTests.StepDefinitions
         {
             var id = _context.Get<Guid>("program_id");
 
-            using var httpClient = new HttpClient
+            using var httpClient = GetHttpClient();
+
+            var httpRequestMessage = new HttpRequestMessage()
             {
-                BaseAddress = new Uri("https://localhost:7120")
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Programs/{id}")
             };
 
-            var response = await httpClient.DeleteAsync($"program/api/Programs/{id}");
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
         }
 
         [Given(@"Program was created")]
         public async Task GivenProgramWasCreated()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
+
             var requestData = new CreateProgramRequest
             {
                 Name = "Program" + Guid.NewGuid(),
@@ -154,7 +166,18 @@ namespace EndToEndTests.StepDefinitions
                 EndDate = DateTime.Now.AddDays(365)
             };
 
-            var response = await httpClient.PostAsync("program/api/Programs", JsonContent.Create(requestData));
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Programs"),
+                Content = JsonContent.Create(requestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+
             _context.Set(requestData, "created_program_request_data");
             _context.Set(response, "created_program_response");
             _context.Set(JsonConvert.DeserializeObject<ProgramDto>(await response.Content.ReadAsStringAsync()), "created_program_response_data");
@@ -163,10 +186,7 @@ namespace EndToEndTests.StepDefinitions
         [When(@"I make a PUT request in order to update an existing program")]
         public async Task WhenIMakeAPUTRequestInOrderToUpdateAProgram()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
             var createdProgram = _context.Get<ProgramDto>("created_program_response_data");
 
             var updatedProgramRequestData = new UpdateProgramRequest
@@ -180,7 +200,17 @@ namespace EndToEndTests.StepDefinitions
                 LastModified = createdProgram.LastModified
             };
 
-            var response = await httpClient.PutAsync($"program/api/Programs/{createdProgram.Id}", JsonContent.Create(updatedProgramRequestData));
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Programs/{createdProgram.Id}"),
+                Content = JsonContent.Create(updatedProgramRequestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
             _context.Set(updatedProgramRequestData, "updated_program_request_data");
             _context.Set(response, "updated_program_response");
         }
@@ -207,13 +237,18 @@ namespace EndToEndTests.StepDefinitions
         [When(@"I make a Delete request in order to delete an existing program")]
         public async Task WhenIMakeADeleteRequestInOrderToDeleeteAnExistingProgram()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
             var createdProgram = _context.Get<ProgramDto>("created_program_response_data");
 
-            var response = await httpClient.DeleteAsync($"program/api/Programs/{createdProgram.Id}");
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Programs/{createdProgram.Id}"),
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
             _context.Set(response, "deleted_program_response");
         }
 
@@ -231,13 +266,18 @@ namespace EndToEndTests.StepDefinitions
         [When(@"I make a Get by id request in order to get an existing program")]
         public async Task WhenIMakeAGetByIdRequestInOrderToGetAnExistingProgram()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
             var createdProgram = _context.Get<ProgramDto>("created_program_response_data");
 
-            var response = await httpClient.GetAsync($"program/api/Programs/{createdProgram.Id}");
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Programs/{createdProgram.Id}"),
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
             _context.Set(response, "get_by_id_program_response");
         }
 
@@ -255,6 +295,15 @@ namespace EndToEndTests.StepDefinitions
             Assert.IsNotNull(responseData.Id);
             Assert.IsNotNull(responseData.Name);
             _context.Set(responseData.Id, "program_id");
+        }
+
+        private HttpClient GetHttpClient()
+        {
+            HttpClientHandler clientHandler = new()
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            };
+            return new HttpClient(clientHandler);
         }
     }
 }

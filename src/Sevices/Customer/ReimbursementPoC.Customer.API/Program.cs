@@ -29,7 +29,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 

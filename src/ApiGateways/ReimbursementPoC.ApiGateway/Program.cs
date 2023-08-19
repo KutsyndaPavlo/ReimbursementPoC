@@ -65,7 +65,7 @@ app.UseMiddleware<UpdateConfigMiddleware>(builder.Configuration);
 
 app.UseSwagger();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseCors(config =>
 {
     config.AllowAnyOrigin();

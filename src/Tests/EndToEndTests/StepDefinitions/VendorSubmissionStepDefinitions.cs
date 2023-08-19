@@ -18,12 +18,19 @@ namespace EndToEndTests.StepDefinitions
         public Guid VendorId { get; set; }
 
         public Guid ServiceId { get; set; }
+
+        public string Description { get; set; }
+
+        public string VendorName { get; set; }
+
+        public string ServiceFullName { get; set; }
     }
 
     [Binding]
     public class vendorSubmissiontepDefinitions
     {
         private readonly ScenarioContext _context;
+        private readonly TokenProvider _tokenProvider = new TokenProvider();
 
         public vendorSubmissiontepDefinitions(ScenarioContext context)
         {
@@ -33,7 +40,7 @@ namespace EndToEndTests.StepDefinitions
         [Given(@"I am a client")]
         public async Task GivenIAmAClient()
         {
-            
+
         }
 
         [Then(@"service  was deleted1")]
@@ -41,21 +48,24 @@ namespace EndToEndTests.StepDefinitions
         {
             var id = _context.Get<Guid>("service_id");
 
-            using var httpClient = new HttpClient
+            using var httpClient = GetHttpClient();
+
+            var httpRequestMessage = new HttpRequestMessage()
             {
-                BaseAddress = new Uri("https://localhost:7120")
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/services/{id}")
             };
 
-            var response = await httpClient.DeleteAsync($"program/api/services/{id}");
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
         }
 
         [Given(@"service  was created1")]
         public async Task GivenServiceWasCreated()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
+
             var requestData = new CreateServiceRequest
             {
                 Name = "Service" + Guid.NewGuid(),
@@ -63,29 +73,54 @@ namespace EndToEndTests.StepDefinitions
                 ProgramId = _context.Get<Guid>("program_id")
             };
 
-            var response = await httpClient.PostAsync("Program/api/Services", JsonContent.Create(requestData));
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Services"),
+                Content = JsonContent.Create(requestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
             _context.Set(requestData, "created_service_request_data");
             _context.Set(response, "created_service_response");
             var data = JsonConvert.DeserializeObject<ServiceDto>(await response.Content.ReadAsStringAsync());
             _context.Set(data, "created_service_response_data");
             _context.Set(data.Id, "service_id");
             _context.Set(data.Id, "created_service_id");
+            _context.Set(data.Name, "service_name");
+            _context.Set(data.Name, "created_service_name");
         }
 
         [When(@"I make a POST request in order to create a vendorSubmission")]
         public async Task WhenIMakeAPOSTRequestInOrderToCreateAvendorSubmission()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
+
             var requestData = new CreatevendorSubmissionRequest
             {
                 VendorId = Guid.NewGuid(),
-                ServiceId = _context.Get<Guid>("created_service_id")
+                ServiceId = _context.Get<Guid>("created_service_id"),
+                Description = "",
+                ServiceFullName = _context.Get<string>("created_service_name"),
+                VendorName = "Bob"
             };
 
-            var response = await httpClient.PostAsync("vendor/api/vendorSubmissions", JsonContent.Create(requestData));
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/vendor/api/vendorSubmissions"),
+                Content = JsonContent.Create(requestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetVendorTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
+            var eee = await response.Content.ReadAsStringAsync();
+
             var data = JsonConvert.DeserializeObject<vendorSubmissionDto>(await response.Content.ReadAsStringAsync());
 
             _context.Set(requestData, "created_vendorSubmission_request_data");
@@ -94,17 +129,22 @@ namespace EndToEndTests.StepDefinitions
             _context.Set(data.Id, "created_vendorSubmission_id");
         }
 
-        [Then(@"vendorSubmission was deleted")]
-        public async Task ThenvendorSubmissionWasDeleted()
+        [Then(@"vendorSubmission was canceled")]
+        public async Task ThenvendorSubmissionWasCanceled()
         {
             var id = _context.Get<Guid>("vendorSubmission_id");
 
-            using var httpClient = new HttpClient
+            using var httpClient = GetHttpClient();
+
+            var httpRequestMessage = new HttpRequestMessage()
             {
-                BaseAddress = new Uri("https://localhost:7120")
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/vendor/api/vendorSubmissions/{id}/cancel")
             };
 
-            var response = await httpClient.DeleteAsync($"vendor/api/vendorSubmissions/{id}");
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetVendorTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
         }
 
         [Then(@"the response status code is '([^']*)' and the vendorSubmission response data are valid")]
@@ -129,17 +169,28 @@ namespace EndToEndTests.StepDefinitions
         [Given(@"vendorSubmission was created")]
         public async Task GivenvendorSubmissionWasCreated()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
+            using var httpClient = GetHttpClient();
+
             var requestData = new CreatevendorSubmissionRequest
             {
                 VendorId = Guid.NewGuid(),
-                ServiceId = _context.Get<Guid>("service_id")
+                ServiceId = _context.Get<Guid>("service_id"),
+                Description = "",
+                ServiceFullName = _context.Get<string>("service_name"),
+                VendorName = "Bob"
             };
 
-            var response = await httpClient.PostAsync("vendor/api/vendorSubmissions", JsonContent.Create(requestData));
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/vendor/api/vendorSubmissions"),
+                Content = JsonContent.Create(requestData)
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetVendorTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+
             _context.Set(requestData, "created_vendorSubmission_request_data");
             _context.Set(response, "created_vendorSubmission_response");
             var data = JsonConvert.DeserializeObject<vendorSubmissionDto>(await response.Content.ReadAsStringAsync());
@@ -147,23 +198,28 @@ namespace EndToEndTests.StepDefinitions
             _context.Set(data.Id, "vendorSubmission_id");
         }
 
-        [When(@"I make a Delete request in order to delete an existing vendorSubmission")]
-        public async Task WhenIMakeADeleteRequestInOrderToDeleteAnExistingvendorSubmission()
+        [When(@"I make a Cancel request in order to cancel an existing vendorSubmission")]
+        public async Task WhenIMakeACancelRequestInOrderToCancelAnExistingvendorSubmission()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
             var createdvendorSubmission = _context.Get<vendorSubmissionDto>("created_vendorSubmission_response_data");
+            using var httpClient = GetHttpClient();
 
-            var response = await httpClient.DeleteAsync($"vendor/api/vendorSubmissions/{createdvendorSubmission.Id}");
-            _context.Set(response, "deleted_vendorSubmission_response");
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/vendor/api/vendorSubmissions/{createdvendorSubmission.Id}/cancel")
+            };
+
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetVendorTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
+            _context.Set(response, "canceled_vendorSubmission_response");
         }
 
-        [Then(@"the response status code of delete  is '([^']*)' and the vendorSubmission response data are valid")]
-        public void ThenTheResponseStatusCodeOfDeleteIsAndTheResponseDataAreValid(int statusCode)
+        [Then(@"the response status code of cancel  is '([^']*)' and the vendorSubmission response data are valid")]
+        public void ThenTheResponseStatusCodeOfCancelIsAndTheResponseDataAreValid(int statusCode)
         {
-            var response = _context.Get<HttpResponseMessage>("deleted_vendorSubmission_response");
+            var response = _context.Get<HttpResponseMessage>("canceled_vendorSubmission_response");
 
             if ((int)response.StatusCode != statusCode)
             {
@@ -174,13 +230,17 @@ namespace EndToEndTests.StepDefinitions
         [When(@"I make a Get by id request in order to get an existing vendorSubmission")]
         public async Task WhenIMakeAGetByIdRequestInOrderToGetAnExistingvendorSubmission()
         {
-            using var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7120")
-            };
             var createdvendorSubmission = _context.Get<vendorSubmissionDto>("created_vendorSubmission_response_data");
+            using var httpClient = GetHttpClient();
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/vendor/api/vendorSubmissions/{createdvendorSubmission.Id}")
+            };
 
-            var response = await httpClient.GetAsync($"vendor/api/vendorSubmissions/{createdvendorSubmission.Id}");
+            httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetVendorTokenAsync());
+
+            var response = await httpClient.SendAsync(httpRequestMessage);
             _context.Set(response, "get_by_id_vendorSubmission_response");
         }
 
@@ -196,7 +256,7 @@ namespace EndToEndTests.StepDefinitions
 
             var responseData = JsonConvert.DeserializeObject<vendorSubmissionDto>(await response.Content.ReadAsStringAsync());
             Assert.IsNotNull(responseData.Id);
-           // Assert.IsNotNull(responseData.Name);
+            // Assert.IsNotNull(responseData.Name);
             _context.Set(responseData.Id, "vendorSubmission_id");
         }
 
@@ -212,8 +272,17 @@ namespace EndToEndTests.StepDefinitions
 
             var responseData = JsonConvert.DeserializeObject<vendorSubmissionDto>(await response.Content.ReadAsStringAsync());
             Assert.IsNotNull(responseData.Id);
-           // Assert.IsNotNull(responseData.Name);
+            // Assert.IsNotNull(responseData.Name);
             _context.Set(responseData.Id, "vendorSubmission_id");
+        }
+
+        private HttpClient GetHttpClient()
+        {
+            HttpClientHandler clientHandler = new()
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
+            };
+            return new HttpClient(clientHandler);
         }
     }
 }

@@ -84,10 +84,10 @@ namespace ReimbursementPoC.Customer.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> GetByCustomerIdAsync([FromRoute] Guid customerId, [FromQuery] int offset = 0, [FromQuery] int limit = 50)
         {
-            if (customerId != GetCustomerId())
-            {
-                return Forbid();
-            }
+            //if (customerId != GetCustomerId())
+            //{
+            //    return Forbid();
+            //}
 
             var query = new GetCustomerSubmissionsByCustomerIdQuery(customerId, offset, limit);
             var result = await _mediator.Send(query);
@@ -130,10 +130,10 @@ namespace ReimbursementPoC.Customer.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> PostAsync([FromBody] CreateCustomerSubmissionRequest request)
         {
-            if (request.CustomerId != GetCustomerId())
-            {
-                return Forbid();
-            }
+            //if (request.CustomerId != GetCustomerId())
+            //{
+            //    return Forbid();
+            //}
 
             var result = await _mediator.Send(_mapper.Map<CreateCustomerSubmissionCommand>(request));
 

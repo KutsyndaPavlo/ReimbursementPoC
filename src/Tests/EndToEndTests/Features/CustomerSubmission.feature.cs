@@ -104,10 +104,10 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Given("program  was created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 9
- testRunner.Given("service  was created1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("service  was created2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 10
- testRunner.Given("vendorSubmision was created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("vendorSubmision was created2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 11
  testRunner.When("I make a POST request in order to create a customerSubmission", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -117,13 +117,13 @@ this.ScenarioInitialize(scenarioInfo);
                         "lid", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 13
-    testRunner.Then("customerSubmission was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.Then("customerSubmission was canceled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 14
- testRunner.Then("vendorSubmision was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("vendorSubmision was canceled2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 15
- testRunner.Then("service  was deleted1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("service  was deleted2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 16
  testRunner.Then("program was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -133,12 +133,12 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("Delete a customerSubmission")]
-        public virtual void DeleteACustomerSubmission()
+        [NUnit.Framework.DescriptionAttribute("Cancel a customerSubmission")]
+        public virtual void CancelACustomerSubmission()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Delete a customerSubmission", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Cancel a customerSubmission", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
 #line 18
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -163,26 +163,26 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Given("program  was created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 21
- testRunner.Given("service  was created1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("service  was created2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 22
- testRunner.Given("vendorSubmision was created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("vendorSubmision was created2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 23
  testRunner.Given("customerSubmission was created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 24
- testRunner.When("I make a Delete request in order to delete an existing customerSubmission", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I make a Cancel request in order to cancel an existing customerSubmission", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 25
-    testRunner.Then("the response status code of delete  is \'204\' and the customerSubmission response " +
+    testRunner.Then("the response status code of cancel  is \'200\' and the customerSubmission response " +
                         "data are valid", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 26
- testRunner.Then("vendorSubmision was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("vendorSubmision was canceled2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 27
- testRunner.Then("service  was deleted1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("service  was deleted2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 28
  testRunner.Then("program was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -222,10 +222,10 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Given("program  was created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 33
- testRunner.Given("service  was created1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("service  was created2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 34
- testRunner.Given("vendorSubmision was created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("vendorSubmision was created2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 35
  testRunner.Given("customerSubmission was created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
@@ -235,16 +235,16 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 37
     testRunner.Then("the response status code of get is \'200\' and the get customerSubmission by id res" +
-                        "ponse data are valid", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                        "ponse data are valid2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 38
- testRunner.Then("customerSubmission was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("customerSubmission was canceled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 39
- testRunner.Then("vendorSubmision was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("vendorSubmision was canceled2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 40
- testRunner.Then("service  was deleted1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("service  was deleted2", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 41
  testRunner.Then("program was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");

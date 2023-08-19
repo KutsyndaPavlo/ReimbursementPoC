@@ -114,7 +114,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "d", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 12
-    testRunner.Then("vendorSubmission was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+    testRunner.Then("vendorSubmission was canceled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 13
  testRunner.Then("service  was deleted1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
@@ -163,10 +163,10 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Given("vendorSubmission was created", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 21
- testRunner.When("I make a Delete request in order to delete an existing vendorSubmission", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I make a Cancel request in order to cancel an existing vendorSubmission", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 22
-    testRunner.Then("the response status code of delete  is \'204\' and the vendorSubmission response da" +
+    testRunner.Then("the response status code of cancel  is \'200\' and the vendorSubmission response da" +
                         "ta are valid", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 23
@@ -223,7 +223,7 @@ this.ScenarioInitialize(scenarioInfo);
                         "nse data are valid", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 33
- testRunner.Then("vendorSubmission was deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+ testRunner.Then("vendorSubmission was canceled", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 34
  testRunner.Then("service  was deleted1", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");

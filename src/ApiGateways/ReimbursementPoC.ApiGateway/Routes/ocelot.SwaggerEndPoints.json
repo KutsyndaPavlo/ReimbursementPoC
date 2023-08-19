@@ -7,7 +7,7 @@
         {
           "Name": "Customer.API",
           "Version": "1.0",
-          "Url": "https://localhost:7120/customer/swagger/v1/swagger.json"
+          "Url": "https://localhost:8504/customer/swagger/v1/swagger.json"
         }
       ]
     },
@@ -18,7 +18,7 @@
         {
           "Name": "Vendor.API",
           "Version": "1.0",
-          "Url": "https://localhost:7120/vendor/swagger/v1/swagger.json"
+          "Url": "https://localhost:8504/vendor/swagger/v1/swagger.json"
         }
       ]
     },
@@ -29,7 +29,7 @@
         {
           "Name": "Administration.API",
           "Version": "1.0",
-          "Url": "https://localhost:7120/administration/swagger/v1/swagger.json"
+          "Url": "https://localhost:8504/administration/swagger/v1/swagger.json"
         }
       ]
     }

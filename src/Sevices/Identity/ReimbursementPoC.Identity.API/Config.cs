@@ -3,6 +3,7 @@
 
 
 using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 using System.Collections.Generic;
 using static System.Net.WebRequestMethods;
@@ -46,9 +47,48 @@ namespace ReimbursementPoC.Identity.API
                     PostLogoutRedirectUris = { $"{url}/" },
                     Enabled = true
                 },
+
+                    //new Client
+                    //{
+                    //    ClientId = "oidcMVCApp",
+                    //    ClientName = "Sample ASP.NET Core MVC Web App",
+                    //    ClientSecrets = new List<Secret> { new Secret("ProCodeGuide".Sha256()) },
+
+                    //    AllowedGrantTypes = GrantTypes.Code,
+                    //    RedirectUris = new List<string> { $"https://{url}/signin-oidc" },
+                    //    AllowedScopes = new List<string>
+                    //    {
+                    //        IdentityServerConstants.StandardScopes.OpenId,
+                    //        IdentityServerConstants.StandardScopes.Profile,
+                    //        IdentityServerConstants.StandardScopes.Email,
+                    //        "apiscope"
+                    //    },
+
+                    //    RequirePkce = true,
+                    //    AllowPlainTextPkce = false
+                    //},
+                new Client
+                    {
+                        // Don't use RPO if you can prevent it. We use it here
+                        // because it's the easiest way to demo with users.
+                        ClientId = "legacy-rpo",
+                        AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                        AllowAccessTokensViaBrowser = false,
+                        RequireClientSecret = false,
+                        AllowedScopes = {  "openid", "profile", "email", "apiscope"},
+
+                    },
+                    //new Client
+                    //{
+                    //    ClientId = "weatherApi",
+                    //    ClientName = "ASP.NET Core Weather Api",
+                    //    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    //    ClientSecrets = new List<Secret> { new Secret("ProCodeGuide".Sha256()) },
+                    //    AllowedScopes = new List<string> {  "openid", "profile", "email", "apiscope" }
+                    //},
             };
 
         }
-            
+
     }
 }

@@ -11,7 +11,7 @@
         //"ConnectionStrings__Db": "***",
         //"EventBus__SubscriptionClientName": "ri-event-bus-sc2"
       },
-      "applicationUrl": "http://localhost:5139",
+      "applicationUrl": "http://localhost:8502",
       "dotnetRunMessages": true
     },
     //"Docker": {
