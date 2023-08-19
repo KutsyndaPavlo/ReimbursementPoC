@@ -1,0 +1,139 @@
+version: '3.4'
+
+services:
+
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:2019-latest 
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+      
+  identity.api:
+    image: ${DOCKER_REGISTRY:-ri}/identity
+    build:
+         context: .
+         dockerfile: Sevices/Identity/ReimbursementPoC.Identity.API/Dockerfile
+    environment:
+         - ASPNETCORE_ENVIRONMENT=Development
+         - ASPNETCORE_URLS=https://+:443
+         - ConnectionStrings__DefaultConnection=Server=sqldata;Database=iden;User Id=sa;Password=Pass@word
+         - UiUrl=https://ui
+    ports:
+         - "8500:443"
+         # - "8600:80"
+    volumes:
+      # - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+         - sqldata
+
+  administration.api:
+    image: ${DOCKER_REGISTRY:-ri}/administration
+    build:
+      context: .
+      dockerfile: Sevices/Administration/ReimbursementPoC.Administration.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionStrings__Db=Server=sqldata;Database=administration;User Id=sa;Password=Pass@word
+      - ConnectionStrings__EventBus=Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0=
+      - EventBus__SubscriptionClientName=ri-event-bus-sc2
+    ports:
+      - "8501:80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - sqldata
+      
+  customer.api:
+      image: ${DOCKER_REGISTRY:-ri}/customer
+      build:
+        context: .
+        dockerfile: Sevices/Customer/ReimbursementPoC.Customer.API/Dockerfile
+      environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://0.0.0.0:80
+       - ConnectionStrings__Db=Server=sqldata;Database=customer;User Id=sa;Password=Pass@word
+       - ConnectionStrings__EventBus=Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0=
+       - EventBus__SubscriptionClientName=ri-event-bus-sc2
+      ports:
+        - "8502:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      depends_on:
+        - sqldata
+      
+  vendor.api:
+      image: ${DOCKER_REGISTRY:-ri}/vendor
+      build:
+        context: .
+        dockerfile: Sevices/Vendor/ReimbursementPoC.Vendor.API/Dockerfile
+      environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://0.0.0.0:80
+       - ConnectionStrings__Db=Server=sqldata;Database=vendor;User Id=sa;Password=Pass@word
+       - ConnectionStrings__EventBus=Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0=
+       - EventBus__SubscriptionClientName=ri-event-bus-sc2
+      ports:
+        - "8503:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      depends_on:
+        - sqldata
+      
+  apigateway:
+      image: ${DOCKER_REGISTRY:-ri}/api-gateway
+      build:
+        context: .
+        dockerfile: ApiGateways/ReimbursementPoC.ApiGateway/Dockerfile
+      depends_on:
+        - administration.api
+        - customer.api
+        - vendor.api
+        - identity.api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=https://+:443
+        # - GlobalConfiguration__BaseUrl=https://apigateway
+        - GlobalConfiguration__Hosts__AdministrationAPI=http://administration.api
+        - GlobalConfiguration__Hosts__VendorAPI=http://vendor.api
+        - GlobalConfiguration__Hosts__CustomerAPI=http://customer.api
+        # - BaseUrl=https://apigateway
+        - IdentityAPI=https://identity.api
+      ports:
+        - "8504:443"
+        # - "8604:80"
+      volumes:
+         - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+         - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro    
+         
+  ui:
+      image: ${DOCKER_REGISTRY:-ri}/ui
+      build:
+        context: .
+        dockerfile: UI/ReimbursementPoC.Blazor.UI/Dockerfile
+      depends_on:
+        - apigateway
+        - identity.api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=https://+:443
+        - oidc__Authority=https://identity.api
+        - GatewayApi=https://apigateway
+      ports:
+        - "8505:443"
+        # - "8605:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro    
+       
+volumes:
+  sqldata:
+    external: false
