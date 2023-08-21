@@ -42,6 +42,13 @@ builder.Services.AddAuthentication()
                 });
 
 var app = builder.Build();
+app.UseCors(config =>
+{
+    config.AllowAnyOrigin();
+    config.AllowAnyMethod();
+    config.AllowAnyHeader();
+});
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

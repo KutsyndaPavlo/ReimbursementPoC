@@ -21,13 +21,14 @@ services:
          - ASPNETCORE_ENVIRONMENT=Development
          - ASPNETCORE_URLS=https://+:443
          - ConnectionStrings__DefaultConnection=Server=sqldata;Database=iden;User Id=sa;Password=Pass@word
-         - UiUrl=https://ui
+         - UiUrl=http://localhost:8505
+         - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+         - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     ports:
          - "8500:443"
          # - "8600:80"
     volumes:
-      # - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+       - ~/.aspnet/https:/https:ro  
     depends_on:
          - sqldata
 
@@ -107,13 +108,13 @@ services:
         - GlobalConfiguration__Hosts__CustomerAPI=http://customer.api
         # - BaseUrl=https://apigateway
         - IdentityAPI=https://identity.api
+        - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+        - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
       ports:
-        - "8504:443"
-        # - "8604:80"
+          - "8504:443"
       volumes:
-         - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-         - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro    
-         
+       - ~/.aspnet/https:/https:ro  
+          
   ui:
       image: ${DOCKER_REGISTRY:-ri}/ui
       build:
