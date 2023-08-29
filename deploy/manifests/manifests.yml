@@ -20,7 +20,7 @@ spec:
         - name: ASPNETCORE_ENVIRONMENT
           value: "QA"
         - name: ASPNETCORE_URLS
-          value: "https://0.0.0.0:443"
+          value: "http://0.0.0.0:80"
         - name: GlobalConfiguration__Hosts__AdministrationAPI
           value: "http://administration"
         - name: GlobalConfiguration__Hosts__VendorAPI
@@ -33,7 +33,7 @@ spec:
           value: "https://ri-identity-api627w7ovra6cy4.azurewebsites.net"
         name: apigateway
         ports:
-         - containerPort: 443
+         - containerPort: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -132,7 +132,7 @@ spec:
     type: LoadBalancer
     ports:
     - port: 443
-      targetPort: 443
+      targetPort: 80
       protocol: TCP
     selector:
         name: apigateway
