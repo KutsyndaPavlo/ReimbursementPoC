@@ -9,7 +9,7 @@
 
         public static string GetApiGatewayUrl()
         {
-            return "http://52.226.248.226";// "https://localhost:8504";
+            return "http://52.224.186.68";// "https://localhost:8504";
         }
     }
 }

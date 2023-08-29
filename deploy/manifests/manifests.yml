@@ -28,7 +28,7 @@ spec:
         - name: GlobalConfiguration__Hosts__CustomerAPI
           value: "http://customer"
         - name: GlobalConfiguration__BaseUrl
-          value: "http://apigateway"
+          value: "http://52.224.186.68"
         - name: IdentityAPI
           value: "https://ri-identity-api627w7ovra6cy4.azurewebsites.net"
         name: apigateway
