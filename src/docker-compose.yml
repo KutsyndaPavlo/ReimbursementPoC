@@ -124,10 +124,8 @@ services:
         - apigateway
         - identity.api
       environment:
-        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_ENVIRONMENT=development
         - ASPNETCORE_URLS=https://+:443
-        - oidc__Authority=https://identity.api
-        - GatewayApi=https://apigateway
       ports:
         - "8505:443"
         # - "8605:80"

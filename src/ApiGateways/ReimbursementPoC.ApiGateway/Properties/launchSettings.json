@@ -11,7 +11,6 @@
         "GlobalConfiguration__Hosts__AdministrationAPI": "http://localhost:8501",
         "GlobalConfiguration__Hosts__VendorAPI": "http://localhost:8503",
         "GlobalConfiguration__Hosts__CustomerAPI": "http://localhost:8502",
-        "BaseUrl": "https://localhost:8504",
         "IdentityAPI": "https://localhost:8500"
       },
       "applicationUrl": "https://localhost:8504",
