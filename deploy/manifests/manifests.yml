@@ -59,7 +59,7 @@ spec:
           - name: ASPNETCORE_URLS
             value: "http://0.0.0.0:80"
           - name: ConnectionStrings__Db
-            value: "Server=tcp:reimbursementpocsql-627w7ovra6cy4.database.windows.net,1433;Initial Catalog=administrationdb;Persist Security Info=False;User ID=riadmin;Password=ri@admin78@9#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+            value: "Server=tcp:reimbursementpocsql-627w7ovra6cy4.database.windows.net,1433;Initial Catalog=administrationdb2;Persist Security Info=False;User ID=riadmin;Password=ri@admin78@9#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
           name: administration
           ports:
             - containerPort: 80
