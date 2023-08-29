@@ -58,6 +58,8 @@ spec:
             value: "QA"
           - name: ASPNETCORE_URLS
             value: "http://0.0.0.0:80"
+          - name: ConnectionStrings__EventBus
+            value: "Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0="
           - name: ConnectionStrings__Db
             value: "Server=tcp:reimbursementpocsql-627w7ovra6cy4.database.windows.net,1433;Initial Catalog=administrationdb2;Persist Security Info=False;User ID=riadmin;Password=ri@admin78@9#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
           name: administration
@@ -87,6 +89,8 @@ spec:
             value: "QA"
           - name: ASPNETCORE_URLS
             value: "http://0.0.0.0:80"
+          - name: ConnectionStrings__EventBus
+            value: "Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0="
           - name: ConnectionStrings__Db
             value: "Server=tcp:reimbursementpocsql-627w7ovra6cy4.database.windows.net,1433;Initial Catalog=customerdb;Persist Security Info=False;User ID=riadmin;Password=ri@admin78@9#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
           name: customer
@@ -116,6 +120,8 @@ spec:
             value: "QA"
           - name: ASPNETCORE_URLS
             value: "http://0.0.0.0:80"
+          - name: ConnectionStrings__EventBus
+            value: "Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0="
           - name: ConnectionStrings__Db
             value: "Server=tcp:reimbursementpocsql-627w7ovra6cy4.database.windows.net,1433;Initial Catalog=vendordb;Persist Security Info=False;User ID=riadmin;Password=ri@admin78@9#;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
           name: vendor
