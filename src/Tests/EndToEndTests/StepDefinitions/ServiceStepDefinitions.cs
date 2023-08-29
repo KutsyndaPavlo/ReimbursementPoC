@@ -77,6 +77,7 @@ namespace EndToEndTests.StepDefinitions
             httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
 
             var response = await httpClient.SendAsync(httpRequestMessage);
+            var message = await response.Content.ReadAsStringAsync();
 
             var data = JsonConvert.DeserializeObject<ProgramDto>(await response.Content.ReadAsStringAsync());
             _context.Set(requestData, "created_program_request_data");

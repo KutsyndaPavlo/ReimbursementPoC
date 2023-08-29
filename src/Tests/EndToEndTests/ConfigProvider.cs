@@ -4,12 +4,12 @@
     {
         public static string GetIdentityApiUrl()
         {
-            return "https://localhost:8500";
+            return "https://ri-identity-api627w7ovra6cy4.azurewebsites.net";// "https://localhost:8500";
         }
 
         public static string GetApiGatewayUrl()
         {
-            return "https://localhost:8504";
+            return "http://52.226.248.226";// "https://localhost:8504";
         }
     }
 }

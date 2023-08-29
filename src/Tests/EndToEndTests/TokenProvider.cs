@@ -30,6 +30,10 @@ namespace EndToEndTests
                 new KeyValuePair<string, string>("username", "alice"),
             }));
 
+
+
+            var rr = await response.Content.ReadAsStringAsync();
+
             var respData = JsonConvert.DeserializeObject<TokenResponse>(await response.Content.ReadAsStringAsync());
             return respData.AccessToken;
         }
@@ -52,6 +56,8 @@ namespace EndToEndTests
                 new KeyValuePair<string, string>("password", "Pass123$"),
                 new KeyValuePair<string, string>("username", "bob"),
             }));
+
+            var rr = await response.Content.ReadAsStringAsync();
 
             var respData = JsonConvert.DeserializeObject<TokenResponse>(await response.Content.ReadAsStringAsync());
             return respData.AccessToken;
@@ -76,6 +82,8 @@ namespace EndToEndTests
                 new KeyValuePair<string, string>("username", "tom"),
             }));
 
+
+            var rr = await response.Content.ReadAsStringAsync();
             var respData = JsonConvert.DeserializeObject<TokenResponse>(await response.Content.ReadAsStringAsync());
             return respData.AccessToken;
         }
