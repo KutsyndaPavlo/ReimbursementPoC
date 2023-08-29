@@ -10,6 +10,9 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+Console.WriteLine($"HostEnvironment: {builder.HostEnvironment}");
+Console.WriteLine($"GatewayApi: {builder.Configuration.GetSection("GatewayApi").Value}");
+
 builder.Services.AddHttpClient("api", client =>
                 {
                     client.BaseAddress = new Uri(builder.Configuration.GetSection("GatewayApi").Value);
