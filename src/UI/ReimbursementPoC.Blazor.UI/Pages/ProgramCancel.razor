@@ -1,0 +1,98 @@
+﻿@page "/program/{programId}/cancel"
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize(Roles = "admin")]
+<h2>Cancel Program</h2>
+<br />
+
+<AuthorizeView>
+    <Authorized>
+        @if (!string.IsNullOrWhiteSpace(Notification))
+        {
+            <div class="col-md-4 text-success">
+                @Notification
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Error))
+        {
+            <div class="col-md-4 text-danger">
+                @Error
+            </div>
+        }
+
+        <div class="form-group">
+            <h4>Do you want to cancel this Program?</h4>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Name</td>
+                        <td>@program.Name</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>@program.Description</td>
+                    </tr>
+                    <tr>
+                        <td>State</td>
+                        <td>@program.State</td>
+                    </tr>
+                    <tr>
+                        <td>Start Date</td>
+                        <td>@program.StartDate</td>
+                    </tr>
+                    <tr>
+                        <td>End Date</td>
+                        <td>@program.EndDate</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Confirm" @onclick="(async () => await CancelProgram(program.Id))" class="btn btn-danger" />
+            <input type="submit" value="Return" @onclick="(() => Cancel())" class="btn btn-warning" />
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public string programId { get; set; }
+    public string Notification { get; set; }
+    public string Error { get; set; }
+    ProgramDto program = new ProgramDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        program = await Http.GetFromJsonAsync<ProgramDto>("/administration/api/programs/" + programId);
+    }
+
+    protected async Task CancelProgram(Guid id)
+    {
+        var result = await Http.PutAsJsonAsync("/administration/api/programs/" + id + "/cancel", program);
+        if (result.IsSuccessStatusCode)
+        {
+            Error = "";
+            Notification = "Program was succesfully canceled";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/program/list");
+            });
+        }
+        else
+        {
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
+        }
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/program/list");
+    }
+}
