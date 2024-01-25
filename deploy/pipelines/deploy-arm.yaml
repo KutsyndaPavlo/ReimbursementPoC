@@ -22,4 +22,4 @@ steps:
     subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
     resourceGroupName: {{ parameters.resourceGroupName }}
     location: 'Australia Central 2'
-    csmFile: deploy/template/rg.json
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/rg.json'
