@@ -103,7 +103,7 @@ steps:
     azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     scriptType: bash
     scriptLocation: inlineScript
-    inlineScript: 'az acr create --resource-group reimbursement-poc-rg --name reimbursementpoccontainerregistry --sku Basic'
+    inlineScript: 'az acr create --resource-group ri-poc-rg --name reimbursementpoccontainerregistry --sku Basic'
     
 # - task: AzureCLI@2
   # displayName: 'K8S'
