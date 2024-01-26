@@ -1,0 +1,128 @@
+parameters:
+- name: resourceGroupName
+  type: string
+  default: 'ri-poc-rg'
+pool:
+  name: Azure Pipelines
+steps:
+- task: AzureCLI@2
+  displayName: 'Resource group'
+  inputs:
+    azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: 'az group create --n ri-poc-rg -l eastus'
+
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: App service - Idenytity API'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
+    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+    resourceGroupName: 'ri-poc-rg'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-identity-api.parameters.json'   
+    deploymentMode: 'Incremental'
+
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: App service - UI'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
+    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+    resourceGroupName: 'ri-poc-rg'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-ui.parameters.json'   
+    deploymentMode: 'Incremental'
+    
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: Cosmos Db'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
+    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+    resourceGroupName: 'ri-poc-rg'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploycosmos.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploycosmos.parameters.json'   
+    deploymentMode: 'Incremental'
+    
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: Storage'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
+    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+    resourceGroupName: 'ri-poc-rg'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploystorage.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploystorage.parameters.json'   
+    deploymentMode: 'Incremental'
+    
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: Redis'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
+    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+    resourceGroupName: 'ri-poc-rg'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/redisdeploy.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/redisdeploy.parameters.json'   
+    deploymentMode: 'Incremental'
+    
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: Service bus'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
+    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+    resourceGroupName: 'ri-poc-rg'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sbusdeploy.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sbusdeploy.parameters.json'   
+    deploymentMode: 'Incremental'
+    
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: MS SQL'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
+    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+    resourceGroupName: 'ri-poc-rg'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'   
+    deploymentMode: 'Incremental'
+    
+- task: AzureCLI@2
+  displayName: 'Container registry'
+  inputs:
+    azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: 'az acr create --resource-group reimbursement-poc-rg --name reimbursementpoccontainerregistry --sku Basic'
+    
+- task: AzureCLI@2
+  displayName: 'K8S'
+  inputs:
+    azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: 'az aks create --resource-group reimbursement-poc-rg --name reimbursement-poc --node-count 1 --enable-addons monitoring --generate-ssh-keys  --node-vm-size Standard_B2s'
