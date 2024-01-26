@@ -22,5 +22,5 @@ steps:
     resourceGroupName: '{{ parameters.resourceGroupName }}'
     location: 'eastus2'
     templateLocation: 'Linked artifact'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/rg.json'    
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/vnet.json'    
     deploymentMode: 'Incremental'
