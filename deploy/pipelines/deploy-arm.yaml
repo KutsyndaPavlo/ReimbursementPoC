@@ -9,7 +9,7 @@ steps:
   displayName: 'Resource group'
   inputs:
     azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
-    scriptType: batch
+    scriptType: bash
     scriptLocation: inlineScript
     inlineScript: 'az group create --n ri-poc-rg -l eastus'
 
