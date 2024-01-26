@@ -1,6 +1,6 @@
 parameters:
 - name: resourceGroupName
-  type: boolean
+  type: string
   default: 'ri-poc-rg'
 pool:
   name: Azure Pipelines
