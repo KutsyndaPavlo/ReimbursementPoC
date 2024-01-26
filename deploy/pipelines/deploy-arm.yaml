@@ -1,7 +1,4 @@
 parameters:
-  name: '' 
-  vmImage: ''
-  displayName: ''
   resourceGroupName: 'ri-poc-rg'
   
 pool:
@@ -18,8 +15,12 @@ steps:
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Resource Group scope'
   inputs:
+    deploymentScope: 'Resource Group'
     azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
     subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: {{ parameters.resourceGroupName }}
-    location: 'Australia Central 2'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/rg.json'
+    resourceGroupName: '{{ parameters.resourceGroupName }}'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/rg.json'    
+    deploymentMode: 'Incremental'
