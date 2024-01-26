@@ -13,8 +13,8 @@
     }
   },
   "variables": {
-    "catalogstorage": "[concat(parameters('catalogstorage'), '-', uniqueString(resourceGroup().id))]",
-    "endpointName": "[concat(parameters('endpointName'), '-', uniqueString(resourceGroup().id))]",
+    "catalogstorage": "[concat(parameters('catalogstorage'))]",
+    "endpointName": "[concat(parameters('endpointName'))]",
     "profileName": "[parameters('profileName')]"
   },
   "resources": [
