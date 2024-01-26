@@ -41,7 +41,7 @@
     }
   },
   "variables": {
-    "webSiteName": "[concat(parameters('appServiceName'), uniqueString(resourceGroup().id))]"
+    "webSiteName": "[concat(parameters('appServiceName'), '-', uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {

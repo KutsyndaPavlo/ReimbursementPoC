@@ -7,7 +7,7 @@
         }
     },
     "variables": {
-        "name": "[concat(parameters('name'), uniqueString(resourceGroup().id))]",
+        "name": "[concat(parameters('name'), '-', uniqueString(resourceGroup().id))]",
         "location":"[resourceGroup().location]"
     },
     "resources": [

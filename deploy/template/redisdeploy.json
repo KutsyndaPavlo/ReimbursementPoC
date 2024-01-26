@@ -11,7 +11,7 @@
     },
     "variables": {
         "location": "[resourceGroup().location]",
-        "namespaceprefix": "[concat(parameters('namespaceprefix'), uniqueString(resourceGroup().id))]",
+        "namespaceprefix": "[concat(parameters('namespaceprefix'), '-', uniqueString(resourceGroup().id))]",
         "sbVersion": "2016-04-01"
     },
     "resources": [
