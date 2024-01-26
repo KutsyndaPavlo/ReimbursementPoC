@@ -6,22 +6,23 @@ pool:
   name: Azure Pipelines
 steps:
 - task: AzureCLI@2
-  displayName: 'Azure CLI '
+  displayName: 'Resource group'
   inputs:
     azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     scriptType: batch
     scriptLocation: inlineScript
-    inlineScript: 'az group create --n {{ parameters.resourceGroupName }} -l eastus'
+    inlineScript: 'az group create --n ri-poc-rg -l eastus'
 
 - task: AzureResourceManagerTemplateDeployment@3
-  displayName: 'ARM Template deployment: Resource Group scope'
+  displayName: 'ARM Template deployment: App service'
   inputs:
     deploymentScope: 'Resource Group'
     azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     action: 'Create Or Update Resource Group'
     subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: '{{ parameters.resourceGroupName }}'
+    resourceGroupName: 'ri-poc-rg'
     location: 'eastus2'
     templateLocation: 'Linked artifact'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/vnet.json'    
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-identity-api.parameters.json'   
     deploymentMode: 'Incremental'
