@@ -14,8 +14,8 @@
   },
   "variables": {
     "sql_server_name": "[concat(parameters('sqlserver'), '-', uniqueString(resourceGroup().id))]",
-	"admin": "['admin']",
-	"adminpwd": "['adminpwd']"
+	"admin": "[parameters('admin')]",
+	"adminpwd": "[parameters('adminpwd')"
   },
   "resources": [
     {
