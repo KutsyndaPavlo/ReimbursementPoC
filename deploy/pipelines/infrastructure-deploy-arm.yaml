@@ -26,7 +26,7 @@ steps:
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'
     deploymentMode: 'Incremental'
-    overrideParameters: '-administratorLogin ri@admin7 -administratorLoginPassword riadmin789#Ue'
+    overrideParameters: '-administratorLogin $(administratorLogin) -administratorLoginPassword $(administratorLoginPassword)'
 
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: App service - Idenytity API'
