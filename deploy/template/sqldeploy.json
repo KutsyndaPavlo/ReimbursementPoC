@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "sql_server": {
-      "type": "object"
+      "type": "string"
     },
     "admin": {
       "type": "string"
@@ -13,7 +13,7 @@
     }
   },
   "variables": {
-    "sql_server_name": "[concat(parameters('sql_server').name, '-', uniqueString(resourceGroup().id))]",
+    "sql_server_name": "[concat(parameters('sql_server'), '-', uniqueString(resourceGroup().id))]",
     "admin": "[parameters('admin')]",
     "adminpwd": "[parameters('adminpwd')]"
   },
@@ -31,7 +31,7 @@
       "resources": [
         {
           "type": "databases",
-          "name": "[parameters('sql_server').dbs.vendor]",
+          "name": "['vendor']",
           "apiVersion": "2014-04-01-preview",
           "location": "[resourceGroup().location]",
           "properties": {
@@ -46,7 +46,7 @@
         },
         {
           "type": "databases",
-          "name": "[parameters('sql_server').dbs.customer]",
+          "name": "['customer']",
           "apiVersion": "2014-04-01-preview",
           "location": "[resourceGroup().location]",
           "properties": {
@@ -61,7 +61,7 @@
         },
         {
           "type": "databases",
-          "name": "[parameters('sql_server').dbs.administration]",
+          "name": "['administration']",
           "apiVersion": "2014-04-01-preview",
           "location": "[resourceGroup().location]",		  
           "properties": {
@@ -76,7 +76,7 @@
         }, 
 		{
           "type": "databases",
-          "name": "[parameters('sql_server').dbs.identity]",
+          "name": "['identity']",
           "apiVersion": "2014-04-01-preview",
           "location": "[resourceGroup().location]",
           "properties": {
