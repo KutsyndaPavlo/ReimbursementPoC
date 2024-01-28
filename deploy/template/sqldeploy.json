@@ -64,6 +64,11 @@
           "name": "[parameters('sql_server').dbs.administration]",
           "apiVersion": "2014-04-01-preview",
           "location": "[resourceGroup().location]",
+		  "sku": {
+                        "name": "['GP_Gen4']",
+                        "tier": "['GeneralPurpose']",
+                        "capacity": "['2']"
+                    },
           "properties": {
             "edition": "Standard",
             "collation": "SQL_Latin1_General_CP1_CI_AS",
