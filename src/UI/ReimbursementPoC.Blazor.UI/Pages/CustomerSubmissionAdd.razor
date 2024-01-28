@@ -1,0 +1,117 @@
+﻿@page "/customerSubmission/add"
+@using Microsoft.AspNetCore.Authorization;
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+@attribute [Authorize(Roles = "customer")]
+
+<h1>Add Customer Submission</h1>
+<hr />
+
+<AuthorizeView>
+    <Authorized>
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
+
+<EditForm Model="@customerSubmission" OnValidSubmit="SaveCustomerSubmission">
+    @* <DataAnnotationsValidator />*@
+    <div class="mb-3">
+        <label for="State" class="form-label">Vendor Submission</label>
+        <div class="col-md-4">
+            <InputSelect @bind-Value="customerSubmission.VendorSubmissionId">
+                <option value="">Select vendor submission ...</option>
+                @foreach (var item in vendorSubmissionsList)
+                {
+                    <option value="@item.Id">@item.VendorName - @item.ServiceFullName</option>
+                }
+            </InputSelect>
+        </div>
+        <ValidationMessage For="@(() => customerSubmission.VendorSubmissionId)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="State" class="form-label">Description</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="customerSubmission.Description" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+    </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public string customerSubmissionId { get; set; }
+
+    public string UserName = null;
+    public string Notification { get; set; }
+    public string Error { get; set; }
+
+    protected string Title = "Add";
+    protected CreateCustomerSubmissionRequest customerSubmission = new CreateCustomerSubmissionRequest();
+    protected List<VendorSubmissionDto> vendorSubmissionsList = new();
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        customerSubmission.CustomerId = Guid.Parse(authenticationState.User.Claims.FirstOrDefault(x => x.Type == "sub").Value);
+
+        await GetVendorSubmissions();
+    }
+
+    protected async Task GetVendorSubmissions()
+    {
+        var result = await Http.GetFromJsonAsync<PaginatedList<VendorSubmissionDto>>("/vendor/api/vendorsubmissions/active");
+        vendorSubmissionsList = result.Items.ToList();
+    }
+
+    protected async Task SaveCustomerSubmission()
+    {
+        var vs = vendorSubmissionsList.FirstOrDefault(x => x.Id == customerSubmission.VendorSubmissionId);
+        customerSubmission.ServiceFullName = vs?.ServiceFullName;
+        customerSubmission.VendorName = vs?.VendorName;
+
+        var result = await Http.PostAsJsonAsync("/customer/api/CustomerSubmissions", customerSubmission);
+
+        if (result.IsSuccessStatusCode)
+        {
+            Error = "";
+            Notification = "CustomerSubmission was succesfully created";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/customerSubmission/list");
+            });
+        }
+        else
+        {
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
+        }
+    }
+
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("/customerSubmission/list");
+    }
+}

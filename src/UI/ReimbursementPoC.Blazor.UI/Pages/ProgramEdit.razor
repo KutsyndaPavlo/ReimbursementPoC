@@ -1,0 +1,112 @@
+﻿@page "/program/{programId}/edit"
+@using Microsoft.AspNetCore.Authorization;
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "admin")]
+<h1>Edit Program</h1>
+<hr />
+
+<AuthorizeView>
+    <Authorized>
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@if (!string.IsNullOrWhiteSpace(Notification))
+{
+    <div class="col-md-4 text-success">
+        @Notification
+    </div>
+}
+@if (!string.IsNullOrWhiteSpace(Error))
+{
+    <div class="col-md-4 text-danger">
+        @Error
+    </div>
+}
+
+<EditForm Model="@program" OnValidSubmit="SaveProgram">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="Name" class="form-label">Name</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="program.Name" />
+        </div>
+        <ValidationMessage For="@(() => program.Name)" />
+    </div>
+    <div class="mb-3">
+        <label for="Description" class="form-label">Description</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="program.Description" />
+        </div>
+        <ValidationMessage For="@(() => program.Description)" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button class="btn btn-light" @onclick="Cancel">Cancel</button>
+    </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public string programId { get; set; }
+    public string Notification { get; set; }
+    public string Error { get; set; }
+    UpdateProgramRequest program = new UpdateProgramRequest();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Http.GetFromJsonAsync<ProgramDto>("/administration/api/programs/" + programId);
+
+        program.Id = result.Id;
+        program.Name = result.Name;
+        program.Description = result.Description;
+        program.StartDate = result.StartDate;
+        program.EndDate = result.EndDate;
+        program.LastModified = result.LastModified;
+        program.StateId = result.StateId;
+    }
+
+    //private int GetStateId(string name)
+    //{
+    //    // ToDo
+    //    if (name == "Alabama")
+    //    {
+    //        return 1;
+    //    }
+    //    else
+    //    {
+    //        return 2;
+    //    }
+    //}
+
+    protected async Task SaveProgram()
+    {
+        var result = await Http.PutAsJsonAsync("/administration/api/programs/" + program.Id, program);
+        
+        if (result.IsSuccessStatusCode)
+        {
+            Error = "";
+            Notification = "Program was succesfully updated";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo("/program/list");
+            });
+        }
+        else
+        {
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
+        }
+    }
+
+    public void Cancel()
+    {
+        NavigationManager.NavigateTo("/program/list");
+    }
+}

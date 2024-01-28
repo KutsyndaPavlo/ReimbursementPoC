@@ -1,0 +1,85 @@
+﻿@page "/vendorSubmission/{vendorSubmissionId}/Cancel"
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Authorization;
+@attribute [Authorize(Roles = "vendor")]
+<h2>Cancel Vendor Submission</h2>
+<br />
+
+<AuthorizeView>
+    <Authorized>
+        @if (!string.IsNullOrWhiteSpace(Notification))
+        {
+            <div class="col-md-4 text-success">
+                @Notification
+            </div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Error))
+        {
+            <div class="col-md-4 text-danger">
+                @Error
+            </div>
+        }
+        <div class="form-group">
+            <h4>Do you want to cancel this Vendor Submission?</h4>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Service</td>
+                        <td>@submission.ServiceFullName</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>@submission.Description</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Confirm" @onclick="(async () => await CancelVendorSubmission(submission.Id))" class="btn btn-danger" />
+            <input type="submit" value="Return" @onclick="(() => Cancel())" class="btn btn-warning" />
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public string vendorSubmissionId { get; set; }
+    public string Notification { get; set; }
+    public string Error { get; set; }
+    VendorSubmissionDto submission = new VendorSubmissionDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        submission = await Http.GetFromJsonAsync<VendorSubmissionDto>("/vendor/api/VendorSubmissions/" + vendorSubmissionId);
+    }
+
+    protected async Task CancelVendorSubmission(Guid id)
+    {
+        var result = await Http.PutAsJsonAsync("/vendor/api/VendorSubmissions/" + id + "/cancel", submission);
+        if (result.IsSuccessStatusCode)
+        {
+            Error = "";
+            Notification = "Submission was succesfully canceled";
+
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(3));
+                NavigationManager.NavigateTo($"/vendorSubmission/list");
+            });
+        }
+        else
+        {
+            Error = $"Error: {await result.Content.ReadAsStringAsync()}";
+        }
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo($"/vendorSubmission/list");
+    }
+}

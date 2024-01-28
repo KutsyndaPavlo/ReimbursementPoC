@@ -1,0 +1,15 @@
+﻿{
+  "profiles": {
+    "ReimbursementPoC.Identity.API": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:8500",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "UiUrl": "https://localhost:8505"
+        //"ConnectionStrings__DefaultConnection": "**"
+      }
+    }
+  }
+}

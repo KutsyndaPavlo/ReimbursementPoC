@@ -1,0 +1,145 @@
+﻿@page "/customerSubmission/list"
+@using Microsoft.AspNetCore.Authorization;
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+@attribute [Authorize(Roles = "customer")]
+<h1>Customer Submission List</h1>
+<p>Blazor CRUD operation</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <a href='/customerSubmission/add' class="btn btn-primary" role="button">
+            <i class="fas fa-user-plus"></i>
+            Add Customer Submission
+        </a>
+    </div>
+</div>
+<br />
+
+<AuthorizeView>
+    <Authorized>
+        @if (submissions == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table table-striped align-middle table-bordered">
+                <thead class="table-success">
+                    <tr>
+                        <th>Vendor</th>
+                        <th>Service</th>
+                        <th>Description</th>
+                        <th>Is canceled ?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in submissions)
+                    {
+                        <tr>
+                            <td>@item.VendorName</td>
+                            <td>@item.ServiceFullName</td>
+                            <td>@item.Description</td>
+                            <td>@item.IsCanceled</td>
+                            <td>
+                                @if (!item.IsCanceled)
+                                {
+                                    <a href='/customerSubmission/@item.Id/cancel' class="btn btn-outline-danger" role="button">
+                                        Cancel
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    protected List<CustomerSubmissionDto> submissions = new();
+
+    private int defaultLimit = 5;
+    private int CurrentOffset = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCustomerSubmissionAsync();
+    }
+
+    protected async Task GetCustomerSubmissionAsync()
+    {        
+        var authenticationState = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var customerId = Guid.Parse(authenticationState.User.Claims.FirstOrDefault(x => x.Type == "sub").Value);
+        var result = await Http.GetFromJsonAsync<PaginatedList<CustomerSubmissionDto>>($"/customer/api/CustomerSubmissions/{customerId}/submissions?offset={CurrentOffset}&limit={defaultLimit}");
+
+        submissions.Clear();
+        submissions.AddRange(result.Items.ToList());
+
+        CreatePaginationLinks(result.Page);
+    }
+
+    private List<PagingLink> _links = new List<PagingLink>();
+
+    private void CreatePaginationLinks(Page page)
+    {
+        _links.Clear();
+        var totalPageCount = (page.Total / defaultLimit) + ((page.Total % defaultLimit) > 0 ? 1 : 0);
+        var currentPage = (page.Offset / defaultLimit) + 1;
+        var countOfVisualPages = 5;
+
+        if (currentPage != 1)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "First",
+                    Offset = 0
+                });
+        }
+
+        for (int i = ((currentPage - countOfVisualPages) > 0 ? (currentPage - countOfVisualPages) : 1); i < currentPage; i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+        for (int i = currentPage; i <= ((currentPage + countOfVisualPages) > totalPageCount ? totalPageCount : (currentPage + countOfVisualPages)); i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+
+        if (currentPage <= totalPageCount && currentPage != totalPageCount)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "Last",
+                    Offset = (int)((totalPageCount - 1) * defaultLimit)
+                });
+        }
+    }
+
+    private async Task OnSelectedPage(PagingLink link)
+    {
+        CurrentOffset = link.Offset;
+        await GetCustomerSubmissionAsync();
+    }
+}

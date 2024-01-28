@@ -1,0 +1,212 @@
+﻿@page "/program/list"
+@using Microsoft.AspNetCore.Authorization;
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "admin")]
+<h1>Program List</h1>
+<p>Blazor CRUD operation</p>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <a href='/program/add' class="btn btn-primary" role="button">
+            <i class="fas fa-user-plus"></i>
+            Add Program
+        </a>
+    </div>
+</div>
+<br />
+
+<AuthorizeView>
+    <Authorized>
+       
+        <div class="row">
+            <div class="input-group col">
+                <input type="text" class="form-control" placeholder="Search program by name (begin with, case-insensitive)"
+                       @bind="NameSearchString" @bind:event="oninput" @onkeyup="FilterProgramsAsync" />
+                @if (NameSearchString.Length > 0)
+                {
+                    <div class="input-group-append">
+                        <button class="btn btn-danger" @onclick="ResetSearchFilterAsync">
+                            <i class="fas fa-times">Reset search</i>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="input-group col">
+                <select @onchange="SortProgramsAsync">
+                    <option value="">- Sort By -</option>
+                    <option value="nameAsc">Name ASC</option>
+                    <option value="nameDesc">Name DESC</option>
+                    <option value="dateAsc">Start date ASC</option>
+                    <option value="dateDesc">Start date Desc</option>
+                </select>
+            </div>
+        </div>
+        <br />
+
+        @if (programList == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table table-striped align-middle table-bordered">
+                <thead class="table-success">
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>StartDate</th>
+                        <th>EndDate</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in programList)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                            <td>@item.StartDate</td>
+                            <td>@item.EndDate</td>
+                            <td>@item.State</td>
+                            <td>
+                                <a href='/program/@item.Id/services' class="btn btn-outline-dark" role="button">
+                                    Services
+                                </a>
+
+                                @if (!item.IsCanceled)
+                                {
+                                    <a href='/program/@item.Id/edit' class="btn btn-outline-dark" role="button">
+                                        Edit
+                                    </a>
+                                    <a href='/program/@item.Id/cancel' class="btn btn-outline-dark" role="button">
+                                        Cancel
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    @foreach (var link in _links)
+                    {
+                        <li @onclick="() => OnSelectedPage(link)" style="cursor: pointer;" class="page-item  @(link.Active ? "active" : null)">
+                            <span class="page-link" href="#">@link.Text</span>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    protected List<ProgramDto> programList = new();
+    protected string NameSearchString { get; set; } = string.Empty;
+    protected string SortTypeString { get; set; } = string.Empty;
+    private int defaultLimit = 5;
+    private int CurrentOffset = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetProgramsAsync();
+    }
+
+    protected async Task GetProgramsAsync()
+    {
+        var url = $"/administration/api/programs?offset={CurrentOffset}&&limit={defaultLimit}&name={NameSearchString}&sort={SortTypeString ?? "nameAsc"}";
+        var result = await Http.GetFromJsonAsync<PaginatedList<ProgramDto>>(url);
+        programList.Clear();
+        programList.AddRange(result.Items.ToList());
+
+        CreatePaginationLinks(result.Page);
+    }
+
+    protected async Task SortProgramsAsync(ChangeEventArgs e)
+    {
+        SortTypeString = e.Value.ToString();
+        CurrentOffset = 0;
+        await GetProgramsAsync();
+    }
+
+    protected async Task FilterProgramsAsync()
+    {
+        CurrentOffset = 0;
+        await GetProgramsAsync();
+    }
+
+    protected async Task ResetSearchFilterAsync()
+    {
+        NameSearchString = "";
+        SortTypeString = "";
+        CurrentOffset = 0;
+        await GetProgramsAsync();
+    }
+
+    private List<PagingLink> _links = new List<PagingLink>();
+
+    private void CreatePaginationLinks(Page page)
+    {
+        _links.Clear();
+        var totalPageCount = (page.Total / defaultLimit) + ((page.Total % defaultLimit) > 0 ? 1 : 0);
+        var currentPage = (page.Offset / defaultLimit) + 1;
+        var countOfVisualPages = 5;
+
+        if (currentPage != 1)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "First",
+                    Offset = 0
+                });
+        }
+
+        for (int i = ((currentPage - countOfVisualPages) > 0 ? (currentPage - countOfVisualPages) : 1); i < currentPage; i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+        for (int i = currentPage; i <= ((currentPage + countOfVisualPages) > totalPageCount ? totalPageCount : (currentPage + countOfVisualPages)); i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+
+        if (currentPage <= totalPageCount && currentPage != totalPageCount)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "Last",
+                    Offset = (int)((totalPageCount - 1) * defaultLimit)
+                });
+        }
+    }
+
+    private async Task OnSelectedPage(PagingLink link)
+    {
+        CurrentOffset = link.Offset;
+        await GetProgramsAsync();
+    }
+}
