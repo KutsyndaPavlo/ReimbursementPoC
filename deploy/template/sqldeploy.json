@@ -2,7 +2,7 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "sql_server": {
+    "sqlserver": {
       "type": "string"
     },
     "admin": {
@@ -13,7 +13,7 @@
     }
   },
   "variables": {
-    "sql_server_name": "[concat(parameters('sql_server'), '-', uniqueString(resourceGroup().id))]"
+    "sql_server_name": "[concat(parameters('sqlserver'), '-', uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {
