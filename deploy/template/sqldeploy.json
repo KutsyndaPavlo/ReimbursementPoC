@@ -13,9 +13,7 @@
     }
   },
   "variables": {
-    "sql_server_name": "[concat(parameters('sql_server'), '-', uniqueString(resourceGroup().id))]",
-    "admin": "[parameters('admin')]",
-    "adminpwd": "[parameters('adminpwd')]"
+    "sql_server_name": "[concat(parameters('sql_server'), '-', uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {
@@ -24,8 +22,8 @@
       "apiVersion": "2014-04-01-preview",
       "location": "[resourceGroup().location]",
       "properties": {
-        "administratorLogin": "[variables('admin')]",
-        "administratorLoginPassword": "[variables('adminpwd')]",
+        "administratorLogin": "[parameters('admin')]",
+        "administratorLoginPassword": "[parameters('adminpwd')]",
         "version": "12.0"
       },
       "resources": [
