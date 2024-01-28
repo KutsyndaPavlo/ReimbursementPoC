@@ -13,20 +13,20 @@ steps:
     scriptLocation: inlineScript
     inlineScript: 'az group create --n ri-poc-rg -l eastus'
     
- - task: AzureResourceManagerTemplateDeployment@3
-   displayName: 'ARM Template deployment: MS SQL'
-   inputs:
-     deploymentScope: 'Resource Group'
-     azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
-     action: 'Create Or Update Resource Group'
-     subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-     resourceGroupName: 'ri-poc-rg'
-     location: 'eastus2'
-     templateLocation: 'Linked artifact'
-     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.json' 
-     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'   
-     deploymentMode: 'Incremental'
-     overrideParameters: '-admin $(adminLogin) -adminpwd $(adminpwdValue)'
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: SQL'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
+    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+    resourceGroupName: 'ri-poc-rg'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'   
+    deploymentMode: 'Incremental'
+    overrideParameters: '-admin $(adminLogin) -adminpwd $(adminpwdValue)'
 
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: App service - Idenytity API'
