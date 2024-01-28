@@ -16,6 +16,9 @@
 		},
 		"serviceBusConnectionString": {
 			"value": ""
+		},
+		"DbcustomerConnectionString": {
+			"value": ""
 		}
     }
 }
