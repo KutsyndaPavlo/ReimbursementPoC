@@ -24,7 +24,7 @@ steps:
     location: 'eastus2'
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.json' 
-    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'   
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'
     deploymentMode: 'Incremental'
     overrideParameters: '-admin $(adminLogin) -adminpwd $(adminpwdValue)'
 
