@@ -99,9 +99,9 @@
       }
    ],
    "outputs": {
-	"DbcustomerConnectionString": {
-		"type": "string",
-		"value": "[concat('Server=tcp:',reference(parameters('serverName')).fullyQualifiedDomainName,',1433;Initial Catalog=',customer';Persist Security Info=False;User ID=',reference(parameters('administratorLogin')).administratorLogin,';Password=',reference(parameters('serverName')).administratorLoginPassword,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+		"DbcustomerConnectionString": {
+		  "type": "string",
+		  "value": "[concat('Server=tcp:',reference(parameters('serverName')).fullyQualifiedDomainName,',1433;Initial Catalog=',customer,';Persist Security Info=False;User ID=',reference(parameters('administratorLogin')).administratorLogin,';Password=',reference(parameters('serverName')).administratorLoginPassword,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
 		}
 	}
 }
