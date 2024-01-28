@@ -28,8 +28,7 @@
         "administratorLoginPassword": "[variables('adminpwd')]",
         "version": "12.0"
       },
-      "resources": [
-        {
+      {
           "type": "databases",
           "name": "['vendor']",
           "apiVersion": "2014-04-01-preview",
@@ -115,7 +114,6 @@
             "[concat('Microsoft.Sql/servers/', variables('sql_server_name'))]"
           ]
         }
-      ]
     }
   ],
   "outputs": {
