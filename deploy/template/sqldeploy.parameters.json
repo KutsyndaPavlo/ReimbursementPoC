@@ -3,7 +3,6 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "sql_server": {
-      "value": {
         "name": "reimbursementpocsql",
         "dbs": {
           "vendor": "vendordb",
@@ -11,7 +10,6 @@
           "administration":  "administrationdb",
 		  "identity": "identitydb",
         }
-      }
     },
     "admin": {
       "value": ""
