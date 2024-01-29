@@ -114,15 +114,25 @@ steps:
     deploymentMode: 'Incremental'
     deploymentOutputs: servicebustemplateoutput
 
-- pwsh: |
+- bash: |
     $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
     $connectionString = $armOutputObj.namespaceConnectionString.value
-    Write-Output "vso[task.setvariable variable=serviceBusConnectionString;issecret=true]$connectionString"
+    echo "##vso[task.setvariable variable=serviceBusConnectionString;issecret=true]$connectionString"
     
-- pwsh: |
+- bash: |
     $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
     $connectionString2 = $armOutputObj2.DbcustomerConnectionString.value
-    Write-Output "vso[task.setvariable variable=dbcustomerConnectionString;issecret=true]$connectionString2"
+    echo "##vso[task.setvariable variable=dbcustomerConnectionString;issecret=true]$connectionString2"
+
+# - pwsh: |
+    # $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
+    # $connectionString = $armOutputObj.namespaceConnectionString.value
+    # Write-Output "vso[task.setvariable variable=serviceBusConnectionString;issecret=true]$connectionString"
+    
+# - pwsh: |
+    # $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
+    # $connectionString2 = $armOutputObj2.DbcustomerConnectionString.value
+    # Write-Output "vso[task.setvariable variable=dbcustomerConnectionString;issecret=true]$connectionString2"
     
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Key Vault'
