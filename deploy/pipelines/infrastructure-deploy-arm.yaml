@@ -114,25 +114,15 @@ steps:
     deploymentMode: 'Incremental'
     deploymentOutputs: servicebustemplateoutput
 
-- bash: |
+- pwsh: |
     $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
     $connectionString = $armOutputObj.namespaceConnectionString.value
-    echo "##vso[task.setvariable variable=serviceBusConnectionString;issecret=true]$connectionString"
+    Write-Output "vso[task.setvariable variable=serviceBusConn;issecret=true]$connectionString"
     
-- bash: |
+- pwsh: |
     $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
     $connectionString2 = $armOutputObj2.DbcustomerConnectionString.value
-    echo "##vso[task.setvariable variable=dbcustomerConnectionString;issecret=true]$connectionString2"
-
-# - pwsh: |
-    # $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
-    # $connectionString = $armOutputObj.namespaceConnectionString.value
-    # Write-Output "vso[task.setvariable variable=serviceBusConnectionString;issecret=true]$connectionString"
-    
-# - pwsh: |
-    # $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
-    # $connectionString2 = $armOutputObj2.DbcustomerConnectionString.value
-    # Write-Output "vso[task.setvariable variable=dbcustomerConnectionString;issecret=true]$connectionString2"
+    Write-Output "vso[task.setvariable variable=dbcustomerConn;issecret=true]$connectionString2"
     
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Key Vault'
@@ -147,7 +137,7 @@ steps:
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.parameters.json'   
     deploymentMode: 'Incremental'
-    overrideParameters: '-serviceBusConnectionString $(serviceBusConnectionString) -dbcustomerConnectionString $(dbcustomerConnectionString)'
+    overrideParameters: '-serviceBusConnectionString $(serviceBusConn) -dbcustomerConnectionString $(dbcustomerConn)'
 
 - task: AzureCLI@2
   displayName: 'Container registry'
