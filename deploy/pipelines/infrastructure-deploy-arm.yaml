@@ -117,12 +117,12 @@ steps:
 - pwsh: |
     $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
     $connectionString = $armOutputObj.namespaceConnectionString.value
-    Write-Output "vso[task.setvariable variable=ServiceBusConnectionString;issecret=true]$ServiceBusConnectionString"
+    Write-Output "vso[task.setvariable variable=ServiceBusConnectionString;]$ServiceBusConnectionString"
     
 - pwsh: |
     $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
     $connectionString2 = $armOutputObj2.DbcustomerConnectionString.value
-    Write-Output "vso[task.setvariable variable=dbcustomerConnectionString;issecret=true]$dbcustomerConnectionString"
+    Write-Output "vso[task.setvariable variable=dbcustomerConnectionString;]$dbcustomerConnectionString"
     
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Key Vault'
