@@ -27,6 +27,7 @@ steps:
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'
     deploymentMode: 'Incremental'
     overrideParameters: '-administratorLogin $(administratorLogin) -administratorLoginPassword $(administratorLoginPassword)'
+    deploymentOutputs: sqltemplateoutput
 
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: App service - Idenytity API'
@@ -117,6 +118,11 @@ steps:
     $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
     $connectionString = $armOutputObj.namespaceConnectionString.value
     Write-Output "vso[task.setvariable variable=ServiceBusConnectionString;issecret=true]$connectionString"
+    
+- pwsh: |
+    $armOutputObj = '$(sqltemplateoutput)' | convertfrom-json
+    $connectionString = $armOutputObj.DbcustomerConnectionString.value
+    Write-Output "vso[task.setvariable variable=DbcustomerConnectionString;issecret=true]$connectionString"
     
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Key Vault'
