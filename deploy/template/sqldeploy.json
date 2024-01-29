@@ -101,7 +101,7 @@
    "outputs": {
 		"DbcustomerConnectionString": {
 		  "type": "string",
-		  "value": "[concat('Server=tcp:',reference(variables('sqlserverName')).fullyQualifiedDomainName,',1433;Initial Catalog=',variables('dbName'),';Persist Security Info=False;User ID=',reference(variables('sqlserverName')).administratorLogin,';Password=',reference(variables('sqlserverName')).administratorLoginPassword,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+		  "value": "[concat('Server=tcp:',reference(parameters('serverName')).fullyQualifiedDomainName,',1433;Initial Catalog=','customer',';Persist Security Info=False;User ID=',reference(parameters('serverName')).administratorLogin,';Password=',reference(parameters('serverName')).administratorLoginPassword,';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
 		}
 	}
 }
