@@ -138,7 +138,7 @@ steps:
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.parameters.json'   
     deploymentMode: 'Incremental'
     overrideParameters: >-
-        -overrideParameters $(ServiceBusConnectionString)
+        -serviceBusConnectionString $(ServiceBusConnectionString)
         -dbcustomerConnectionString $(DbcustomerConnectionString)
 
 - task: AzureCLI@2
