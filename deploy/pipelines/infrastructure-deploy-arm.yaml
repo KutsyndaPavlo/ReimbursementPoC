@@ -137,7 +137,7 @@ steps:
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.parameters.json'   
     deploymentMode: 'Incremental'
-    overrideParameters: '-serviceBusConnectionString $(ServiceBusConnectionString) -DbcustomerConnectionString $(DbcustomerConnectionString)'
+    overrideParameters: '-serviceBusConnectionString $(ServiceBusConnectionString) -DbcustomerConnectionString $(ServiceBusConnectionString)'
 
 - task: AzureCLI@2
   displayName: 'Container registry'
