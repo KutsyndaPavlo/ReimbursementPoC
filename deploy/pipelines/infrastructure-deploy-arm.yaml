@@ -119,10 +119,10 @@ steps:
     $connectionString = $armOutputObj.namespaceConnectionString.value
     Write-Output "vso[task.setvariable variable=ServiceBusConnectionString;issecret=true]$connectionString"
     
-# - pwsh: |
-    # $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
-    # $connectionString2 = $armOutputObj2.DbcustomerConnectionString.value
-    # Write-Output "vso[task.setvariable variable=DbcustomerConnectionString;issecret=true]$connectionString2"
+- pwsh: |
+    $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
+    $connectionString2 = $armOutputObj2.DbcustomerConnectionString.value
+    Write-Output "vso[task.setvariable variable=DbcustomerConnectionString;issecret=true]$connectionString2"
     
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Key Vault'
@@ -137,7 +137,7 @@ steps:
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.parameters.json'   
     deploymentMode: 'Incremental'
-    overrideParameters: '-serviceBusConnectionString $(ServiceBusConnectionString)'
+    overrideParameters: '-serviceBusConnectionString $(ServiceBusConnectionString) -dbcustomerConnectionString DbcustomerConnectionString'
 
 - task: AzureCLI@2
   displayName: 'Container registry'
