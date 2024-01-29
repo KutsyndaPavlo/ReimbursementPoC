@@ -32,7 +32,7 @@
         "description": ""
       }
     },
-	"DbcustomerConnectionString": {
+	"dbcustomerConnectionString": {
       "type": "string",
       "metadata": {
         "description": ""
@@ -138,9 +138,9 @@
 	{
       "type": "Microsoft.KeyVault/vaults/secrets",
       "apiVersion": "2021-11-01-preview",
-      "name": "[format('{0}/{1}', parameters('vaultName'), 'DbcustomerConnectionString2')]",
+      "name": "[format('{0}/{1}', parameters('vaultName'), 'dbcustomerConnectionString')]",
       "properties": {
-        "value": "[parameters('DbcustomerConnectionString')]"
+        "value": "[parameters('dbcustomerConnectionString')]"
       },
       "dependsOn": [
         "[resourceId('Microsoft.KeyVault/vaults', parameters('vaultName'))]"
