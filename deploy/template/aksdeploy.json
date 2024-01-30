@@ -72,7 +72,7 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "kubernetesVersion": "1.18.8",
+                "kubernetesVersion": "1.25.11",
                 "enableRBAC": true,
                 "dnsPrefix": "[parameters('dnsPrefix')]",
                 "agentPoolProfiles": [
