@@ -118,7 +118,7 @@ steps:
     $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
     $connectionString = $armOutputObj.namespaceConnectionString.value
     $testcs= 'tcs'
-    Write-Output "vso[task.setvariable variable=serviceBusConn;]$connectionString"
+    Write-Output "vso[task.setvariable variable=serviceBusConn;isOutput=true;]$connectionString"
     Write-Output "$serviceBusConn"
     Write-Output "$connectionString"
     Write-Output "$testcs"
@@ -126,8 +126,9 @@ steps:
 - pwsh: |
     $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
     $connectionString2 = $armOutputObj2.DbcustomerConnectionString.value
-    Write-Output "vso[task.setvariable variable=dbcustomerConn;issecret=true]$connectionString2"
+    Write-Output "vso[task.setvariable variable=dbcustomerConn;issecret=true;isOutput=true;]$connectionString2"
     Write-Output "$dbcustomerConn"
+    Write-Output "$connectionString2"
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Key Vault'
   inputs:
@@ -141,7 +142,7 @@ steps:
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.parameters.json'   
     deploymentMode: 'Incremental'
-    overrideParameters: '-serviceBusConnectionString $(testcs) -dbcustomerConnectionString $(dbcustomerConn)'
+    overrideParameters: '-serviceBusConnectionString $(serviceBusConn) -dbcustomerConnectionString $(dbcustomerConn)'
 
 - task: AzureCLI@2
   displayName: 'Container registry'
