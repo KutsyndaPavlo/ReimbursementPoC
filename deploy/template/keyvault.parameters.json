@@ -17,7 +17,13 @@
 		"serviceBusConnectionString": {
 			"value": ""
 		},
-		"dbcustomerConnectionString": {
+		"sqlServerName": {
+			"value": ""
+		},
+		"sqlAdminLogin": {
+			"value": ""
+		},	
+		"sqlAdminPassword": {
 			"value": ""
 		}
     }
