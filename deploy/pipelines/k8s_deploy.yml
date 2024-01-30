@@ -44,7 +44,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'KutsyndaPavloPriceAnalytics-1762.default'
+    environment: 'Dev'
     strategy:
       runOnce:
         deploy:
