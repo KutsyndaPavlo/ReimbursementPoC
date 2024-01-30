@@ -126,7 +126,7 @@ steps:
     Write-Output "dbcustomerConn $dbcustomerConn"
     Write-Output "connectionString2 $connectionString2"
     
-- bash: echo $(dbcustomerConn)
+- bash: echo $(sqltemplateoutput.DbcustomerConnectionString.value)
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Key Vault'
   inputs:
