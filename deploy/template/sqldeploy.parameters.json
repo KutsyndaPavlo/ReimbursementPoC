@@ -5,10 +5,10 @@
 		"serverName": { 
 		  "value": "reimbursementpocsql"
 		},
-		"administratorLogin": {
+		"al": {
 		  "value": ""
 		},
-		"administratorLoginPassword": {
+		"alp": {
 		  "value": ""
 		}
     }

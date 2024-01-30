@@ -26,7 +26,7 @@ steps:
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'
     deploymentMode: 'Incremental'
-    overrideParameters: '-administratorLogin $(administratorLogin) -administratorLoginPassword $(administratorLoginPassword)'
+    overrideParameters: '-al $(administratorLogin) -alp $(administratorLoginPassword)'
     deploymentOutputs: sqltemplateoutput
 
 - task: AzureResourceManagerTemplateDeployment@3

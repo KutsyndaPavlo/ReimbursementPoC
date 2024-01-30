@@ -16,13 +16,13 @@
             "description":"Location for all resources."
          }
       },
-      "administratorLogin":{
+      "al":{
          "type":"string",
          "metadata":{
             "description":"The administrator username of the SQL logical server."
          }
       },
-      "administratorLoginPassword":{
+      "alp":{
          "type":"string",
          "metadata":{
             "description":"The administrator password of the SQL logical server."
@@ -30,9 +30,8 @@
       }
    },
    "variables":{
-	    "adminLogin":"[parameters('administratorLogin')]",
-		"adminPassword":"[parameters('administratorLoginPassword')]",
-        "al":"[parameters('administratorLoginPassword')]"      		
+	    "adminLogin":"[parameters('al')]",
+		"adminPassword":"[parameters('alp')]"    		
    },
    "resources":[
       {
@@ -103,7 +102,7 @@
    "outputs": {
 		"DbcustomerConnectionString": {
 		  "type": "string",
-		  "value": "[concat('Server=tcp:', parameters('serverName') ,'.database.windows.net,1433;Initial Catalog=customer;Persist Security Info=False;User ID=',variables('adminLogin'),';Password=',parameters('administratorLoginPassword'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+		  "value": "[concat('Server=tcp:', parameters('serverName') ,'.database.windows.net,1433;Initial Catalog=customer;Persist Security Info=False;User ID=',variables('adminLogin'),';Password=',parameters('alp'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
 		},
 	    "al": {
 		  "type": "string",
