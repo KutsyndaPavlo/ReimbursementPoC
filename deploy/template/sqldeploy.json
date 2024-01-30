@@ -111,7 +111,7 @@
 		},
 	    "ar": {
 		  "type": "string",
-		  "value": "[reference(parameters('yourservernameName')).administratorLoginPassword]"
+		  "value": "[reference(parameters('serverName')).administratorLoginPassword]"
 		}
 	}
 }
