@@ -117,9 +117,12 @@ steps:
 - pwsh: |
     $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
     $connectionString = $armOutputObj.namespaceConnectionString.value
-    Write-Output "vso[task.setvariable variable=connectionString;issecret=true;]$serviceBusConn"
+    Write-Output "##vso[task.setvariable variable=serviceBusConn;issecret=true;]$connectionString"
     Write-Output "serviceBusConn $serviceBusConn"
     Write-Output "connectionString $connectionString"
+
+- bash: echo $(serviceBusConn)
+- bash: echo $(connectionString)
     
 - pwsh: |
     $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
