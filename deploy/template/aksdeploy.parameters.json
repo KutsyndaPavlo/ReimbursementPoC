@@ -10,6 +10,6 @@
 		},
 	    "agentVMSize": {
 			"value": "Standard_A6"
-		},
+		}
     }
 }
