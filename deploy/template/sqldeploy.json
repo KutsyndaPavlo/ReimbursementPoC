@@ -105,13 +105,13 @@
 		  "type": "string",
 		  "value": "[concat('Server=tcp:', parameters('serverName') ,'.database.windows.net,1433;Initial Catalog=customer;Persist Security Info=False;User ID=',variables('adminLogin'),';Password=',parameters('administratorLoginPassword'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
 		},
-	    "ap": {
-		  "type": "string",
-		  "value": "[parameters('administratorLoginPassword')]"
-		},
 	    "al": {
 		  "type": "string",
-		  "value": "[$administratorLoginPassword]"
+		  "value": "[reference(parameters('serverName')).administratorLogin]"
+		},
+	    "ar": {
+		  "type": "string",
+		  "value": "[reference(parameters('yourservernameName')).administratorLoginPassword]"
 		}
 	}
 }
