@@ -121,10 +121,9 @@ steps:
     
 - pwsh: |
     $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
-    $connectionString2 = $armOutputObj2.DbcustomerConnectionString.value
-    Write-Output "##vso[task.setvariable variable=dbcustomerConn;issecret=true;]$connectionString2"
-    Write-Output "dbcustomerConn dbcustomerConn"
-    Write-Output "connectionString2 $connectionString2"
+    Write-Output "##vso[task.setvariable variable=dbcustomerConn;issecret=true;]$armOutputObj2.DbcustomerConnectionString.value"
+    Write-Output "dbcustomerConn $dbcustomerConn"
+    Write-Output "connectionString2 $armOutputObj2.DbcustomerConnectionString.value"
     
 - bash: echo $(dbcustomerConn)
 - task: AzureResourceManagerTemplateDeployment@3
