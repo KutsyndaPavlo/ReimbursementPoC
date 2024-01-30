@@ -111,7 +111,7 @@
 		},
 	    "al": {
 		  "type": "string",
-		  "value": "[variables('al')]"
+		  "value": "[$administratorLoginPassword]"
 		}
 	}
 }
