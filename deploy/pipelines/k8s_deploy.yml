@@ -11,10 +11,10 @@ resources:
 variables:
 
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '0d9c8384-3d33-49f2-8510-cb5d5c78f59f'
-  containerRegistry: 'priceanalyticscr.azurecr.io'
+  dockerRegistryServiceConnection: 'azc_connection'
+  containerRegistry: 'reimbursementpoccontainerregistry.azurecr.io'
   dockerfilePath: '**/Dockerfile'
-  imagePullSecret: 'priceanalyticscr170491e0-auth'
+  imagePullSecret: 'reimbursementpoccontainerregistrycr170491e0-auth'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
