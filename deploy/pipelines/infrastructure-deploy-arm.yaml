@@ -117,7 +117,7 @@ steps:
 - pwsh: |
     $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
     $connectionString = $armOutputObj.namespaceConnectionString.value
-    Write-Output "##vso[task.setvariable variable=serviceBusConn;issecret=true;isOutput=true;]$connectionString"
+    Write-Output "##vso[task.setvariable variable=connectionString;issecret=true;isOutput=true;]$serviceBusConn"
     Write-Output "serviceBusConn $serviceBusConn"
     Write-Output "connectionString $connectionString"
     
