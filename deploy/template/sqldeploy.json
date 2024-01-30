@@ -30,8 +30,8 @@
       }
    },
    "variables":{
-	    "adminLogin":"[parameters('al')]",
-		"adminPassword":"[concatparameters('al')]"    		
+	    "adminLogin":"[concat('adm',parameters('al'))]",
+		"adminPassword":"[parameters('al')]"    		
    },
    "resources":[
       {
@@ -40,7 +40,7 @@
          "name":"[parameters('serverName')]",
          "location":"[parameters('location')]",
          "properties":{
-            "administratorLogin":"[concat('adm',variables('adminLogin'))]",
+            "administratorLogin":"[variables('adminLogin')]",
             "administratorLoginPassword":"[variables('adminPassword')]"
          },
          "resources":[
