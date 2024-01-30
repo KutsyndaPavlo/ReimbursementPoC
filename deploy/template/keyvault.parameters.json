@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vaultName": {
-			"value": "reimbursementpoc-vault7"
+			"value": "reimbursementpoc-vault8"
 		},
 		"keyName": {
 			"value": "reimbursementpockey"
