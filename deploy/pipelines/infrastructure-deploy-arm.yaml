@@ -1,8 +1,13 @@
 parameters:
-- name: azureResourceManagerConn
+- name: azureResourceManagerConn1
   type: string
   default: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
-     
+
+variables:
+
+  # Container registry service connection established during pipeline creation
+  azureResourceManagerConn: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+
 pool:
   name: Azure Pipelines
 steps:
@@ -18,7 +23,7 @@ steps:
   displayName: 'ARM Template deployment: SQL'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: "[parameters('azureResourceManagerConn')]"
+    azureResourceManagerConnection: $azureResourceManagerConn
     action: 'Create Or Update Resource Group'
     subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
     resourceGroupName: 'ri-poc-rg'
