@@ -1,4 +1,6 @@
 variables:
+- name: containerRegistry
+  value: 'azc_connection'
 - name: BuildParameters.RestoreBuildProjects
   value: '**/ReimbursementPoC.ApiGateway.csproj'
 - name: BuildParameters.TestProjects
@@ -55,7 +57,7 @@ jobs:
   - task: Docker@2
     displayName: buildAndPush
     inputs:
-      containerRegistry: 'azc_connection'
+      containerRegistry: $(containerRegistry)
       repository: gateway-api
       Dockerfile: src/Dockerfile_ApiGateway
       tags: >-
