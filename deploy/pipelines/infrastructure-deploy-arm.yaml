@@ -16,7 +16,7 @@ steps:
   displayName: 'ARM Template deployment: SQL'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: variables('azureResourceManagerConn')
+    azureResourceManagerConnection: $azureResourceManagerConn
     action: 'Create Or Update Resource Group'
     subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
     resourceGroupName: 'ri-poc-rg'
