@@ -2,14 +2,17 @@ pool:
   name: Azure Pipelines
 
 variables:
-  azureResourceManagerConn: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
-  platform: x64
+  azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+  azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+  subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+  resourceGroupName: 'ri-poc-rg'
+  location: 'eastus2'
 
 steps:
 - task: AzureCLI@2
   displayName: 'Resource group'
   inputs:
-    azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    azureSubscription: $(azureSubscription)
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: 'az group create --n ri-poc-rg -l eastus'
@@ -17,12 +20,12 @@ steps:
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: SQL'
   inputs:
-    deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: $(azureResourceManagerConn)
+    deploymentScope: 'Resource Group'    
     action: 'Create Or Update Resource Group'
-    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: 'ri-poc-rg'
-    location: 'eastus2'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'
@@ -34,11 +37,11 @@ steps:
   displayName: 'ARM Template deployment: App service - Idenytity API'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     action: 'Create Or Update Resource Group'
-    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: 'ri-poc-rg'
-    location: 'eastus2'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-identity-api.parameters.json'   
@@ -48,11 +51,11 @@ steps:
   displayName: 'ARM Template deployment: App service - UI'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     action: 'Create Or Update Resource Group'
-    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: 'ri-poc-rg'
-    location: 'eastus2'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-ui.parameters.json'   
@@ -62,11 +65,11 @@ steps:
   displayName: 'ARM Template deployment: Cosmos Db'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     action: 'Create Or Update Resource Group'
-    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: 'ri-poc-rg'
-    location: 'eastus2'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploycosmos.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploycosmos.parameters.json'   
@@ -76,11 +79,11 @@ steps:
   displayName: 'ARM Template deployment: Storage'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     action: 'Create Or Update Resource Group'
-    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: 'ri-poc-rg'
-    location: 'eastus2'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploystorage.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploystorage.parameters.json'   
@@ -104,11 +107,11 @@ steps:
   displayName: 'ARM Template deployment: Service bus'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     action: 'Create Or Update Resource Group'
-    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: 'ri-poc-rg'
-    location: 'eastus2'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sbusdeploy.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sbusdeploy.parameters.json'   
@@ -133,11 +136,11 @@ steps:
   displayName: 'ARM Template deployment: Key Vault'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     action: 'Create Or Update Resource Group'
-    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: 'ri-poc-rg'
-    location: 'eastus2'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/keyvault.parameters.json'   
@@ -147,21 +150,21 @@ steps:
 - task: AzureCLI@2
   displayName: 'Container registry'
   inputs:
-    azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    azureSubscription: $(azureSubscription)
     scriptType: bash
     scriptLocation: inlineScript
-    inlineScript: 'az acr create --resource-group ri-poc-rg --name reimbursementpoccontainerregistry --sku Basic'
+    inlineScript: 'az acr create --resource-group $(resourceGroupName) --name reimbursementpoccontainerregistry --sku Basic'
     
     
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: K8S'
   inputs:
     deploymentScope: 'Resource Group'
-    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
     action: 'Create Or Update Resource Group'
-    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    resourceGroupName: 'ri-poc-rg'
-    location: 'eastus2'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/aksdeploy.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/aksdeploy.parameters.json'   
