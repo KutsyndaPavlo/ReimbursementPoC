@@ -1,12 +1,6 @@
-parameters:
-- name: azureResourceManagerConn1
-  type: string
-  default: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
-
 variables:
-
-  # Container registry service connection established during pipeline creation
-  azureResourceManagerConn: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+ - name: azureResourceManagerConn
+   value: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
 
 pool:
   name: Azure Pipelines
