@@ -41,7 +41,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionStrings__Db=Server=sqldata;Database=administration;User Id=sa;Password=Pass@word
-      - ConnectionStrings__EventBus=Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0=
+      - ConnectionStrings__EventBus=Endpoint=***
       - EventBus__SubscriptionClientName=ri-event-bus-sc2
     ports:
       - "8501:80"
@@ -60,7 +60,7 @@ services:
        - ASPNETCORE_ENVIRONMENT=Development
        - ASPNETCORE_URLS=http://0.0.0.0:80
        - ConnectionStrings__Db=Server=sqldata;Database=customer;User Id=sa;Password=Pass@word
-       - ConnectionStrings__EventBus=Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0=
+       - ConnectionStrings__EventBus=Endpoint=***
        - EventBus__SubscriptionClientName=ri-event-bus-sc2
       ports:
         - "8502:80"
@@ -79,7 +79,7 @@ services:
        - ASPNETCORE_ENVIRONMENT=Development
        - ASPNETCORE_URLS=http://0.0.0.0:80
        - ConnectionStrings__Db=Server=sqldata;Database=vendor;User Id=sa;Password=Pass@word
-       - ConnectionStrings__EventBus=Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0=
+       - ConnectionStrings__EventBus=Endpoint=***
        - EventBus__SubscriptionClientName=ri-event-bus-sc2
       ports:
         - "8503:80"
@@ -132,6 +132,15 @@ services:
       volumes:
         - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
         - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro    
+        
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:5341
+      - 8081:80
        
 volumes:
   sqldata:
