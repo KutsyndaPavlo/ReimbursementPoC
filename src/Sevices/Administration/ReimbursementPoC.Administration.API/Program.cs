@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using ReimbursementPoC.Administration.API;
 using ReimbursementPoC.Administration.API.Mappings;
+using ReimbursementPoC.Administration.API.Middleware;
 using ReimbursementPoC.Administration.Application;
 using ReimbursementPoC.Administration.Infrastructure;
 using ReimbursementPoC.Administration.Infrastructure.Health;
@@ -33,6 +34,7 @@ UseCors(app);
 app.MapControllers();
 MapHealthCheck(app);
 app.ConfigureEventBus();
+app.UseMiddleware<RequestContextLoggingMiddleware>();
 app.UseSerilogRequestLogging();   //https://www.milanjovanovic.tech/blog/structured-logging-in-asp-net-core-with-serilog
 app.Run();
 
