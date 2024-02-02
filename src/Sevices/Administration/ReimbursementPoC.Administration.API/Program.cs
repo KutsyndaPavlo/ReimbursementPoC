@@ -1,19 +1,83 @@
 using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.IdentityModel.Tokens;
 using ReimbursementPoC.Administration.API;
 using ReimbursementPoC.Administration.API.Mappings;
 using ReimbursementPoC.Administration.Application;
 using ReimbursementPoC.Administration.Infrastructure;
+using ReimbursementPoC.Administration.Infrastructure.Health;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(AddSwaggerDocumentation);
+builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddAutoMapper(MappingProfile.AutoMapperConfig, typeof(MappingProfile).Assembly);
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add(new ErrorHandlingFilter());
+});
+AddHealthChecks(builder);
+
+var app = builder.Build();
+
+UseSwagger(app);
+UseCors(app);
+app.MapControllers();
+MapHealthCheck(app);
+app.ConfigureEventBus();
+app.Run();
+
+static void AddHealthChecks(WebApplicationBuilder builder)
+{
+    var hcBuilder = builder.Services.AddHealthChecks();
+    hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy())
+             .AddHealthChecks(builder.Configuration);
+}
+
+static void AddSwaggerDocumentation(SwaggerGenOptions o)
+{
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+}
+
+static void MapHealthCheck(WebApplication app)
+{
+    app.MapHealthChecks("/health", new HealthCheckOptions()
+    {
+        Predicate = _ => true,
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
+
+    app.MapHealthChecks("/liveness", new HealthCheckOptions
+    {
+        Predicate = r => r.Name.Contains("self")
+    });
+}
+
+static void UseSwagger(WebApplication app)
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+static void UseCors(WebApplication app)
+{
+    app.UseCors(config =>
+    {
+        config.AllowAnyOrigin();
+        config.AllowAnyMethod();
+        config.AllowAnyHeader();
+    });
+}
+
+// Add services to the container.
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 //                .AddJwtBearer(options =>
 //                {
@@ -25,54 +89,3 @@ builder.Services.AddControllers();
 //                    };
 //                });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(o => AddSwaggerDocumentation(o));
-builder.Services.AddApplication(builder.Configuration);
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddAutoMapper(MappingProfile.AutoMapperConfig, typeof(MappingProfile).Assembly);
-builder.Services.AddMvc(options =>
-{
-    options.Filters.Add(new ErrorHandlingFilter());
-});
-
-var hcBuilder = builder.Services.AddHealthChecks();
-hcBuilder.AddCheck("self", () => HealthCheckResult.Healthy());
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.UseCors(config =>
-{
-    config.AllowAnyOrigin();
-    config.AllowAnyMethod();
-    config.AllowAnyHeader();
-});
-
-//app.UseAuthentication();
-//app.UseAuthorization();
-
-app.MapControllers();
-
-app.MapHealthChecks("/health", new HealthCheckOptions()
-{
-    Predicate = _ => true,
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
-
-app.MapHealthChecks("/liveness", new HealthCheckOptions
-{
-    Predicate = r => r.Name.Contains("self")
-});
-
-app.ConfigureEventBus();
-
-app.Run();
-
-static void AddSwaggerDocumentation(SwaggerGenOptions o)
-{
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-}

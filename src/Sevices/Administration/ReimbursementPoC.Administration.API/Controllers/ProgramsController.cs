@@ -10,14 +10,14 @@ using ReimbursementPoC.Administration.Application.Program.Commands.UpdateProgram
 using ReimbursementPoC.Administration.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Administration.Application.Program.Queries.GetPrograms;
 using Swashbuckle.AspNetCore.Annotations;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ReimbursementPoC.Administration.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/programs")]
     [ApiController]
+    //[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class ProgramsController : Controller
     {
         #region Fields

@@ -62,7 +62,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await Http.GetFromJsonAsync<ServiceDto>("/administration/api/services/" + serviceId);
+        var result = await Http.GetFromJsonAsync<ServiceDto>($"/administration/api/programs/{programId}/services/{serviceId}");
 
         service.Id = result.Id;
         service.Name = result.Name;
@@ -72,7 +72,7 @@
 
     protected async Task SaveService()
     {
-        var result = await Http.PutAsJsonAsync("/administration/api/services/" + service.Id, service);
+        var result = await Http.PutAsJsonAsync($"/administration/api/programs/{programId}/services/{service.Id}", service);
         if (result.IsSuccessStatusCode)
         {
             Error = "";

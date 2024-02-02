@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
     "ReimbursementPoC.Administration.API": {
       "commandName": "Project",
@@ -8,17 +7,19 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ConnectionStrings__EventBus": "Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0="
-        //"ConnectionStrings__Db": "***",
-        //"EventBus__SubscriptionClientName": "ri-event-bus-sc2"
       },
       "applicationUrl": "http://localhost:8501",
       "dotnetRunMessages": true
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "environmentVariables": {
+        "ASPNETCORE_HTTP_PORTS": "8080"
+      },
+      "publishAllPorts": true
     }
-    //"Docker": {
-    //  "commandName": "Docker",
-    //  "launchBrowser": true,
-    //  "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-    //  "publishAllPorts": true
-    //}
-  }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json"
 }

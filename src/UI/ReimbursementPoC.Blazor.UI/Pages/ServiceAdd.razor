@@ -71,7 +71,7 @@
 
     protected async Task SaveService()
     {
-        var result = await Http.PostAsJsonAsync("/administration/api/services", service);
+        var result = await Http.PostAsJsonAsync($"/administration/api/programs/{service.ProgramId}/services", service);
 
         if (result.IsSuccessStatusCode)
         {
