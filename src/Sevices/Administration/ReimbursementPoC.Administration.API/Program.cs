@@ -6,6 +6,7 @@ using ReimbursementPoC.Administration.API.Mappings;
 using ReimbursementPoC.Administration.Application;
 using ReimbursementPoC.Administration.Infrastructure;
 using ReimbursementPoC.Administration.Infrastructure.Health;
+using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
@@ -22,6 +23,8 @@ builder.Services.AddMvc(options =>
     options.Filters.Add(new ErrorHandlingFilter());
 });
 AddHealthChecks(builder);
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
 var app = builder.Build();
 
@@ -30,6 +33,7 @@ UseCors(app);
 app.MapControllers();
 MapHealthCheck(app);
 app.ConfigureEventBus();
+app.UseSerilogRequestLogging();   //https://www.milanjovanovic.tech/blog/structured-logging-in-asp-net-core-with-serilog
 app.Run();
 
 static void AddHealthChecks(WebApplicationBuilder builder)
