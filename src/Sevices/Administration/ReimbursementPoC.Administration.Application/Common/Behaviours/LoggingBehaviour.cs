@@ -36,8 +36,8 @@ public class RequestLoggingPipelineBehavior<TRequest, TResponse>
 
     public async Task<TResponse> Handle(
         TRequest request,
-        CancellationToken cancellationToken,
-        RequestHandlerDelegate<TResponse> next)
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
         string requestName = typeof(TRequest).Name;
 
