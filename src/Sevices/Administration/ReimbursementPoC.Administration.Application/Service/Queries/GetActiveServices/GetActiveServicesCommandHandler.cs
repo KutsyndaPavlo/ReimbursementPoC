@@ -4,12 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Administration.Application.Common.Interfaces;
 using ReimbursementPoC.Administration.Application.Common.Model;
 using ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById;
+using ReimbursementPoC.Administration.Domain.Common;
 using ReimbursementPoC.Administration.Domain.Service;
 
 namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServices
 {
     public class GetActiveServicesCommandHandler
-        : IRequestHandler<GetActiveServicesQuery, PaginatedList<ServiceDto>>
+        : IRequestHandler<GetActiveServicesQuery, Result<PaginatedList<ServiceDto>>>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
@@ -20,7 +21,7 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
             _mapper = mapper;
         }
 
-        public async Task<PaginatedList<ServiceDto>> Handle(GetActiveServicesQuery query, CancellationToken cancellationToken)
+        public async Task<Result<PaginatedList<ServiceDto>>> Handle(GetActiveServicesQuery query, CancellationToken cancellationToken)
         {
             var root = (IQueryable<ServiceEntity>)_applicationDbContext.Services.Include(x => x.Program)
                 .Where(x => !x.IsCanceled 
@@ -36,7 +37,7 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
                 .Take(query.Limit)
                 .ToListAsync();
 
-            return new PaginatedList<ServiceDto>
+            return Result<PaginatedList<ServiceDto>>.Success(new PaginatedList<ServiceDto>
             {
                 Items = data.Select(x => _mapper.Map<ServiceDto>(x)),
                 Page = new Page
@@ -46,7 +47,7 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
                     Count = data.Count,
                     Total = total
                 }
-            };
+            });
         }
     }
 }

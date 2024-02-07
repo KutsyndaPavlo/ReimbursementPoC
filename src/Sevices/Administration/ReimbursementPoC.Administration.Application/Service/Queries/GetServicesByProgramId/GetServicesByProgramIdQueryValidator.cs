@@ -6,7 +6,7 @@ namespace ReimbursementPoC.Administration.Application.Service.Queries.GetService
     {
         public GetServicesByProgramIdQueryValidator()
         {
-            RuleFor(v => v.ProgramId).NotEmpty();
+           // RuleFor(v => v.ProgramId).NotEmpty();
         }
     }
 }

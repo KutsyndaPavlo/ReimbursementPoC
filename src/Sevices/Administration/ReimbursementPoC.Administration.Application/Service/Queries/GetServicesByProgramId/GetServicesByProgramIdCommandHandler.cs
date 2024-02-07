@@ -5,14 +5,17 @@ using ReimbursementPoC.Administration.Application.Common.Interfaces;
 using ReimbursementPoC.Administration.Application.Common.Model;
 using ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById;
 using ReimbursementPoC.Administration.Domain;
+using ReimbursementPoC.Administration.Domain.Common;
+using ReimbursementPoC.Administration.Domain.Program.Errors;
 using ReimbursementPoC.Administration.Domain.Program.Specification;
 using ReimbursementPoC.Administration.Domain.Service;
 using ReimbursementPoC.Administration.Domain.Service.Specifications;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ReimbursementPoC.Administration.Application.Service.Queries.GetServicesByProgramId
 {
     public class GetServicesByProgramIdCommandHandler
-        : IRequestHandler<GetServicesByProgramIdQuery, PaginatedList<ServiceDto>>
+        : IRequestHandler<GetServicesByProgramIdQuery, Result<PaginatedList<ServiceDto>>>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
@@ -23,7 +26,7 @@ namespace ReimbursementPoC.Administration.Application.Service.Queries.GetService
             _mapper = mapper;
         }
 
-        public async Task<PaginatedList<ServiceDto>> Handle(GetServicesByProgramIdQuery query, CancellationToken cancellationToken)
+        public async Task<Result<PaginatedList<ServiceDto>>> Handle(GetServicesByProgramIdQuery query, CancellationToken cancellationToken)
         {
             //ToDo add specification
             var program = await _applicationDbContext.Programs
@@ -31,7 +34,7 @@ namespace ReimbursementPoC.Administration.Application.Service.Queries.GetService
 
             if (program == null)
             {
-               throw new ProgramNotFoundException($"Program with id {query.ProgramId} doesn't exist");
+                return Result<PaginatedList<ServiceDto>>.Failure(ProgramErrors.NotFound(query.ProgramId));
             }
 
             var root = (IQueryable<ServiceEntity>)_applicationDbContext.Services.Include(x => x.Program)
@@ -45,7 +48,8 @@ namespace ReimbursementPoC.Administration.Application.Service.Queries.GetService
                 .Take(query.Limit)
                 .ToListAsync();
 
-            return new PaginatedList<ServiceDto>
+
+            return Result<PaginatedList<ServiceDto>>.Success(new PaginatedList<ServiceDto>
             {
                 Items = data.Select(x => _mapper.Map<ServiceDto>(x)),
                 Page = new Page
@@ -55,7 +59,7 @@ namespace ReimbursementPoC.Administration.Application.Service.Queries.GetService
                     Count = data.Count,
                     Total = total
                 }
-            };
+            });
         }
     }
 }

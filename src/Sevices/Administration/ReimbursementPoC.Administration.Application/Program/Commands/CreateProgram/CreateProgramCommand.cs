@@ -1,9 +1,10 @@
 ﻿using MediatR;
 using ReimbursementPoC.Administration.Application.Program.Queries.GetProgramById;
+using ReimbursementPoC.Administration.Domain.Common;
 
 namespace ReimbursementPoC.Administration.Application.Program.Commands.CreateProgram
 {
-    public class CreateProgramCommand : IRequest<ProgramDto>
+    public class CreateProgramCommand : IRequest<Result<ProgramDto>>
     {
         public string Name { get; set; }
 

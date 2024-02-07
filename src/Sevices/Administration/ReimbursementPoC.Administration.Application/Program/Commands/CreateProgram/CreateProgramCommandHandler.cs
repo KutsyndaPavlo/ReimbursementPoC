@@ -3,12 +3,13 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Administration.Application.Common.Interfaces;
 using ReimbursementPoC.Administration.Application.Program.Queries.GetProgramById;
+using ReimbursementPoC.Administration.Domain.Common;
 using ReimbursementPoC.Administration.Domain.Program;
 using ReimbursementPoC.Administration.Domain.Program.Specification;
 
 namespace ReimbursementPoC.Administration.Application.Program.Commands.CreateProgram
 {
-    public class CreateProgramCommandHandler : IRequestHandler<CreateProgramCommand, ProgramDto>
+    public class CreateProgramCommandHandler : IRequestHandler<CreateProgramCommand, Result<ProgramDto>>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
@@ -23,7 +24,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.CreatePro
             _ProgramUniquenessChecker = ProgramUniquenessChecker;
         }
 
-        public async Task<ProgramDto> Handle(CreateProgramCommand command, CancellationToken cancellationToken)
+        public async Task<Result<ProgramDto>> Handle(CreateProgramCommand command, CancellationToken cancellationToken)
         {
             var entity = ProgramEntity.CreateNew(
                 command.Name,
@@ -44,7 +45,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.CreatePro
 
             var dto = _mapper.Map<ProgramDto>(result);
 
-            return dto;
+            return Result<ProgramDto>.Success(dto);
         }
     }
 }

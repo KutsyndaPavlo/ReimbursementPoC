@@ -86,7 +86,7 @@ namespace ReimbursementPoC.service.API.Controllers
             var command = _mapper.Map<CreateServiceCommand>(request);
 
             var result = await _mediator.Send(command);
-            return CreatedAtRoute(nameof(GetByIdAsync), new { id = result.Id }, result);
+            return CreatedAtRoute(nameof(GetByIdAsync), new { id = result.Data.Id }, result);
         }
 
         [HttpPut("{id}")]

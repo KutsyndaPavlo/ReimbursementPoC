@@ -119,7 +119,7 @@ namespace ReimbursementPoC.Administration.API.Controllers
         {
             var result = await _mediator.Send(_mapper.Map<CreateProgramCommand>(request));
 
-            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result);
         }
 
         [HttpPut("{id}")]

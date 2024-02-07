@@ -6,8 +6,8 @@ namespace ReimbursementPoC.Administration.Application.Services.Commands.UpdateSe
     {
         public UpdateServiceCommandValidator()
         {
-            RuleFor(v => v.Name)
-                .NotEmpty();
+            //RuleFor(v => v.Name)
+            //    .NotEmpty();
         }
     }
 }
