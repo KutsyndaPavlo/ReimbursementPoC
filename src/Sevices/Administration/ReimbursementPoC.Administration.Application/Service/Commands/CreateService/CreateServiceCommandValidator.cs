@@ -7,8 +7,8 @@ namespace ReimbursementPoC.Administration.Application.Services.Commands.CreateSe
     {
         public CreateServiceCommandValidator(IApplicationDbContext applicationDbContext)
         {
-            //RuleFor(v => v.Name)
-            //    .NotEmpty();
+            RuleFor(v => v.Name)
+                .NotEmpty();
         }
     }
 }

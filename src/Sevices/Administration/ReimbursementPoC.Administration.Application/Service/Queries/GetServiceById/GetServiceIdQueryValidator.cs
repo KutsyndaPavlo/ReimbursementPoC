@@ -6,9 +6,9 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
     {
         public GetServiceByIdQueryValidator()
         {
-            //RuleFor(v => v.ServiceId)
-            //    .NotEmpty()
-            //    .WithMessage("ServiceId is required.");
+            RuleFor(v => v.ServiceId)
+                .NotEmpty()
+                .WithMessage("ServiceId is required.");
         }
     }
 }
