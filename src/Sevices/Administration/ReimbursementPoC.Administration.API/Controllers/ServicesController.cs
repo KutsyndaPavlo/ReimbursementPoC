@@ -9,6 +9,9 @@ using ReimbursementPoC.Administration.Application.Services.Commands.DeactivateSe
 using ReimbursementPoC.Administration.Application.Services.Commands.DeleteService;
 using ReimbursementPoC.Administration.Application.Services.Commands.UpdateService;
 using ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById;
+using ReimbursementPoC.Administration.Domain.Common;
+using ReimbursementPoC.Administration.Domain.Program.Errors;
+using ReimbursementPoC.Administration.Domain.Service.Errors;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace ReimbursementPoC.service.API.Controllers
@@ -51,7 +54,10 @@ namespace ReimbursementPoC.service.API.Controllers
         {
             var query = new GetServicesByProgramIdQuery(programId, offset, limit);
             var result = await _mediator.Send(query);
-            return Ok(result);
+
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
         }
 
         [HttpGet("{id}", Name = "GetByIdAsync")]
@@ -66,12 +72,11 @@ namespace ReimbursementPoC.service.API.Controllers
             var query = new GetServiceByIdQuery(id);
             var result = await _mediator.Send(query);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(result);
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : result.Error.Code == ProgramErrors.NotFound(id).Code
+                    ? NotFound(result.Error)
+                    : BadRequest(result.Error);
         }
 
         [HttpPost()]
@@ -86,7 +91,10 @@ namespace ReimbursementPoC.service.API.Controllers
             var command = _mapper.Map<CreateServiceCommand>(request);
 
             var result = await _mediator.Send(command);
-            return CreatedAtRoute(nameof(GetByIdAsync), new { id = result.Data.Id }, result);
+
+            return result.IsSuccess
+                ? CreatedAtRoute(nameof(GetByIdAsync), new { id = result.Data.Id }, result)
+                : BadRequest(result.Error);
         }
 
         [HttpPut("{id}")]
@@ -100,7 +108,12 @@ namespace ReimbursementPoC.service.API.Controllers
         public async Task<IActionResult> PutAsync([FromRoute] Guid programId, Guid id, [FromBody] UpdateServiceRequest request)
         {
             var result = await _mediator.Send(_mapper.Map<UpdateServiceCommand>(request));
-            return Ok(result);
+
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : result.Error.Code == ServiceErrors.ConcurrentUpdate(id).Code
+                    ? Conflict(result.Error)
+                    : BadRequest(result.Error);
         }
 
         [HttpPut("{id}/cancel")]
@@ -118,7 +131,9 @@ namespace ReimbursementPoC.service.API.Controllers
                 Id = id
             });
 
-            return Ok(result);
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
         }
 
         [HttpDelete("{id}")]
@@ -132,8 +147,11 @@ namespace ReimbursementPoC.service.API.Controllers
         {
             var command = new DeleteServiceCommand(id);
 
-            await _mediator.Send(command);
-            return NoContent();
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess
+                ? NoContent()
+                : BadRequest(result.Error);
         }
 
         #endregion

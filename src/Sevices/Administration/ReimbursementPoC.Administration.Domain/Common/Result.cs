@@ -17,8 +17,6 @@
 
         public bool IsSuccess { get; }
 
-        public bool IsFailure => !IsSuccess;
-
         public T Data { get; }
 
         public Error Error { get; }
