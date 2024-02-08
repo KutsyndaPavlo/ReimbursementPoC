@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
+using ReimbursementPoC.Administration.Domain.Common;
 
 namespace ReimbursementPoC.Administration.Application.Common.Behaviours;
 
@@ -25,7 +26,7 @@ namespace ReimbursementPoC.Administration.Application.Common.Behaviours;
 public class RequestLoggingPipelineBehavior<TRequest, TResponse>
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class
-    where TResponse : class// Result
+    where TResponse : Result<object>
 {
     private readonly ILogger _logger;
 
@@ -45,19 +46,15 @@ public class RequestLoggingPipelineBehavior<TRequest, TResponse>
 
         TResponse result = await next();
 
-        //if (result.IsSuccess)
-        //{
-        //    _logger.LogInformation(
-        //        "Completed request {RequestName}", requestName);
-        //}
-        //else
-        //{
-        //    using (LogContext.PushProperty("Error", result.Error, true))
-        //    {
-        //        _logger.LogError(
-        //            "Completed request {RequestName} with error", requestName);
-        //    }
-        //}
+        if (result.IsSuccess)
+        {
+            _logger.LogInformation(
+                "Completed request {RequestName}", requestName);
+        }
+        else
+        {
+            _logger.LogWarning("Completed request {RequestName} with error", requestName);
+        }
 
         return result;
     }
