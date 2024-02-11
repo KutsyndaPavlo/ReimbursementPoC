@@ -9,15 +9,17 @@ using ReimbursementPoC.Administration.Application.Program.Commands.DeleteProgram
 using ReimbursementPoC.Administration.Application.Program.Commands.UpdateProgram;
 using ReimbursementPoC.Administration.Application.Program.Queries.GetProgramById;
 using ReimbursementPoC.Administration.Application.Program.Queries.GetPrograms;
+using ReimbursementPoC.Administration.Domain.Program.Errors;
+using ReimbursementPoC.Administration.Domain.Service.Errors;
 using Swashbuckle.AspNetCore.Annotations;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ReimbursementPoC.Administration.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/programs")]
     [ApiController]
+    //[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
     public class ProgramsController : Controller
     {
         #region Fields
@@ -78,7 +80,10 @@ namespace ReimbursementPoC.Administration.API.Controllers
         {
             var query = new GetProgramsQuery(name, offset, limit, sort);
             var result = await _mediator.Send(query);
-            return Ok(result);
+
+            return result.IsSuccess 
+                ? Ok(result.Data) 
+                : BadRequest(result.Error);
         }
 
         /// <summary>
@@ -100,12 +105,11 @@ namespace ReimbursementPoC.Administration.API.Controllers
             var query = new GetProgramByIdQuery(id);
             var result = await _mediator.Send(query);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(result);
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : result.Error.Code == ProgramErrors.NotFound(id).Code
+                    ? NotFound(result.Error)
+                    : BadRequest(result.Error);
         }
 
         [HttpPost]
@@ -119,7 +123,9 @@ namespace ReimbursementPoC.Administration.API.Controllers
         {
             var result = await _mediator.Send(_mapper.Map<CreateProgramCommand>(request));
 
-            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+            return result.IsSuccess
+                ? CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result)
+                : BadRequest(result.Error);
         }
 
         [HttpPut("{id}")]
@@ -133,7 +139,12 @@ namespace ReimbursementPoC.Administration.API.Controllers
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] UpdateProgramRequest request)
         {
             var result = await _mediator.Send(_mapper.Map<UpdateProgramCommand>(request));
-            return Ok(result);
+
+            return result.IsSuccess
+              ? Ok(result.Data)
+              : result.Error.Code == ProgramErrors.ConcurrentUpdate(id).Code
+                    ? Conflict(result.Error)
+                    : BadRequest(result.Error);
         }
 
         [HttpPut("{id}/cancel")]
@@ -146,7 +157,10 @@ namespace ReimbursementPoC.Administration.API.Controllers
         public async Task<IActionResult> CancelAsync(Guid id)
         {
             var result = await _mediator.Send(new CancelProgramCommand { Id = id });
-            return Ok(result);
+
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
         }
 
         [HttpDelete("{id}")]
@@ -160,8 +174,11 @@ namespace ReimbursementPoC.Administration.API.Controllers
         {
             var command = new DeleteProgramCommand { Id = id };
 
-            await _mediator.Send(command);
-            return NoContent();
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess
+                ? NoContent()
+                : BadRequest(result.Error);
         }
 
         #endregion

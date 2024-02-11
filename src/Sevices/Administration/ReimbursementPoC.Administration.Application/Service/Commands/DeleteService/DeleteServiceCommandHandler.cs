@@ -1,13 +1,14 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Administration.Application.Common.Interfaces;
+using ReimbursementPoC.Administration.Domain.Common;
+using ReimbursementPoC.Administration.Domain.Service.Errors;
 using ReimbursementPoC.Administration.Domain.Service.Events;
-using ReimbursementPoC.Administration.Domain.Service.Exeption;
 using ReimbursementPoC.Administration.Domain.Service.Specifications;
 
 namespace ReimbursementPoC.Administration.Application.Services.Commands.DeleteService
 {
-    public class DeleteServiceCommandHandler : IRequestHandler<DeleteServiceCommand, bool>
+    public class DeleteServiceCommandHandler : IRequestHandler<DeleteServiceCommand, Result<bool>>
     {
         private readonly IApplicationDbContext _applicationDbContext;
 
@@ -16,18 +17,18 @@ namespace ReimbursementPoC.Administration.Application.Services.Commands.DeleteSe
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task<bool> Handle(DeleteServiceCommand command, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(DeleteServiceCommand command, CancellationToken cancellationToken)
         {
             var service = await _applicationDbContext.Services.FirstOrDefaultAsync(new ServiceByIdSpecification(command.Id).ToExpression());
 
             if (service == null)
             {
-                throw new ServiceNotFoundException($"Program with id {command.Id} doesn't exist");
+                return Result<bool>.Failure(ServiceErrors.NotFound(command.Id));
             }
 
             if (!service.CanBeDeleted())
             {
-                throw new ServiceCanNotBeDeletedException($"Service with id {command.Id} can't be deleted");
+                return Result<bool>.Failure(ServiceErrors.CanNotBeDeleted(command.Id));
             }
 
             _applicationDbContext.Services.Remove(service);
@@ -36,7 +37,7 @@ namespace ReimbursementPoC.Administration.Application.Services.Commands.DeleteSe
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-            return true;
+            return Result<bool>.Success(true);
         }
     }
 }

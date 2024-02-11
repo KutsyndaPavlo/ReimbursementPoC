@@ -1,15 +1,14 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Administration.Application.Common.Interfaces;
-using ReimbursementPoC.Administration.Domain;
-using ReimbursementPoC.Administration.Domain.Product;
-using ReimbursementPoC.Administration.Domain.Program;
+using ReimbursementPoC.Administration.Domain.Common;
+using ReimbursementPoC.Administration.Domain.Program.Errors;
 using ReimbursementPoC.Administration.Domain.Program.Events;
 using ReimbursementPoC.Administration.Domain.Program.Specification;
 
 namespace ReimbursementPoC.Administration.Application.Program.Commands.DeleteProgram
 {
-    public class DeleteProgramCommandHandler : IRequestHandler<DeleteProgramCommand, bool>
+    public class DeleteProgramCommandHandler : IRequestHandler<DeleteProgramCommand, Result<bool>>
     {
         private readonly IApplicationDbContext _applicationDbContext;
 
@@ -18,19 +17,19 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.DeletePro
             _applicationDbContext = applicationDbContext;
         }
 
-        public async Task<bool> Handle(DeleteProgramCommand command, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(DeleteProgramCommand command, CancellationToken cancellationToken)
         {
             var entity = await _applicationDbContext.Programs.Include("_services")
                 .FirstOrDefaultAsync(new ProgramByIdSpecification(command.Id).ToExpression());
 
             if (entity == null)
             {
-                throw new ProgramNotFoundException($"Program with id {command.Id} doesn't exist");
+                return Result<bool>.Failure(ProgramErrors.NotFound(command.Id));
             }
 
             if (!entity.CanBeDeleted())
             {
-                throw new ProgramCanNotBeDeletedException($"Program with id {command.Id} can't be deleted");
+                return Result<bool>.Failure(ProgramErrors.CanNotBeDeleted(command.Id));
             }
 
             _applicationDbContext.Programs.Remove(entity);
@@ -39,7 +38,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.DeletePro
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 
-            return true;
+            return Result<bool>.Success(true);
         }
     }
 }

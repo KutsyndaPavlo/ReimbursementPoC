@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using ReimbursementPoC.Administration.Application.Common.Model;
 using ReimbursementPoC.Administration.Application.Program.Queries.GetProgramById;
+using ReimbursementPoC.Administration.Domain.Common;
 using System.Runtime.Serialization;
 
 namespace ReimbursementPoC.Administration.Application.Program.Queries.GetPrograms
 {
-    public class GetProgramsQuery : IRequest<PaginatedList<ProgramDto>>
+    public class GetProgramsQuery : IRequest<Result<PaginatedList<ProgramDto>>>
     {
 
         [DataMember]

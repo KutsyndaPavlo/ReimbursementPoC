@@ -57,12 +57,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        service = await Http.GetFromJsonAsync<ServiceDto>("/administration/api/services/" + serviceId);
+        service = await Http.GetFromJsonAsync<ServiceDto>($"/administration/api/programs/{programId}/services/{serviceId}");
     }
 
     protected async Task CancelService(Guid id)
     {
-        var result = await Http.PutAsJsonAsync("/administration/api/services/" + id + "/cancel", service);
+        var result = await Http.PutAsJsonAsync($"/administration/api/programs/{programId}/services/" + id + " / cancel", service);
         if (result.IsSuccessStatusCode)
         {
             Error = "";

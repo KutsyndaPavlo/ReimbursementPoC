@@ -32,6 +32,24 @@
         "description": ""
       }
     },
+	"sqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": ""
+      }
+    },	
+	"sqlAdminLogin": {
+      "type": "string",
+      "metadata": {
+        "description": ""
+      }
+    },	
+	"sqlAdminPassword": {
+      "type": "string",
+      "metadata": {
+        "description": ""
+      }
+    },	
     "location": {
       "type": "string",
       "defaultValue": "[resourceGroup().location]",
@@ -128,6 +146,50 @@
         "[resourceId('Microsoft.KeyVault/vaults', parameters('vaultName'))]"
       ]
     },
+	{
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2021-11-01-preview",
+      "name": "[format('{0}/{1}', parameters('vaultName'), 'dbCustomerConnectionString')]",
+      "properties": {
+        "value": "[concat('Server=tcp:',parameters('sqlServerName'),'.database.windows.net,1433;Initial Catalog=customer;Persist Security Info=False;User ID=',parameters('sqlAdminLogin'),';Password=',parameters('sqlAdminPassword'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('vaultName'))]"
+      ]
+    },
+	{
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2021-11-01-preview",
+      "name": "[format('{0}/{1}', parameters('vaultName'), 'dbIdentityConnectionString')]",
+      "properties": {
+        "value": "[concat('Server=tcp:',parameters('sqlServerName'),'.database.windows.net,1433;Initial Catalog=identityDb;Persist Security Info=False;User ID=',parameters('sqlAdminLogin'),';Password=',parameters('sqlAdminPassword'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('vaultName'))]"
+      ]
+    },
+	{
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2021-11-01-preview",
+      "name": "[format('{0}/{1}', parameters('vaultName'), 'dbAdministrationConnectionString')]",
+      "properties": {
+        "value": "[concat('Server=tcp:',parameters('sqlServerName'),'.database.windows.net,1433;Initial Catalog=administration;Persist Security Info=False;User ID=',parameters('sqlAdminLogin'),';Password=',parameters('sqlAdminPassword'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('vaultName'))]"
+      ]
+    },
+	{
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2021-11-01-preview",
+      "name": "[format('{0}/{1}', parameters('vaultName'), 'dbVendorConnectionString')]",
+      "properties": {
+        "value": "[concat('Server=tcp:',parameters('sqlServerName'),'.database.windows.net,1433;Initial Catalog=vendor;Persist Security Info=False;User ID=',parameters('sqlAdminLogin'),';Password=',parameters('sqlAdminPassword'),';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', parameters('vaultName'))]"
+      ]
+    },	
     {
       "type": "Microsoft.KeyVault/vaults/keys",
       "apiVersion": "2021-11-01-preview",

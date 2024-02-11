@@ -9,12 +9,14 @@ using ReimbursementPoC.Administration.Application.Services.Commands.DeactivateSe
 using ReimbursementPoC.Administration.Application.Services.Commands.DeleteService;
 using ReimbursementPoC.Administration.Application.Services.Commands.UpdateService;
 using ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById;
-using ReimbursementPoC.Administration.Application.Services.Queries.GetServices;
+using ReimbursementPoC.Administration.Domain.Common;
+using ReimbursementPoC.Administration.Domain.Program.Errors;
+using ReimbursementPoC.Administration.Domain.Service.Errors;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace ReimbursementPoC.service.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/programs/{programId}/services")]
     [ApiController]
     public class ServicesController : ControllerBase
     {
@@ -42,20 +44,7 @@ namespace ReimbursementPoC.service.API.Controllers
 
         #region Actions
 
-        [HttpGet("active")]
-        [SwaggerOperation(Tags = new[] { "service" }, Summary = "Get active services.")]
-        [Produces("application/json")]
-        [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<ServiceDto>))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
-        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> GetAsync([FromQuery] int offset = 0, [FromQuery] int limit = 50)
-        {
-            var query = new GetActiveServicesQuery(offset, limit);
-            var result = await _mediator.Send(query);
-            return Ok(result);
-        }
-
-        [HttpGet("program/{programId}/services")]
+        [HttpGet()]
         [SwaggerOperation(Tags = new[] { "service" }, Summary = "Get services by program id.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<ServiceDto>))]
@@ -65,7 +54,10 @@ namespace ReimbursementPoC.service.API.Controllers
         {
             var query = new GetServicesByProgramIdQuery(programId, offset, limit);
             var result = await _mediator.Send(query);
-            return Ok(result);
+
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
         }
 
         [HttpGet("{id}", Name = "GetByIdAsync")]
@@ -75,17 +67,16 @@ namespace ReimbursementPoC.service.API.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Service does not exist")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> GetByIdAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync([FromRoute] Guid programId, Guid id)
         {
             var query = new GetServiceByIdQuery(id);
             var result = await _mediator.Send(query);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(result);
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : result.Error.Code == ProgramErrors.NotFound(id).Code
+                    ? NotFound(result.Error)
+                    : BadRequest(result.Error);
         }
 
         [HttpPost()]
@@ -95,12 +86,15 @@ namespace ReimbursementPoC.service.API.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status409Conflict, "Service already exist")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> PostServiceAsync([FromBody] CreateServiceRequest request)
+        public async Task<IActionResult> PostServiceAsync([FromRoute] Guid programId, [FromBody] CreateServiceRequest request)
         {
             var command = _mapper.Map<CreateServiceCommand>(request);
 
             var result = await _mediator.Send(command);
-            return CreatedAtRoute(nameof(GetByIdAsync), new { id = result.Id }, result);
+
+            return result.IsSuccess
+                ? CreatedAtRoute(nameof(GetByIdAsync), new { id = result.Data.Id }, result)
+                : BadRequest(result.Error);
         }
 
         [HttpPut("{id}")]
@@ -111,10 +105,15 @@ namespace ReimbursementPoC.service.API.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Service does not exist")]
         [SwaggerResponse(StatusCodes.Status409Conflict, "Service has been updated by someone else")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> PutAsync(Guid id, [FromBody] UpdateServiceRequest request)
+        public async Task<IActionResult> PutAsync([FromRoute] Guid programId, Guid id, [FromBody] UpdateServiceRequest request)
         {
             var result = await _mediator.Send(_mapper.Map<UpdateServiceCommand>(request));
-            return Ok(result);
+
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : result.Error.Code == ServiceErrors.ConcurrentUpdate(id).Code
+                    ? Conflict(result.Error)
+                    : BadRequest(result.Error);
         }
 
         [HttpPut("{id}/cancel")]
@@ -125,14 +124,16 @@ namespace ReimbursementPoC.service.API.Controllers
         [SwaggerResponse(StatusCodes.Status404NotFound, "Service does not exist")]
         [SwaggerResponse(StatusCodes.Status409Conflict, "Service has been updated by someone else")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> CancelServiceAsync(Guid id)
+        public async Task<IActionResult> CancelServiceAsync([FromRoute] Guid programId,Guid id)
         {
             var result = await _mediator.Send(new CancelServiceCommand
             {
                 Id = id
             });
 
-            return Ok(result);
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
         }
 
         [HttpDelete("{id}")]
@@ -142,12 +143,15 @@ namespace ReimbursementPoC.service.API.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status404NotFound, "Service does not exist")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> DeleteServiceAsync(Guid id)
+        public async Task<IActionResult> DeleteServiceAsync([FromRoute] Guid programId,Guid id)
         {
             var command = new DeleteServiceCommand(id);
 
-            await _mediator.Send(command);
-            return NoContent();
+            var result = await _mediator.Send(command);
+
+            return result.IsSuccess
+                ? NoContent()
+                : BadRequest(result.Error);
         }
 
         #endregion

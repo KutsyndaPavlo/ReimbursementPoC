@@ -1,123 +1,116 @@
 ﻿{
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "sql_server": {
-      "type": "object"
-    },
-    "admin": {
-      "type": "string"
-    },
-    "adminpwd":  {
-      "type": "string"
-    }
-  },
-  "variables": {
-    "sql_server_name": "[concat(parameters('sql_server').name, '-', uniqueString(resourceGroup().id))]",
-    "admin": "[parameters('admin')]",
-    "adminpwd": "[parameters('adminpwd')]"
-  },
-  "resources": [
-    {
-      "type": "Microsoft.Sql/servers",
-      "name": "[variables('sql_server_name')]",
-      "apiVersion": "2014-04-01-preview",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "administratorLogin": "[variables('admin')]",
-        "administratorLoginPassword": "[variables('adminpwd')]",
-        "version": "12.0"
+   "$schema":"https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+   "contentVersion":"1.0.0.0",
+   "parameters":{
+      "serverName":{
+         "type":"string",
+         "defaultValue":"[uniqueString('sql', resourceGroup().id)]",
+         "metadata":{
+            "description":"The name of the SQL logical server."
+         }
       },
-      "resources": [
-        {
-          "type": "databases",
-          "name": "[parameters('sql_server').dbs.vendor]",
-          "apiVersion": "2014-04-01-preview",
-          "location": "[resourceGroup().location]",
-          "properties": {
-            "edition": "Standard",
-            "collation": "SQL_Latin1_General_CP1_CI_AS",
-            "maxSizeBytes": "1073741824",
-            "requestedServiceObjectiveName": "S1"
-          },
-          "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', variables('sql_server_name'))]"
-          ]
-        },
-        {
-          "type": "databases",
-          "name": "[parameters('sql_server').dbs.customer]",
-          "apiVersion": "2014-04-01-preview",
-          "location": "[resourceGroup().location]",
-          "properties": {
-            "edition": "Standard",
-            "collation": "SQL_Latin1_General_CP1_CI_AS",
-            "maxSizeBytes": "1073741824",
-            "requestedServiceObjectiveName": "S1"
-          },
-          "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', variables('sql_server_name'))]"
-          ]
-        },
-        {
-          "type": "databases",
-          "name": "[parameters('sql_server').dbs.administration]",
-          "apiVersion": "2014-04-01-preview",
-          "location": "[resourceGroup().location]",
-          "properties": {
-            "edition": "Standard",
-            "collation": "SQL_Latin1_General_CP1_CI_AS",
-            "maxSizeBytes": "1073741824",
-            "requestedServiceObjectiveName": "S1"
-          },
-          "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', variables('sql_server_name'))]"
-          ]
-        }, 
-		{
-          "type": "databases",
-          "name": "[parameters('sql_server').dbs.identity]",
-          "apiVersion": "2014-04-01-preview",
-          "location": "[resourceGroup().location]",
-          "properties": {
-            "edition": "Standard",
-            "collation": "SQL_Latin1_General_CP1_CI_AS",
-            "maxSizeBytes": "1073741824",
-            "requestedServiceObjectiveName": "S1"
-          },
-          "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', variables('sql_server_name'))]"
-          ]
-        },      
-        {
-          "type": "firewallrules",
-          "name": "AllowAllWindowsAzureIps",
-          "apiVersion": "2014-04-01-preview",
-          "location": "[resourceGroup().location]",
-          "properties": {
-            "startIpAddress": "0.0.0.0",
-            "endIpAddress": "0.0.0.0"
-          },
-          "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', variables('sql_server_name'))]"
-          ]
-        },
-        {
-          "type": "firewallrules",
-          "name": "AllConnectionsAllowed",
-          "apiVersion": "2014-04-01-preview",
-          "location": "[resourceGroup().location]",
-          "properties": {
-            "startIpAddress": "0.0.0.0",
-            "endIpAddress": "255.255.255.255"
-          },
-          "dependsOn": [
-            "[concat('Microsoft.Sql/servers/', variables('sql_server_name'))]"
-          ]
-        }
-      ]
-    }
-  ],
-  "outputs": {
-  }
+      "location":{
+         "type":"string",
+         "defaultValue":"[resourceGroup().location]",
+         "metadata":{
+            "description":"Location for all resources."
+         }
+      },
+      "al":{
+         "type":"string",
+         "metadata":{
+            "description":"The administrator username of the SQL logical server."
+         }
+      },
+      "alp":{
+         "type":"string",
+         "metadata":{
+            "description":"The administrator password of the SQL logical server."
+         }
+      }
+   },
+   "variables":{
+	    "adminLogin":"[concat('adm',parameters('al'))]",
+		"adminPassword":"[concat('adm878Urrr',parameters('al'))]"    		
+   },
+   "resources":[
+      {
+         "type":"Microsoft.Sql/servers",
+         "apiVersion":"2020-02-02-preview",
+         "name":"[parameters('serverName')]",
+         "location":"[parameters('location')]",
+         "properties":{
+            "administratorLogin":"[variables('adminLogin')]",
+            "administratorLoginPassword":"[variables('adminPassword')]"
+         },
+         "resources":[
+            {
+               "type":"databases",
+               "apiVersion":"2020-08-01-preview",
+               "name":"['identityDb']",
+               "location":"[parameters('location')]",
+               "sku":{
+                  "name":"Basic",
+                  "tier":"Basic"
+               },
+               "dependsOn":[
+                  "[resourceId('Microsoft.Sql/servers', concat(parameters('serverName')))]"
+               ]
+            },
+			            {
+               "type":"databases",
+               "apiVersion":"2020-08-01-preview",
+               "name":"['administration']",
+               "location":"[parameters('location')]",
+               "sku":{
+                  "name":"Basic",
+                  "tier":"Basic"
+               },
+               "dependsOn":[
+                  "[resourceId('Microsoft.Sql/servers', concat(parameters('serverName')))]"
+               ]
+            },
+			            {
+               "type":"databases",
+               "apiVersion":"2020-08-01-preview",
+               "name":"['vendor']",
+               "location":"[parameters('location')]",
+               "sku":{
+                  "name":"Basic",
+                  "tier":"Basic"
+               },
+               "dependsOn":[
+                  "[resourceId('Microsoft.Sql/servers', concat(parameters('serverName')))]"
+               ]
+            },
+			            {
+               "type":"databases",
+               "apiVersion":"2020-08-01-preview",
+               "name":"['customer']",
+               "location":"[parameters('location')]",
+               "sku":{
+                  "name":"Basic",
+                  "tier":"Basic"
+               },
+               "dependsOn":[
+                  "[resourceId('Microsoft.Sql/servers', concat(parameters('serverName')))]"
+               ]
+            }
+         ]
+      }
+   ],
+   "outputs": {
+	   	"sqlServerName": {
+		  "type": "string",
+		  "value": "[parameters('serverName')]"
+		},
+		"sqlAdminLogin": {
+		  "type": "string",
+		  "value": "[variables('adminLogin')]"
+		},
+		"sqlAdminPassword": {
+		  "type": "string",
+		  "value": "[variables('adminPassword')]"
+		}
+	}
 }

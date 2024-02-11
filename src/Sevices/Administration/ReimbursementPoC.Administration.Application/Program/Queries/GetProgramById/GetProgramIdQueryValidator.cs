@@ -11,9 +11,9 @@ namespace ReimbursementPoC.Administration.Application.Program.Queries.GetProgram
     {
         public GetProgramByIdQueryValidator()
         {
-            RuleFor(v => v.Id)
-                .NotEmpty()
-                .WithMessage("Id is required.");
+            //RuleFor(v => v.Id)
+            //    .NotEmpty()
+            //    .WithMessage("Id is required.");
         }
     }
 }

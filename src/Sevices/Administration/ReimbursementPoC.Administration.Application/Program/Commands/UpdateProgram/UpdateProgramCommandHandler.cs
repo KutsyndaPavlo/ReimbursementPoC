@@ -3,13 +3,14 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Administration.Application.Common.Interfaces;
 using ReimbursementPoC.Administration.Application.Program.Queries.GetProgramById;
-using ReimbursementPoC.Administration.Domain;
+using ReimbursementPoC.Administration.Domain.Common;
 using ReimbursementPoC.Administration.Domain.Program;
+using ReimbursementPoC.Administration.Domain.Program.Errors;
 using ReimbursementPoC.Administration.Domain.Program.Specification;
 
 namespace ReimbursementPoC.Administration.Application.Program.Commands.UpdateProgram
 {
-    internal class UpdateProgramCommandHandler : IRequestHandler<UpdateProgramCommand, ProgramDto>
+    internal class UpdateProgramCommandHandler : IRequestHandler<UpdateProgramCommand, Result<ProgramDto>>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
@@ -25,18 +26,18 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.UpdatePro
             _ProgramUniquenessChecker = ProgramUniquenessChecker;
         }
 
-        public async Task<ProgramDto> Handle(UpdateProgramCommand command, CancellationToken cancellationToken)
+        public async Task<Result<ProgramDto>> Handle(UpdateProgramCommand command, CancellationToken cancellationToken)
         {
             var entity = await _applicationDbContext.Programs.FindAsync(new object[] { command.Id }, cancellationToken);
 
             if (entity == null)
             {
-                throw new ProgramNotFoundException($"Program with id {command.Id} doesn't exist.");
+                return Result<ProgramDto>.Failure(ProgramErrors.NotFound(command.Id));
             }
 
             if (command.LastModified.Ticks != entity.LastModified.Ticks)
             {
-                throw new ProgramConcurrentUpdateException($"Program {command.Id} version is outdated.");
+                return Result<ProgramDto>.Failure(ProgramErrors.ConcurrentUpdate(command.Id));
             }
 
             entity.UpdateProgram(
@@ -54,7 +55,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.UpdatePro
 
             var dto = _mapper.Map<ProgramDto>(result);
 
-            return dto;
+            return Result<ProgramDto>.Success(dto);
         }
     }
 }

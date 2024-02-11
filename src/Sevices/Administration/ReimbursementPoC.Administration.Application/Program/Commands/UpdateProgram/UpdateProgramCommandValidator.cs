@@ -6,8 +6,8 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.UpdatePro
     {
         public UpdateProgramCommandValidator()
         {
-            RuleFor(v => v.Name)
-                .NotEmpty();
+            //RuleFor(v => v.Name)
+            //    .NotEmpty();
         }
     }
 }

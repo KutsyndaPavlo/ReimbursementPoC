@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vaultName": {
-			"value": "reimbursementpoc-vault4"
+			"value": "reimbursementpoc-vault9"
 		},
 		"keyName": {
 			"value": "reimbursementpockey"
@@ -15,6 +15,15 @@
 			"value": "6b314215-9d62-49dd-bfbb-1f64319b1c98"
 		},
 		"serviceBusConnectionString": {
+			"value": ""
+		},
+		"sqlServerName": {
+			"value": ""
+		},
+		"sqlAdminLogin": {
+			"value": ""
+		},	
+		"sqlAdminPassword": {
 			"value": ""
 		}
     }

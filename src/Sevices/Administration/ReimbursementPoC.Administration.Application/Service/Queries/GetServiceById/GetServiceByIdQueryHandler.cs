@@ -2,13 +2,14 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ReimbursementPoC.Administration.Application.Common.Interfaces;
-using ReimbursementPoC.Administration.Domain.Service.Exeption;
+using ReimbursementPoC.Administration.Domain.Common;
+using ReimbursementPoC.Administration.Domain.Service.Errors;
 using ReimbursementPoC.Administration.Domain.Service.Specifications;
 
 namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById
 {
     public class GetServiceByIdQueryHandler
-        : IRequestHandler<GetServiceByIdQuery, ServiceDto>
+        : IRequestHandler<GetServiceByIdQuery, Result<ServiceDto>>
     {
         private readonly IApplicationDbContext _applicationDbContext;
         private readonly IMapper _mapper;
@@ -19,17 +20,17 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
             _mapper = mapper;
         }
 
-        public async Task<ServiceDto> Handle(GetServiceByIdQuery query, CancellationToken cancellationToken)
+        public async Task<Result<ServiceDto>> Handle(GetServiceByIdQuery query, CancellationToken cancellationToken)
         {
             //ToDo add specification
             var service = await _applicationDbContext.Services.Include(x => x.Program).FirstOrDefaultAsync(new ServiceByIdSpecification(query.Id).ToExpression());
 
             if (service == null)
             {
-                throw new ServiceNotFoundException($"Service with id {query.Id} doesn't exist");
+                Result<ServiceDto>.Failure(ServiceErrors.NotFound(query.Id));
             }
 
-            return _mapper.Map<ServiceDto>(service);
+            return Result<ServiceDto>.Success(_mapper.Map<ServiceDto>(service));
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using MediatR;
 using ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById;
+using ReimbursementPoC.Administration.Domain.Common;
 
 namespace ReimbursementPoC.Administration.Application.Services.Commands.UpdateService
 {
-    public class UpdateServiceCommand : IRequest<ServiceDto>
+    public class UpdateServiceCommand : IRequest<Result<ServiceDto>>
     {
         public Guid Id { get; set; }
 

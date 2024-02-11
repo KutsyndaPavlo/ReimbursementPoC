@@ -89,7 +89,7 @@
 
     protected async Task GetServicesAsync()
     {
-        var result = await Http.GetFromJsonAsync<PaginatedList<ServiceDto>>($"/administration/api/services/program/{programId}/services?offset={CurrentOffset}&limit={defaultLimit}");
+        var result = await Http.GetFromJsonAsync<PaginatedList<ServiceDto>>($"/administration/api/programs/{programId}/services?offset={CurrentOffset}&limit={defaultLimit}");
 
         serviceList.Clear();
         serviceList.AddRange(result.Items.ToList());
