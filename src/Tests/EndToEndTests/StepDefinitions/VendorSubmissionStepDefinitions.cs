@@ -47,13 +47,14 @@ namespace EndToEndTests.StepDefinitions
         public async Task ThenServiceWasDeleted()
         {
             var id = _context.Get<Guid>("service_id");
+            var programId = _context.Get<Guid>("program_id");
 
             using var httpClient = GetHttpClient();
 
             var httpRequestMessage = new HttpRequestMessage()
             {
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/services/{id}")
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/programs/{programId}/services/{id}")
             };
 
             httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
@@ -70,13 +71,15 @@ namespace EndToEndTests.StepDefinitions
             {
                 Name = "Service" + Guid.NewGuid(),
                 Description = "",
-                ProgramId = _context.Get<Guid>("program_id")
             };
+
+
+            var programId = _context.Get<Guid>("program_id");
 
             var httpRequestMessage = new HttpRequestMessage()
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/Services"),
+                RequestUri = new Uri($"{ConfigProvider.GetApiGatewayUrl()}/administration/api/programs/{programId}/services"),
                 Content = JsonContent.Create(requestData)
             };
 

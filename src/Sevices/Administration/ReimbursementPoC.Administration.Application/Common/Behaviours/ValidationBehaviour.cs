@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using ReimbursementPoC.Administration.Domain.Common;
 
 namespace ReimbursementPoC.Administration.Application.Common.Behaviours;
 
@@ -32,7 +33,7 @@ public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReque
                 .ToList();
 
             if (failures.Any())
-                throw new ValidationException(failures);
+                throw new ValidationException(failures); //ToDo return new Error()
         }
         return await next();
     }

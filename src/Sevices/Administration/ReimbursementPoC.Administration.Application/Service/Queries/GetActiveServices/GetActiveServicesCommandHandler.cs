@@ -35,6 +35,7 @@ namespace ReimbursementPoC.Administration.Application.Services.Queries.GetServic
                 .OrderBy(c => c.Name)
                 .Skip(query.Offset)
                 .Take(query.Limit)
+                .AsNoTracking()
                 .ToListAsync();
 
             return Result<PaginatedList<ServiceDto>>.Success(new PaginatedList<ServiceDto>

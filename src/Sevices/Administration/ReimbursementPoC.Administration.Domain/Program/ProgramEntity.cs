@@ -53,9 +53,9 @@ namespace ReimbursementPoC.Administration.Domain.Program
 
         public bool IsCanceled { get; private set; }
 
-        public List<ServiceEntity> _services;
+        private List<ServiceEntity> _services = new List<ServiceEntity>();
 
-        public IReadOnlyCollection<ServiceEntity> Services => _services;
+        public IReadOnlyCollection<ServiceEntity> Services => _services.AsReadOnly();
 
         /// <summary>
         /// Creates new program.
@@ -104,7 +104,7 @@ namespace ReimbursementPoC.Administration.Domain.Program
 
         public bool CanBeDeleted()
         {
-            return !_services.Any();
+            return !Services.Any();
         }
 
         public ServiceEntity CreateService(string name, string? description)

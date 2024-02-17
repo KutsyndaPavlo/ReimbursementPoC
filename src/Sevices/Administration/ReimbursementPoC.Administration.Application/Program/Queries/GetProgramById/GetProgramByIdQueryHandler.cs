@@ -25,8 +25,11 @@ namespace ReimbursementPoC.Administration.Application.Program.Queries.GetProgram
             var entity = await _applicationDbContext
                 .Programs
                 .Include(x => x.State)
-                .Include("_services")
-            .FirstOrDefaultAsync(new ProgramByIdSpecification(query.Id).ToExpression());
+                .Include(x=>x.Services)
+                //.ThenInclude(x=>x.Program)
+                .AsSplitQuery()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(new ProgramByIdSpecification(query.Id).ToExpression());
 
             if (entity == null)
             {

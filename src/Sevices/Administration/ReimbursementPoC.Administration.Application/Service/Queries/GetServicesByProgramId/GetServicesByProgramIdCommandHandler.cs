@@ -46,6 +46,7 @@ namespace ReimbursementPoC.Administration.Application.Service.Queries.GetService
                 .OrderBy(c => c.Name)
                 .Skip(query.Offset)
                 .Take(query.Limit)
+                .AsNoTracking()
                 .ToListAsync();
 
 

@@ -80,7 +80,7 @@
 
     protected async Task GetServices()
     {
-        var result = await Http.GetFromJsonAsync<PaginatedList<ServiceDto>>("/administration/api/services/active");
+        var result = await Http.GetFromJsonAsync<PaginatedList<ServiceDto>>($"/administration/api/services/active");
         serviceList = result.Items.ToList();
     }
 

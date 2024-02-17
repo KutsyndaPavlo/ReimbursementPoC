@@ -19,7 +19,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.DeletePro
 
         public async Task<Result<bool>> Handle(DeleteProgramCommand command, CancellationToken cancellationToken)
         {
-            var entity = await _applicationDbContext.Programs.Include("_services")
+            var entity = await _applicationDbContext.Programs.Include(x=>x.Services)
                 .FirstOrDefaultAsync(new ProgramByIdSpecification(command.Id).ToExpression());
 
             if (entity == null)

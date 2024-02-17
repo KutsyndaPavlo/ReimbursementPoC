@@ -26,7 +26,7 @@ namespace ReimbursementPoC.Vendor.Application
             services.AddAutoMapper(MappingProfile.AutoMapperConfig, typeof(MappingProfile).Assembly);
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             services.AddEventBus(configuration);
             return services;
@@ -63,7 +63,7 @@ namespace ReimbursementPoC.Vendor.Application
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            eventBus.Subscribe<ProgramCreatedIntegrationEvent, ProgramCreatedIntegrationEventHandler>();
+            //eventBus.Subscribe<ProgramCreatedIntegrationEvent, ProgramCreatedIntegrationEventHandler>();
         }
     }
 }

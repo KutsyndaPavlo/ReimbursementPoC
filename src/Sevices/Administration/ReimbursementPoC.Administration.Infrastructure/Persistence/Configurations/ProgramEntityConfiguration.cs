@@ -36,6 +36,14 @@ namespace ReimbursementPoC.Administration.Infrastructure.Persistence.Configurati
                            mv.Property(p => p.EndDate).HasColumnName("EndDate");
                        });
 
+            //builder.OwnsOne(i => i.Period, io =>
+            //{
+            //    // io.WithOwner();
+
+            //    io.Property(cio => cio.StartDate).HasColumnName("StartDate");
+            //    io.Property(cio => cio.EndDate).HasColumnName("EndDate");
+            //});
+
             builder.Property(t => t.IsCanceled)
                 .HasColumnName("IsCompleted")
                 .IsRequired();
@@ -48,10 +56,15 @@ namespace ReimbursementPoC.Administration.Infrastructure.Persistence.Configurati
                 .HasColumnName("LastModifiedBy")
                 .IsRequired();
 
-            builder.HasMany("_services")
-                .WithOne("Program")
-                .HasForeignKey("ProgramId")
-                .IsRequired().OnDelete(DeleteBehavior.Cascade);
+            var navigation = builder.Metadata.FindNavigation(nameof(ProgramEntity.Services));
+
+            navigation?.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            //builder.HasMany("_services")
+            //    .WithOne("Program")
+            //    .HasForeignKey("ProgramId")
+            //    .IsRequired().OnDelete(DeleteBehavior.Cascade);
+
 
             builder.Ignore(e => e.DomainEvents);
         }

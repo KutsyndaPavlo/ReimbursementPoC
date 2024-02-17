@@ -107,7 +107,7 @@ namespace ReimbursementPoC.Administration.API.Controllers
 
             return result.IsSuccess
                 ? Ok(result.Data)
-                : result.Error.Code == ProgramErrors.NotFound(id).Code
+                : result.Error.Code == ProgramErrors.NotFoundCode
                     ? NotFound(result.Error)
                     : BadRequest(result.Error);
         }
@@ -124,7 +124,7 @@ namespace ReimbursementPoC.Administration.API.Controllers
             var result = await _mediator.Send(_mapper.Map<CreateProgramCommand>(request));
 
             return result.IsSuccess
-                ? CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result)
+                ? CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result.Data)
                 : BadRequest(result.Error);
         }
 
@@ -142,7 +142,7 @@ namespace ReimbursementPoC.Administration.API.Controllers
 
             return result.IsSuccess
               ? Ok(result.Data)
-              : result.Error.Code == ProgramErrors.ConcurrentUpdate(id).Code
+              : result.Error.Code == ProgramErrors.ConcurrentUpdateCode
                     ? Conflict(result.Error)
                     : BadRequest(result.Error);
         }

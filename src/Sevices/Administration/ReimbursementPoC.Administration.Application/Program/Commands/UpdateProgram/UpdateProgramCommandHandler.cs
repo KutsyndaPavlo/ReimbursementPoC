@@ -45,6 +45,13 @@ namespace ReimbursementPoC.Administration.Application.Program.Commands.UpdatePro
                 command.Description);
 
             _applicationDbContext.Programs.Update(entity);
+            //return await _demoContext.Countries
+            //                    .Where(x =>
+            //                    x.Id == countryEntity.Id)
+            //                    .ExecuteUpdateAsync(s =>
+            //                            s.SetProperty(p => p.Description, countryEntity.Description)
+            //                            .SetProperty(p => p.FlagUri, countryEntity.FlagUri)
+            //                            .SetProperty(p => p.Name, countryEntity.Name));
 
             await _applicationDbContext.SaveChangesAsync(cancellationToken);
 

@@ -20,7 +20,7 @@ services:
     environment:
          - ASPNETCORE_ENVIRONMENT=Development
          - ASPNETCORE_URLS=https://+:443
-         - ConnectionStrings__DefaultConnection=Server=sqldata;Database=iden;User Id=sa;Password=Pass@word
+         - ConnectionStrings__DefaultConnection=Server=sqldata;Database=iden;User Id=sa;Password=Pass@word;TrustServerCertificate=True; 
          - UiUrl=http://localhost:8505
          - ASPNETCORE_Kestrel__Certificates__Default__Password=password
          - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
@@ -40,7 +40,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionStrings__Db=Server=sqldata;Database=administration;User Id=sa;Password=Pass@word
+      - ConnectionStrings__Db=Server=sqldata;Database=administration;User Id=sa;Password=Pass@word;TrustServerCertificate=True; 
       - ConnectionStrings__EventBus=Endpoint=***
       - EventBus__SubscriptionClientName=ri-event-bus-sc2
     ports:
@@ -59,7 +59,7 @@ services:
       environment:
        - ASPNETCORE_ENVIRONMENT=Development
        - ASPNETCORE_URLS=http://0.0.0.0:80
-       - ConnectionStrings__Db=Server=sqldata;Database=customer;User Id=sa;Password=Pass@word
+       - ConnectionStrings__Db=Server=sqldata;Database=customer;User Id=sa;Password=Pass@word;TrustServerCertificate=True; 
        - ConnectionStrings__EventBus=Endpoint=***
        - EventBus__SubscriptionClientName=ri-event-bus-sc2
       ports:
@@ -78,7 +78,7 @@ services:
       environment:
        - ASPNETCORE_ENVIRONMENT=Development
        - ASPNETCORE_URLS=http://0.0.0.0:80
-       - ConnectionStrings__Db=Server=sqldata;Database=vendor;User Id=sa;Password=Pass@word
+       - ConnectionStrings__Db=Server=sqldata;Database=vendor;User Id=sa;Password=Pass@word;TrustServerCertificate=True; 
        - ConnectionStrings__EventBus=Endpoint=***
        - EventBus__SubscriptionClientName=ri-event-bus-sc2
       ports:

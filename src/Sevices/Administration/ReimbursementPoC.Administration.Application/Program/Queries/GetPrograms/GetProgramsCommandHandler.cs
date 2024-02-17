@@ -33,7 +33,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Queries.GetProgram
 
             var total = await root.LongCountAsync();
 
-            root = root.Include(x => x.State).Include("_services");
+            root = root.Include(x => x.State).Include(x=>x.Services);
 
             if (query.Sort == "nameAsc")
             {
@@ -54,6 +54,7 @@ namespace ReimbursementPoC.Administration.Application.Program.Queries.GetProgram
 
             var data = await root.Skip(query.Offset)
             .Take(query.Limit)
+            .AsNoTracking()
             .ToListAsync();
 
             return Result<PaginatedList<ProgramDto>>.Success(new PaginatedList<ProgramDto>

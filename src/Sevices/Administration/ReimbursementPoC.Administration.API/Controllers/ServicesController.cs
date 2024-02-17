@@ -9,6 +9,7 @@ using ReimbursementPoC.Administration.Application.Services.Commands.DeactivateSe
 using ReimbursementPoC.Administration.Application.Services.Commands.DeleteService;
 using ReimbursementPoC.Administration.Application.Services.Commands.UpdateService;
 using ReimbursementPoC.Administration.Application.Services.Queries.GetServiceById;
+using ReimbursementPoC.Administration.Application.Services.Queries.GetServices;
 using ReimbursementPoC.Administration.Domain.Common;
 using ReimbursementPoC.Administration.Domain.Program.Errors;
 using ReimbursementPoC.Administration.Domain.Service.Errors;
@@ -16,7 +17,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace ReimbursementPoC.service.API.Controllers
 {
-    [Route("api/programs/{programId}/services")]
+    [Route("api")]
     [ApiController]
     public class ServicesController : ControllerBase
     {
@@ -44,7 +45,23 @@ namespace ReimbursementPoC.service.API.Controllers
 
         #region Actions
 
-        [HttpGet()]
+        [HttpGet("services/active")]
+        [SwaggerOperation(Tags = new[] { "service" }, Summary = "Get active services")]
+        [Produces("application/json")]
+        [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<ServiceDto>))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
+        public async Task<IActionResult> GetServicesByProgramIdAsync([FromQuery] int offset = 0, [FromQuery] int limit = 50)
+        {
+            var query = new GetActiveServicesQuery(offset, limit);
+            var result = await _mediator.Send(query);
+
+            return result.IsSuccess
+                ? Ok(result.Data)
+                : BadRequest(result.Error);
+        }
+
+        [HttpGet("programs/{programId}/services")]
         [SwaggerOperation(Tags = new[] { "service" }, Summary = "Get services by program id.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<ServiceDto>))]
@@ -60,7 +77,7 @@ namespace ReimbursementPoC.service.API.Controllers
                 : BadRequest(result.Error);
         }
 
-        [HttpGet("{id}", Name = "GetByIdAsync")]
+        [HttpGet("programs/{programId}/services/{id}", Name = "GetByIdAsync")]
         [SwaggerOperation(Tags = new[] { "Service" }, Summary = "Get service by id.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(ServiceDto))] 
@@ -74,12 +91,12 @@ namespace ReimbursementPoC.service.API.Controllers
 
             return result.IsSuccess
                 ? Ok(result.Data)
-                : result.Error.Code == ProgramErrors.NotFound(id).Code
+                : result.Error.Code == ProgramErrors.NotFoundCode
                     ? NotFound(result.Error)
                     : BadRequest(result.Error);
         }
 
-        [HttpPost()]
+        [HttpPost("programs/{programId}/services")]
         [SwaggerOperation(Tags = new[] { "Service" }, Summary = "Create a service.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(ServiceDto))]
@@ -89,15 +106,16 @@ namespace ReimbursementPoC.service.API.Controllers
         public async Task<IActionResult> PostServiceAsync([FromRoute] Guid programId, [FromBody] CreateServiceRequest request)
         {
             var command = _mapper.Map<CreateServiceCommand>(request);
+            command.ProgramId = programId;
 
             var result = await _mediator.Send(command);
 
             return result.IsSuccess
-                ? CreatedAtRoute(nameof(GetByIdAsync), new { id = result.Data.Id }, result)
+                ? CreatedAtRoute(nameof(GetByIdAsync), new { programId, id = result.Data.Id }, result.Data)
                 : BadRequest(result.Error);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("programs/{programId}/services/{id}")]
         [SwaggerOperation(Tags = new[] { "Service" }, Summary = "Update a service.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(ServiceDto))]
@@ -111,12 +129,12 @@ namespace ReimbursementPoC.service.API.Controllers
 
             return result.IsSuccess
                 ? Ok(result.Data)
-                : result.Error.Code == ServiceErrors.ConcurrentUpdate(id).Code
+                : result.Error.Code == ServiceErrors.ConcurrentUpdateCode
                     ? Conflict(result.Error)
                     : BadRequest(result.Error);
         }
 
-        [HttpPut("{id}/cancel")]
+        [HttpPut("programs/{programId}/services/{id}/cancel")]
         [SwaggerOperation(Tags = new[] { "Service" }, Summary = "Cancel a service.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(ServiceDto))]
@@ -136,7 +154,7 @@ namespace ReimbursementPoC.service.API.Controllers
                 : BadRequest(result.Error);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("programs/{programId}/services/{id}")]
         [SwaggerOperation(Tags = new[] { "service" }, Summary = "Delete service by id.")]
         [Produces("application/json")]
         [SwaggerResponse(StatusCodes.Status204NoContent)]

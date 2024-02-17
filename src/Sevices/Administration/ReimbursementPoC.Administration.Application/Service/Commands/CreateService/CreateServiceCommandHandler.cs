@@ -24,7 +24,7 @@ namespace ReimbursementPoC.Administration.Application.Services.Commands.CreateSe
 
         public async Task<Result<ServiceDto>> Handle(CreateServiceCommand command, CancellationToken cancellationToken)
         {
-            var program = await _applicationDbContext.Programs.Include("_services").FirstOrDefaultAsync(new ProgramByIdSpecification(command.ProgramId).ToExpression());
+            var program = await _applicationDbContext.Programs.Include(x => x.Services).FirstOrDefaultAsync(new ProgramByIdSpecification(command.ProgramId).ToExpression());
 
             if (program == null)
             {

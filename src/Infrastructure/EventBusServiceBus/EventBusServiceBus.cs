@@ -25,12 +25,12 @@ public class EventBusServiceBus : IEventBus, IAsyncDisposable
         _subsManager = subsManager ?? new InMemoryEventBusSubscriptionsManager();
         _serviceProvider = serviceProvider;
         _subscriptionName = subscriptionClientName;
-        _sender = _serviceBusPersisterConnection.TopicClient.CreateSender(_topicName);
-        ServiceBusProcessorOptions options = new ServiceBusProcessorOptions { MaxConcurrentCalls = 10, AutoCompleteMessages = false };
-        _processor = _serviceBusPersisterConnection.TopicClient.CreateProcessor(_topicName, _subscriptionName, options);
+        //_sender = _serviceBusPersisterConnection.TopicClient.CreateSender(_topicName);
+        //ServiceBusProcessorOptions options = new ServiceBusProcessorOptions { MaxConcurrentCalls = 10, AutoCompleteMessages = false };
+       // _processor = _serviceBusPersisterConnection.TopicClient.CreateProcessor(_topicName, _subscriptionName, options);
 
-        RemoveDefaultRule();
-        RegisterSubscriptionClientMessageHandlerAsync().GetAwaiter().GetResult();
+        //RemoveDefaultRule();
+       // RegisterSubscriptionClientMessageHandlerAsync().GetAwaiter().GetResult(); //ToDo
     }
 
     public void Publish(IntegrationEvent @event)

@@ -4,10 +4,14 @@ namespace ReimbursementPoC.Administration.Domain.Service.Errors
 {
     public static class ServiceErrors
     {
-        public static Error CanNotBeDeleted(Guid id) => new("Service.CanNotBeDeleted", $"Service with id {id} can't be deleted");
+        public static string CanNotBeDeletedCode = "Service.CanNotBeDeleted";
+        public static string ConcurrentUpdateCode = "Service.ConcurrentUpdate";
+        public static string NotFoundCode = "Service.CanNotBeDeleted";
 
-        public static Error ConcurrentUpdate(Guid id) => new("Service.ConcurrentUpdate", $"Service {id} version is outdated.");
+        public static Error CanNotBeDeleted(Guid id) => new(CanNotBeDeletedCode, $"Service with id {id} can't be deleted");
 
-        public static Error NotFound(Guid id) => new("Service.NotFound", $"Service with id {id} doesn't exist");
+        public static Error ConcurrentUpdate(Guid id) => new(ConcurrentUpdateCode, $"Service {id} version is outdated.");
+
+        public static Error NotFound(Guid id) => new(NotFoundCode, $"Service with id {id} doesn't exist");
     }
 }
