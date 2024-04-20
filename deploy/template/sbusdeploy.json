@@ -15,7 +15,7 @@
         "location": "[resourceGroup().location]",
         "sbVersion": "2015-08-01",
         "defaultSASKeyName": "Root",
-        "namespace":"[concat(parameters('namespaceprefix'), uniqueString(resourceGroup().id))]",
+        "namespace":"[concat(parameters('namespaceprefix'), '-', uniqueString(resourceGroup().id))]",
         "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/topics/authorizationRules', variables('namespace'), variables('serviceBusTopicName'), variables('defaultSASKeyName'))]"        
     },
     "resources": [

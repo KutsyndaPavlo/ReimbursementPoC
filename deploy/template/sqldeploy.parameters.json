@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
 		"serverName": { 
-		  "value": "reimbursementpocsql4"
+		  "value": "reimbursementpocsql"
 		},
 		"al": {
 		  "value": ""

@@ -2,78 +2,29 @@ pool:
   name: Azure Pipelines
 
 variables:
-  azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
-  azureSubscription: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
-  subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-  resourceGroupName: 'ri-poc-rg'
-  location: 'eastus2'
+- group: dev-variable-group
+- name: resourceGroupName
+  value: 'ri-poc-rg'
+- name: location
+  value: 'eastus2'
 
 steps:
 - task: AzureCLI@2
   displayName: 'Resource group'
   inputs:
-    azureSubscription: $(azureSubscription)
+    azureSubscription: $(azureResourceManagerConnection)
     scriptType: bash
     scriptLocation: inlineScript
     inlineScript: 'az group create --n ri-poc-rg -l eastus'
     
-- task: AzureResourceManagerTemplateDeployment@3
-  displayName: 'ARM Template deployment: SQL'
+- task: AzureCLI@2
+  displayName: 'Container registry'
   inputs:
-    deploymentScope: 'Resource Group'    
-    action: 'Create Or Update Resource Group'
-    azureResourceManagerConnection: $(azureResourceManagerConnection)
-    subscriptionId: $(subscriptionId)
-    resourceGroupName: $(resourceGroupName)
-    location: $(location)
-    templateLocation: 'Linked artifact'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.json' 
-    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'
-    deploymentMode: 'Incremental'
-    overrideParameters: '-al $(adminLogin) -alp $(adminLogin)'
-    deploymentOutputs: sqltemplateoutput
-
-- task: AzureResourceManagerTemplateDeployment@3
-  displayName: 'ARM Template deployment: App service - Idenytity API'
-  inputs:
-    deploymentScope: 'Resource Group'
-    action: 'Create Or Update Resource Group'
-    azureResourceManagerConnection: $(azureResourceManagerConnection)
-    subscriptionId: $(subscriptionId)
-    resourceGroupName: $(resourceGroupName)
-    location: $(location)
-    templateLocation: 'Linked artifact'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
-    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-identity-api.parameters.json'   
-    deploymentMode: 'Incremental'
-
-- task: AzureResourceManagerTemplateDeployment@3
-  displayName: 'ARM Template deployment: App service - UI'
-  inputs:
-    deploymentScope: 'Resource Group'
-    action: 'Create Or Update Resource Group'
-    azureResourceManagerConnection: $(azureResourceManagerConnection)
-    subscriptionId: $(subscriptionId)
-    resourceGroupName: $(resourceGroupName)
-    location: $(location)
-    templateLocation: 'Linked artifact'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
-    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-ui.parameters.json'   
-    deploymentMode: 'Incremental'
-    
-- task: AzureResourceManagerTemplateDeployment@3
-  displayName: 'ARM Template deployment: Cosmos Db'
-  inputs:
-    deploymentScope: 'Resource Group'
-    action: 'Create Or Update Resource Group'
-    azureResourceManagerConnection: $(azureResourceManagerConnection)
-    subscriptionId: $(subscriptionId)
-    resourceGroupName: $(resourceGroupName)
-    location: $(location)
-    templateLocation: 'Linked artifact'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploycosmos.json' 
-    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploycosmos.parameters.json'   
-    deploymentMode: 'Incremental'
+    azureSubscription: $(azureResourceManagerConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: 'az acr create --resource-group $(resourceGroupName) --name reimbursementpoccontainerregistry --sku Basic'
+   
     
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Storage'
@@ -87,21 +38,7 @@ steps:
     templateLocation: 'Linked artifact'
     csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploystorage.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploystorage.parameters.json'   
-    deploymentMode: 'Incremental'
-    
-# - task: AzureResourceManagerTemplateDeployment@3
-  # displayName: 'ARM Template deployment: Redis'
-  # inputs:
-    # deploymentScope: 'Resource Group'
-    # azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
-    # action: 'Create Or Update Resource Group'
-    # subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
-    # resourceGroupName: 'ri-poc-rg'
-    # location: 'eastus2'
-    # templateLocation: 'Linked artifact'
-    # csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/redisdeploy.json' 
-    # csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/redisdeploy.parameters.json'   
-    # deploymentMode: 'Incremental'
+    deploymentMode: 'Incremental'  
     
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Service bus'
@@ -123,14 +60,42 @@ steps:
     $connectionString = $armOutputObj.namespaceConnectionString.value
     Write-Output "##vso[task.setvariable variable=serviceBusConn;issecret=true;]$connectionString"
     
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: SQL'
+  inputs:
+    deploymentScope: 'Resource Group'    
+    action: 'Create Or Update Resource Group'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/sqldeploy.parameters.json'
+    deploymentMode: 'Incremental'
+    overrideParameters: '-al $(sqlAdminLogin) -alp $(sqlAdminPassword)'
+    deploymentOutputs: sqltemplateoutput
+    
+
 - pwsh: |
     $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
     $sqlServerName1 = $armOutputObj2.sqlServerName.value
-    $sqlAdminLogin1 = $armOutputObj2.sqlAdminLogin.value
-    $sqlAdminPassword1 = $armOutputObj2.sqlAdminPassword.value
     Write-Output "##vso[task.setvariable variable=sqlServerName;issecret=true;]$sqlServerName1"
-    Write-Output "##vso[task.setvariable variable=sqlAdminLogin;issecret=true;]$sqlAdminLogin1"
-    Write-Output "##vso[task.setvariable variable=sqlAdminPassword;issecret=true;]$sqlAdminPassword1"
+    
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: Cosmos Db'
+  inputs:
+    deploymentScope: 'Resource Group'
+    action: 'Create Or Update Resource Group'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploycosmos.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deploycosmos.parameters.json'   
+    deploymentMode: 'Incremental'
+
 
 - task: AzureResourceManagerTemplateDeployment@3
   displayName: 'ARM Template deployment: Key Vault'
@@ -147,17 +112,9 @@ steps:
     deploymentMode: 'Incremental'
     overrideParameters: '-serviceBusConnectionString $(serviceBusConn) -sqlServerName $(sqlServerName) -sqlAdminLogin $(sqlAdminLogin) -sqlAdminPassword $(sqlAdminPassword)'
 
-- task: AzureCLI@2
-  displayName: 'Container registry'
-  inputs:
-    azureSubscription: $(azureSubscription)
-    scriptType: bash
-    scriptLocation: inlineScript
-    inlineScript: 'az acr create --resource-group $(resourceGroupName) --name reimbursementpoccontainerregistry --sku Basic'
-    
     
 - task: AzureResourceManagerTemplateDeployment@3
-  displayName: 'ARM Template deployment: K8S'
+  displayName: 'ARM Template deployment: App service - Idenytity API'
   inputs:
     deploymentScope: 'Resource Group'
     action: 'Create Or Update Resource Group'
@@ -166,10 +123,57 @@ steps:
     resourceGroupName: $(resourceGroupName)
     location: $(location)
     templateLocation: 'Linked artifact'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/aksdeploy.json' 
-    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/aksdeploy.parameters.json'   
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-identity-api.parameters.json'   
     deploymentMode: 'Incremental'
-    overrideParameters: ''
+    overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
+ 
+    
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: App service - UI'
+  inputs:
+    deploymentScope: 'Resource Group'
+    action: 'Create Or Update Resource Group'
+    azureResourceManagerConnection: $(azureResourceManagerConnection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-ui.parameters.json'   
+    deploymentMode: 'Incremental'
+    overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
+ 
+    
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: Redis'
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Professional с подпиской MSDN (404aea7e-eb4e-4ac8-9314-08837b50d1cb)'
+    action: 'Create Or Update Resource Group'
+    subscriptionId: '404aea7e-eb4e-4ac8-9314-08837b50d1cb'
+    resourceGroupName: 'ri-poc-rg'
+    location: 'eastus2'
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/redisdeploy.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/redisdeploy.parameters.json'   
+    deploymentMode: 'Incremental'
+    
+    
+# - task: AzureResourceManagerTemplateDeployment@3
+  # displayName: 'ARM Template deployment: K8S'
+  # inputs:
+    # deploymentScope: 'Resource Group'
+    # action: 'Create Or Update Resource Group'
+    # azureResourceManagerConnection: $(azureResourceManagerConnection)
+    # subscriptionId: $(subscriptionId)
+    # resourceGroupName: $(resourceGroupName)
+    # location: $(location)
+    # templateLocation: 'Linked artifact'
+    # csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/aksdeploy.json' 
+    # csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/aksdeploy.parameters.json'   
+    # deploymentMode: 'Incremental'
+    # overrideParameters: ''
 
     
  # - task: AzureCLI@2

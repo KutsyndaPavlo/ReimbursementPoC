@@ -29,10 +29,6 @@
          }
       }
    },
-   "variables":{
-	    "adminLogin":"[concat('adm',parameters('al'))]",
-		"adminPassword":"[concat('adm878Urrr',parameters('al'))]"    		
-   },
    "resources":[
       {
          "type":"Microsoft.Sql/servers",
@@ -40,8 +36,8 @@
          "name":"[parameters('serverName')]",
          "location":"[parameters('location')]",
          "properties":{
-            "administratorLogin":"[variables('adminLogin')]",
-            "administratorLoginPassword":"[variables('adminPassword')]"
+            "administratorLogin":"[parameters('al')]",
+            "administratorLoginPassword":"[parameters('alp')]"
          },
          "resources":[
             {
@@ -103,14 +99,6 @@
 	   	"sqlServerName": {
 		  "type": "string",
 		  "value": "[parameters('serverName')]"
-		},
-		"sqlAdminLogin": {
-		  "type": "string",
-		  "value": "[variables('adminLogin')]"
-		},
-		"sqlAdminPassword": {
-		  "type": "string",
-		  "value": "[variables('adminPassword')]"
 		}
 	}
 }

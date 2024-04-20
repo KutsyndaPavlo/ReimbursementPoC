@@ -1,18 +1,54 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "hostingPlanName": {
-      "value": "ri-free-app-service-plan"
-    },
-    "skuName": {
-      "value": "F1"
-    },
-    "skuCapacity": {
-      "value": 1
-    },
-    "appServiceName": {
-      "value": "ri-identity-api"
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId": {
+            "value": ""
+        },
+        "resourceGroupName": {
+            "value": ""
+        },
+        "name": {
+            "value": "ri-identity-api"
+        },
+        "location": {
+            "value": ""
+        },
+        "hostingPlanName": {
+            "value": "ri-identity-api-hosting-plan"
+        },
+        "serverFarmResourceGroup": {
+            "value": ""
+        },
+        "alwaysOn": {
+            "value": false
+        },
+        "ftpsState": {
+            "value": "FtpsOnly"
+        },
+        "sku": {
+            "value": "Free"
+        },
+        "skuCode": {
+            "value": "F1"
+        },
+        "workerSize": {
+            "value": "0"
+        },
+        "workerSizeId": {
+            "value": "0"
+        },
+        "numberOfWorkers": {
+            "value": "1"
+        },
+        "currentStack": {
+            "value": "dotnet"
+        },
+        "phpVersion": {
+            "value": "OFF"
+        },
+        "netFrameworkVersion": {
+            "value": "v6.0"
+        }
     }
-  }
 }
