@@ -63,7 +63,7 @@ namespace ReimbursementPoC.Vendor.Application
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            //eventBus.Subscribe<ProgramCreatedIntegrationEvent, ProgramCreatedIntegrationEventHandler>();
+            eventBus.Subscribe<ProgramCreatedIntegrationEvent, ProgramCreatedIntegrationEventHandler>();
         }
     }
 }
