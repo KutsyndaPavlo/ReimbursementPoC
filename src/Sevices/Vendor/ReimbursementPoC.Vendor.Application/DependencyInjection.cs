@@ -43,7 +43,7 @@ namespace ReimbursementPoC.Vendor.Application
 
                 busConfigurator.UsingRabbitMq((context, configurator) =>
                 {
-                    configurator.Host("localhost", "/", h =>
+                    configurator.Host(Environment.GetEnvironmentVariable("RabbitMqHost") ?? "localhost", "/", h =>
                     {
                         h.Username("guest");
                         h.Password("guest");
