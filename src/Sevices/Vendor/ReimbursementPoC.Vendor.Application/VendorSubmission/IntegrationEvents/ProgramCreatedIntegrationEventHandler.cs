@@ -1,24 +1,11 @@
-﻿using ReimbursementPoC.Administration.IntergrationEvents;
-using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MassTransit;
+using ReimbursementPoC.Administration.IntergrationEvents;
 
 namespace ReimbursementPoC.Vendor.Application.VendorSubmission.IntegrationEvents
 {
-    public class ProgramCreatedIntegrationEventHandler : IIntegrationEventHandler<ProgramCreatedIntegrationEvent>
+    public class ProgramCreatedIntegrationEventConsumer() : IConsumer<ProgramCreatedIntegrationEvent>
     {
-
-        //private readonly IRepository<ProductProposal> _respository;
-
-        public ProgramCreatedIntegrationEventHandler()
-        {
-            // _respository = respository;
-        }
-
-        public async Task Handle(ProgramCreatedIntegrationEvent @event)
+        public async Task Consume(ConsumeContext<ProgramCreatedIntegrationEvent> context)
         {
             //var item = new ProductProposal()
             //{
@@ -35,6 +22,8 @@ namespace ReimbursementPoC.Vendor.Application.VendorSubmission.IntegrationEvents
             //};
 
             //await _respository.AddItemAsync(item);
+
+            await Task.CompletedTask;
         }
     }
 }

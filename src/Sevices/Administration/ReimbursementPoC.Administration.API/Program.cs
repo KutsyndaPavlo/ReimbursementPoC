@@ -1,4 +1,5 @@
 using HealthChecks.UI.Client;
+using MassTransit;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using ReimbursementPoC.Administration.API;
@@ -33,7 +34,9 @@ UseSwagger(app);
 UseCors(app);
 app.MapControllers();
 MapHealthCheck(app);
-app.ConfigureEventBus();
+
+//app.ConfigureEventBus();
+
 app.UseMiddleware<RequestContextLoggingMiddleware>();
 app.UseSerilogRequestLogging();   //https://www.milanjovanovic.tech/blog/structured-logging-in-asp-net-core-with-serilog
 app.Run();

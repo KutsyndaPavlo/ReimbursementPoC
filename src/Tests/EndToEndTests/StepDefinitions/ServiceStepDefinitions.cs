@@ -135,8 +135,6 @@ namespace EndToEndTests.StepDefinitions
             httpRequestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", await _tokenProvider.GetAdminTokenAsync());
 
             var response = await httpClient.SendAsync(httpRequestMessage);
-
-
         }
 
         [Then(@"program was deleted")]

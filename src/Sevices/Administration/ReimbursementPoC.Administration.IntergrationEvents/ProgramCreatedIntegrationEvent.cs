@@ -1,8 +1,6 @@
-﻿using ReimbursementPoC.Infrustructure.EventBus.Events;
-
-namespace ReimbursementPoC.Administration.IntergrationEvents
+﻿namespace ReimbursementPoC.Administration.IntergrationEvents
 {
-    public record ProgramCreatedIntegrationEvent : IntegrationEvent
+    public record ProgramCreatedIntegrationEvent
     {
         public Guid ProgramId { get; set; }
     }
