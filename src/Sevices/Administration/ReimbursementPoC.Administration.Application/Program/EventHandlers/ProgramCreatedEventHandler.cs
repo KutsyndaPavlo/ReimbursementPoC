@@ -1,24 +1,24 @@
-﻿using MediatR;
+﻿using MassTransit;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using PriceAnalytics.Application.Common.Models;
 using ReimbursementPoC.Administration.Domain.Program.Events;
 using ReimbursementPoC.Administration.IntergrationEvents;
-using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
 
 namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
 {
     internal class ProgramCreatedEventHandler : INotificationHandler<DomainEventNotification<ProgramCreatedEvent>>
     {
         private readonly ILogger<ProgramCreatedEventHandler> _logger;
-        private readonly IEventBus _eventBus;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public ProgramCreatedEventHandler(ILogger<ProgramCreatedEventHandler> logger, IEventBus eventBus)
+        public ProgramCreatedEventHandler(ILogger<ProgramCreatedEventHandler> logger, IPublishEndpoint publishEndpoint)
         {
             _logger = logger;
-            _eventBus = eventBus;
+            _publishEndpoint = publishEndpoint;
         }
 
-        public Task Handle(DomainEventNotification<ProgramCreatedEvent> notification, CancellationToken cancellationToken)
+        public async Task Handle(DomainEventNotification<ProgramCreatedEvent> notification, CancellationToken cancellationToken)
         {
             var domainEvent = notification.DomainEvent;
 
@@ -29,12 +29,10 @@ namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
                 ProgramId = domainEvent.Program.Id,
             };
 
-            //_eventBus.Publish(integrationEvent);
+            await _publishEndpoint.Publish(integrationEvent);
 
             //await Task.Delay(TimeSpan.FromSeconds(1));
             domainEvent.IsPublished = true;
-
-            return Task.CompletedTask;
         }
     }
 }

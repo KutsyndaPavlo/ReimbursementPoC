@@ -1,12 +1,9 @@
 ﻿using FluentValidation;
+using MassTransit;
 using MediatR;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using ReimbursementPoC.Infrustructure.EventBus;
-using ReimbursementPoC.Infrustructure.EventBus.Abstractions;
-using ReimbursementPoC.Infrustructure.EventBusServiceBus;
 using ReimbursementPoC.Administration.Application.Common.Behaviours;
 using ReimbursementPoC.Administration.Application.Common.Mappings;
 using ReimbursementPoC.Administration.Application.Program.DomainServices;
@@ -35,36 +32,30 @@ namespace ReimbursementPoC.Administration.Application
         {
             var cs = configuration.GetConnectionString("EventBus");
 
-
-            services.AddSingleton<IServiceBusPersisterConnection>(sp =>
+            services.AddMassTransit(busConfigurator =>
             {
-                return new DefaultServiceBusPersisterConnection(cs);
+                busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+                //busConfigurator.UsingAzureServiceBus((context, configurator) =>
+                //{
+                //    configurator.Host(cs);
+
+                //    configurator.ConfigureEndpoints(context);
+                //});
+
+                busConfigurator.UsingRabbitMq((context, configurator) =>
+                {
+                    configurator.Host("localhost", "/", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+
+                    configurator.ConfigureEndpoints(context);
+                });
             });
-
-            services.AddSingleton<IEventBus, EventBusServiceBus>(sp =>
-            {
-                var serviceBusPersisterConnection = sp.GetRequiredService<IServiceBusPersisterConnection>();
-                var logger = sp.GetRequiredService<ILogger<EventBusServiceBus>>();
-                var eventBusSubscriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
-                string subscriptionName = configuration.GetSection("EventBus:SubscriptionClientName").Value;
-
-                return new EventBusServiceBus(serviceBusPersisterConnection, logger,
-                    eventBusSubscriptionsManager, sp, subscriptionName);
-            });
-
-
-            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
-
-            //services.AddTransient<ProgramCreatedIntegrationEventHandler>();
 
             return services;
-        }
-
-        public static void ConfigureEventBus(this IApplicationBuilder app)
-        {
-            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-
-            //eventBus.Subscribe<ProgramCreatedIntegrationEvent, ProgramCreatedIntegrationEventHandler>();
         }
     }
 }

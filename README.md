@@ -2,12 +2,13 @@
 
 ## Technologies:
 
-- [.NET Core 3.1]
+- [.NET Core 6]
 - [MS SQL Server]
-- [Entity Framework Core 3.1]
+- [Entity Framework Core 6]
 - [IdentityServer4]
 - [Swashbuckle]
 - [Dapper]
+- [MassTransit]
 - [Newtonsoft.Json]
 - [FluentValidation]
 - [MediatR]

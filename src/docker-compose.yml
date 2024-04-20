@@ -1,6 +1,19 @@
-version: '3.4'
+name: ReimbursementPoC 
 
 services:
+ rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - 'rabbitmq_data:/data'
+    environment:
+      - "RABBITMQ_DEFAULT_PASS=guest"
+      - "RABBITMQ_DEFAULT_USER=guest"
+
+volumes:
+  rabbitmq_data:
 
   sqldata:
     image: mcr.microsoft.com/mssql/server:2019-latest 

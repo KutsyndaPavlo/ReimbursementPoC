@@ -166,10 +166,10 @@ public class EventBusServiceBus : IEventBus, IAsyncDisposable
             {
                 if (subscription.IsDynamic)
                 {
-                    if (_serviceProvider.GetService(subscription.HandlerType) is not IDynamicIntegrationEventHandler handler) continue;
+                //    if (_serviceProvider.GetService(subscription.HandlerType) is not IDynamicIntegrationEventHandler handler) continue;
 
-                    using dynamic eventData = JsonDocument.Parse(message);
-                    await handler.Handle(eventData);
+                //    using dynamic eventData = JsonDocument.Parse(message);
+                //    await handler.Handle(eventData);
                 }
                 else
                 {
