@@ -24,7 +24,7 @@ namespace ReimbursementPoC.Vendor.Application.VendorSubmission.EventHandlers
 
             _logger.LogInformation("Domain Event: {DomainEvent}", domainEvent.GetType().Name);
 
-            var integrationEvent = new VendorSubmissionCanceledIntegrationEvent();
+            var integrationEvent = new VendorSubmissionCanceledIntegrationEvent(domainEvent.VendorSubmission.Id);
 
             await _publishEndpoint.Publish(integrationEvent).ConfigureAwait(false);
 

@@ -1,6 +1,4 @@
 ﻿namespace ReimbursementPoC.Administration.IntergrationEvents
 {
-    public record ProgramUpdatedIntegrationEvent
-    {
-    }
+    public record ProgramUpdatedIntegrationEvent(Guid Id, string Name, string Description);
 }

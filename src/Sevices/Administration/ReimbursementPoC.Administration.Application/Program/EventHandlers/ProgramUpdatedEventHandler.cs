@@ -24,9 +24,10 @@ namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
 
             _logger.LogInformation("Domain Event: {DomainEvent}", domainEvent.GetType().Name);
 
-            var integrationEvent = new ProgramUpdatedIntegrationEvent
-            {
-            };
+            var integrationEvent = new ProgramUpdatedIntegrationEvent(
+                domainEvent.Program.Id,
+                domainEvent.Program.Name,
+                domainEvent.Program.Description ?? "");
 
             await _publishEndpoint.Publish(integrationEvent);
 

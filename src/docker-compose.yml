@@ -54,6 +54,8 @@ services:
       - ConnectionStrings__Db=Server=sqldata;Database=administration;User Id=sa;Password=Pass@word;TrustServerCertificate=True; 
       - ConnectionStrings__EventBus=Endpoint=***
       - EventBus__SubscriptionClientName=ri-event-bus-sc2
+      - RabbitMqPass=guest
+      - RabbitMqUser=guest
       - RabbitMqHost=rabbitmq
     ports:
       - "8501:80"
@@ -76,6 +78,8 @@ services:
        - ConnectionStrings__EventBus=Endpoint=***
        - EventBus__SubscriptionClientName=ri-event-bus-sc2
        - RabbitMqHost=rabbitmq
+       - RabbitMqPass=guest
+       - RabbitMqUser=guest
       ports:
         - "8502:80"
       volumes:
@@ -97,6 +101,8 @@ services:
        - ConnectionStrings__EventBus=Endpoint=***
        - EventBus__SubscriptionClientName=ri-event-bus-sc2
        - RabbitMqHost=rabbitmq
+       - RabbitMqPass=guest
+       - RabbitMqUser=guest
       ports:
         - "8503:80"
       volumes:

@@ -45,8 +45,8 @@ namespace ReimbursementPoC.Vendor.Application
                 {
                     configurator.Host(Environment.GetEnvironmentVariable("RabbitMqHost") ?? "localhost", "/", h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(Environment.GetEnvironmentVariable("RabbitMqUser"));
+                        h.Password(Environment.GetEnvironmentVariable("RabbitMqPass"));
                     });
 
                     configurator.ConfigureEndpoints(context);

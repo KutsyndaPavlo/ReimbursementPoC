@@ -1,7 +1,6 @@
 ﻿namespace ReimbursementPoC.Administration.IntergrationEvents
 {
-    public record ProgramCreatedIntegrationEvent
-    {
-        public Guid ProgramId { get; set; }
-    }
+    public record ProgramCreatedIntegrationEvent(Guid Id, string Name, string Description, string State, DateTime StartDate, DateTime EndDate);
 }
+
+

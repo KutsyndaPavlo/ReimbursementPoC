@@ -28,10 +28,8 @@ namespace ReimbursementPoC.Vendor.Application.VendorSubmission.EventHandlers
 
             var integrationEvent = new VendorSubmissionCreatedIntegrationEvent(
                 vs.Id,
-                vs.VendorId,
-                vs.VendorName,
-                vs.ServiceId,
-                vs.ServiceFullName,
+                new IntergrationEvents.Vendor(vs.VendorId, vs.VendorName),
+                new IntergrationEvents.Service(vs.ServiceId, "", "", new Program(Guid.Empty, "", "", "", DateTime.Now, DateTime.Now, false), false), // Todo
                 vs.Description,
                 vs.IsCanceled);
 
