@@ -28,7 +28,7 @@ namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
                 domainEvent.Program.Id,
                 domainEvent.Program.Name,
                 domainEvent.Program.Description ?? "",
-                domainEvent.Program.State.Name,
+                "state",//domainEvent.Program.State,              // ToDo bug
                 domainEvent.Program.Period.StartDate,
                 domainEvent.Program.Period.EndDate);
 
