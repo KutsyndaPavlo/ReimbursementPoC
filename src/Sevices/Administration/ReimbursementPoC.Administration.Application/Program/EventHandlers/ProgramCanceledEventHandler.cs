@@ -1,21 +1,21 @@
-﻿using PriceAnalytics.Application.Common.Models;
+﻿using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using ReimbursementPoC.Administration.Application.Common.Interfaces;
+using PriceAnalytics.Application.Common.Models;
 using ReimbursementPoC.Administration.Domain.Program.Events;
+using ReimbursementPoC.Administration.IntergrationEvents;
 
 namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
 {
-    public class ProgramDeactivatedEventHandler : INotificationHandler<DomainEventNotification<ProgramCanceledEvent>>
+    public class ProgramCanceledEventHandler : INotificationHandler<DomainEventNotification<ProgramCanceledEvent>>
     {
-        private readonly ILogger<ProgramDeactivatedEventHandler> _logger;
-        private readonly IApplicationDbContext _applicationDbContext;
+        private readonly ILogger<ProgramCanceledEventHandler> _logger;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public ProgramDeactivatedEventHandler(ILogger<ProgramDeactivatedEventHandler> logger,
-                                              IApplicationDbContext applicationDbContext)
+        public ProgramCanceledEventHandler(ILogger<ProgramCanceledEventHandler> logger, IPublishEndpoint publishEndpoint)
         {
             _logger = logger;
-            _applicationDbContext = applicationDbContext;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task Handle(DomainEventNotification<ProgramCanceledEvent> notification, CancellationToken cancellationToken)
@@ -23,7 +23,15 @@ namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
             var domainEvent = notification.DomainEvent;
 
             _logger.LogInformation("Domain Event: {DomainEvent}", domainEvent.GetType().Name);
-           
+
+            var integrationEvent = new ProgramCanceledIntegrationEvent
+            {
+            };
+
+            await _publishEndpoint.Publish(integrationEvent);
+
+            domainEvent.IsPublished = true;
+
             //await DeactivateProposals(domainEvent, cancellationToken);
         }
 

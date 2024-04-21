@@ -31,7 +31,6 @@ namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
 
             await _publishEndpoint.Publish(integrationEvent);
 
-            //await Task.Delay(TimeSpan.FromSeconds(1));
             domainEvent.IsPublished = true;
         }
     }
