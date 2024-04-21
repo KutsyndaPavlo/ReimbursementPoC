@@ -10,8 +10,6 @@ WORKDIR /src
 
 COPY ["Sevices/Customer/ReimbursementPoC.Customer.API/ReimbursementPoC.Customer.API.csproj", "Sevices/Customer/ReimbursementPoC.Customer.API/"]
 COPY ["Sevices/Customer/ReimbursementPoC.Customer.Application/ReimbursementPoC.Customer.Application.csproj", "Sevices/Customer/ReimbursementPoC.Customer.Application/"]
-COPY ["Infrastructure/EventBusServiceBus/ReimbursementPoC.Infrustructure.EventBusServiceBus.csproj", "Infrastructure/EventBusServiceBus/"]
-COPY ["Infrastructure/EventBus/ReimbursementPoC.Infrustructure.EventBus.csproj", "Infrastructure/EventBus/"]
 COPY ["Sevices/Customer/ReimbursementPoC.Customer.Domain/ReimbursementPoC.Customer.Domain.csproj", "Sevices/Customer/ReimbursementPoC.Customer.Domain/"]
 COPY ["Sevices/Customer/ReimbursementPoC.Customer.Infrastructure/ReimbursementPoC.Customer.Infrastructure.csproj", "Sevices/Customer/ReimbursementPoC.Customer.Infrastructure/"]
 RUN dotnet restore "Sevices/Customer/ReimbursementPoC.Customer.API/ReimbursementPoC.Customer.API.csproj"
