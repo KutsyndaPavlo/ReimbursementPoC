@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Infrastructure\EventBusServiceBus\ReimbursementPoC.Infrustructure.EventBusServiceBus.csproj" />
     <ProjectReference Include="..\ReimbursementPoC.Customer.Domain\ReimbursementPoC.Customer.Domain.csproj" />
   </ItemGroup>
 

@@ -21,8 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Infrastructure\EventBusServiceBus\ReimbursementPoC.Infrustructure.EventBusServiceBus.csproj" />
-    <ProjectReference Include="..\..\..\Infrastructure\EventBus\ReimbursementPoC.Infrustructure.EventBus.csproj" />
     <ProjectReference Include="..\..\Administration\ReimbursementPoC.Administration.IntergrationEvents\ReimbursementPoC.Administration.IntergrationEvents.csproj" />
     <ProjectReference Include="..\ReimbursementPoC.Vendor.IntergrationEvents\ReimbursementPoC.Vendor.IntergrationEvents.csproj" />
     <ProjectReference Include="..\ReimbursementPoC.VendorDomain\ReimbursementPoC.Vendor.Domain.csproj" />
