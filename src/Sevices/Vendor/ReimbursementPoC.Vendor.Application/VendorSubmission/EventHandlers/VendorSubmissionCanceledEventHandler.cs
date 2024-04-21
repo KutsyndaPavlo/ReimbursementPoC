@@ -44,31 +44,3 @@ namespace ReimbursementPoC.Vendor.Application.VendorSubmission.EventHandlers
         //}
     }
 }
-
-
-
-
-internal class VendorSubmissionCreatedEventHandler : INotificationHandler<DomainEventNotification<VendorSubmissionCreatedEvent>>
-{
-    private readonly ILogger<VendorSubmissionCreatedEventHandler> _logger;
-    private readonly IPublishEndpoint _publishEndpoint;
-
-    public VendorSubmissionCreatedEventHandler(ILogger<VendorSubmissionCreatedEventHandler> logger, IPublishEndpoint publishEndpoint)
-    {
-        _logger = logger;
-        _publishEndpoint = publishEndpoint;
-    }
-
-    public async Task Handle(DomainEventNotification<VendorSubmissionCreatedEvent> notification, CancellationToken cancellationToken)
-    {
-        var domainEvent = notification.DomainEvent;
-
-        _logger.LogInformation("Domain Event: {DomainEvent}", domainEvent.GetType().Name);
-
-        var integrationEvent = new VendorSubmissionCanceledIntegrationEvent(notification.DomainEvent.VendorSubmission.Id);
-
-        await _publishEndpoint.Publish(integrationEvent).ConfigureAwait(false);
-
-        domainEvent.IsPublished = true;
-    }
-}
