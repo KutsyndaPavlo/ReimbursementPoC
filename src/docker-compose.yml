@@ -154,7 +154,26 @@ services:
         # - "8605:80"
       volumes:
         - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro    
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro  
+        
+  vendor.search.api:
+      image: ${DOCKER_REGISTRY:-ri}/vendor-search
+      build:
+        context: .
+        dockerfile: Sevices/VendorSearch/ReimbursementPoC.VendorSearch.API/Dockerfile
+      environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://0.0.0.0:80
+       - RabbitMqHost=rabbitmq
+       - RabbitMqPass=guest
+       - RabbitMqUser=guest
+      ports:
+        - "8506:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      depends_on:
+        - rabbitmq
         
   seq:
     image: datalust/seq:latest
