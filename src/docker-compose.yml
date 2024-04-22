@@ -22,6 +22,15 @@ services:
     volumes:
       - sqldata:/var/opt/mssql
       
+  elasticsearch:
+    image: elasticsearch:8.8.0
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      
   identity.api:
     image: ${DOCKER_REGISTRY:-ri}/identity
     build:
@@ -174,6 +183,7 @@ services:
         - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       depends_on:
         - rabbitmq
+        - elasticsearch
         
   seq:
     image: datalust/seq:latest
