@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Elastic.Clients.Elasticsearch;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -49,9 +50,25 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> GetSubmissionsdAsync([FromQuery] int offset = 0, [FromQuery] int limit = 50)
         {
+
+            var client = new ElasticsearchClient(new Uri($"{Environment.GetEnvironmentVariable("ElasticSearchHost") ?? "localhost"}:9200"));
+
+            // create index
+            var indexName = "vendor_submission_index";
+
+
+            //// Searching documents
+            var response = await client.SearchAsync<object>(s => s
+                .Index(indexName)
+                .From(0)
+                .Size(10)
+            //.Query(q => q
+            //    .Term(t => t.User, "flobernd")
+            );
+
             //var query = new GetVendorSubmissionsQuery(offset, limit);
             //var result = await _mediator.Send(query);
-            return Ok();
+            return Ok(response.Hits);
         }
 
         #endregion

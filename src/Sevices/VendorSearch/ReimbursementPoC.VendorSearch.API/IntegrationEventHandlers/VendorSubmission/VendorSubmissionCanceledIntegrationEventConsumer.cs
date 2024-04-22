@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using Elastic.Clients.Elasticsearch;
+using MassTransit;
 using ReimbursementPoC.Vendor.IntergrationEvents;
 
 namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.VendorSubmission
@@ -7,6 +8,7 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.VendorSubmi
     {
         public async Task Consume(ConsumeContext<VendorSubmissionCanceledIntegrationEvent> context)
         {
+            
             //var item = new ProductProposal()
             //{
             //    Currency = @event.Currency,

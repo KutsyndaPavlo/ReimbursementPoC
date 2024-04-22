@@ -176,6 +176,7 @@ services:
        - RabbitMqHost=rabbitmq
        - RabbitMqPass=guest
        - RabbitMqUser=guest
+       - ElasticSearchHost=elasticsearch
       ports:
         - "8506:80"
       volumes:
