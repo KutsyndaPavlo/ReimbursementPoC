@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using Elastic.Clients.Elasticsearch;
+using MassTransit;
 using ReimbursementPoC.Vendor.IntergrationEvents;
 
 namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.VendorSubmission
@@ -7,23 +8,18 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.VendorSubmi
     {
         public async Task Consume(ConsumeContext<VendorSubmissionDeletedIntegrationEvent> context)
         {
-            //var item = new ProductProposal()
-            //{
-            //    Currency = @event.Currency,
-            //    ProductName = @event.ProductName,
-            //    Date = @event.Date,
-            //    Description = @event.Description,
-            //    Price = @event.Price,
-            //    ProductCode = @event.ProductCode,
-            //    ProductId = @event.ProductId,
-            //    SellerId = @event.SellerId,
-            //    SellerName = @event.SellerName,
-            //    Id = @event.Id,
-            //};
+            var client = new ElasticsearchClient(new Uri($"http://{Environment.GetEnvironmentVariable("ElasticSearchHost") ?? "localhost"}:9200"));
 
-            //await _respository.AddItemAsync(item);
+            // create index
+            var indexName = "vendor_submission_index";
+            var res = await client.Indices.ExistsAsync(indexName);
+            if (!res.Exists)
+            {
+                await client.Indices.CreateAsync(indexName);
+            };
 
-            await Task.CompletedTask;
+            var request = new DeleteRequest(indexName, context.Message.Id);
+            await client.DeleteAsync(request);
         }
     }
 }

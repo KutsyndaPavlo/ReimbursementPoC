@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ReimbursementPoC.Vendor.Application.Common.Behaviours;
 using ReimbursementPoC.Vendor.Application.Common.Mappings;
 using ReimbursementPoC.Vendor.Application.VendorSubmission.DomainServices;
-using ReimbursementPoC.Vendor.Application.VendorSubmission.IntegrationEvents;
 using ReimbursementPoC.Vendor.Domain.VendorSubmission.DomainServices;
 using System.Reflection;
 
@@ -52,7 +51,6 @@ namespace ReimbursementPoC.Vendor.Application
                     configurator.ConfigureEndpoints(context);
                 });
 
-                busConfigurator.AddConsumer<ProgramCreatedIntegrationEventConsumer>();
             });
 
             return services;

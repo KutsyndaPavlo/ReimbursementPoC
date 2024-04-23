@@ -8,24 +8,21 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.VendorSubmi
     {
         public async Task Consume(ConsumeContext<VendorSubmissionCanceledIntegrationEvent> context)
         {
-            
-            //var item = new ProductProposal()
-            //{
-            //    Currency = @event.Currency,
-            //    ProductName = @event.ProductName,
-            //    Date = @event.Date,
-            //    Description = @event.Description,
-            //    Price = @event.Price,
-            //    ProductCode = @event.ProductCode,
-            //    ProductId = @event.ProductId,
-            //    SellerId = @event.SellerId,
-            //    SellerName = @event.SellerName,
-            //    Id = @event.Id,
-            //};
+            var client = new ElasticsearchClient(new Uri($"http://{Environment.GetEnvironmentVariable("ElasticSearchHost") ?? "localhost"}:9200"));
 
-            //await _respository.AddItemAsync(item);
+            // create index
+            var indexName = "vendor_submission_index";
+            var res = await client.Indices.ExistsAsync(indexName);
 
-            await Task.CompletedTask;
+            if (!res.Exists)
+            {
+                await client.Indices.CreateAsync(indexName);
+            };
+
+            var response = await client.UpdateAsync<VendorSubmissionCreatedIntegrationEvent, object>(
+                indexName,
+                context.Message.Id,
+                u => u.Doc(new { IsCanceled  = true }));
         }
     }
 }

@@ -8,7 +8,7 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.VendorSubmi
     {
         public async Task Consume(ConsumeContext<VendorSubmissionCreatedIntegrationEvent> context)
         {
-            var client = new ElasticsearchClient(new Uri($"{Environment.GetEnvironmentVariable("ElasticSearchHost") ?? "localhost"}:9200"));
+            var client = new ElasticsearchClient(new Uri($"http://{Environment.GetEnvironmentVariable("ElasticSearchHost") ?? "localhost"}:9200"));
 
             // create index
             var indexName = "vendor_submission_index";
@@ -18,27 +18,8 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.VendorSubmi
                 await client.Indices.CreateAsync(indexName);
             };
 
-            var request = new IndexRequest<VendorSubmissionCreatedIntegrationEvent>(context.Message, indexName = indexName, context.Message.Id);
+            var request = new IndexRequest<VendorSubmissionCreatedIntegrationEvent>(context.Message, indexName, context.Message.Id);
             await client.IndexAsync(request);
-
-
-            //var item = new ProductProposal()
-            //{
-            //    Currency = @event.Currency,
-            //    ProductName = @event.ProductName,
-            //    Date = @event.Date,
-            //    Description = @event.Description,
-            //    Price = @event.Price,
-            //    ProductCode = @event.ProductCode,
-            //    ProductId = @event.ProductId,
-            //    SellerId = @event.SellerId,
-            //    SellerName = @event.SellerName,
-            //    Id = @event.Id,
-            //};
-
-            //await _respository.AddItemAsync(item);
-
-            await Task.CompletedTask;
         }
     }
 }

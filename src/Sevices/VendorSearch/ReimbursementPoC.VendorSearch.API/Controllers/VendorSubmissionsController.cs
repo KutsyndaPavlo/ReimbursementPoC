@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.QueryDsl;
 using Microsoft.AspNetCore.Mvc;
+using ReimbursementPoC.Vendor.IntergrationEvents;
 using Swashbuckle.AspNetCore.Annotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,18 +16,15 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         #region Fields
 
         private readonly ILogger<VendorSubmissionsController> _logger;
-        private readonly IMapper _mapper;
 
         #endregion
 
         #region Constructor
 
         public VendorSubmissionsController(
-            ILogger<VendorSubmissionsController> logger,
-            IMapper mapper)
+            ILogger<VendorSubmissionsController> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         #endregion
@@ -48,36 +47,63 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         //[SwaggerResponse(StatusCodes.Status200OK, "Success", Type = typeof(PaginatedList<VendorSubmissionDto>))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
-        public async Task<IActionResult> GetSubmissionsdAsync([FromQuery] int offset = 0, [FromQuery] int limit = 50)
+        public async Task<IActionResult> GetSubmissionsdAsync(
+            [FromQuery] int offset = 0, 
+            [FromQuery] int limit = 50,
+            [FromQuery] string vendor = null,
+            [FromQuery] string service = null,
+            [FromQuery] string program = null)
         {
 
-            var client = new ElasticsearchClient(new Uri($"{Environment.GetEnvironmentVariable("ElasticSearchHost") ?? "localhost"}:9200"));
+            var client = new ElasticsearchClient(new Uri($"http://{Environment.GetEnvironmentVariable("ElasticSearchHost") ?? "localhost"}:9200"));
 
             // create index
             var indexName = "vendor_submission_index";
 
-
             //// Searching documents
-            var response = await client.SearchAsync<object>(s => s
-                .Index(indexName)
-                .From(0)
-                .Size(10)
-            //.Query(q => q
-            //    .Term(t => t.User, "flobernd")
-            );
+            var response = await client.SearchAsync<VendorSubmissionCreatedIntegrationEvent>(s => GetQuery(indexName, s, offset, limit, vendor, service, program));
 
-            //var query = new GetVendorSubmissionsQuery(offset, limit);
-            //var result = await _mediator.Send(query);
-            return Ok(response.Hits);
-        }
+            return Ok(response?.Documents);
+        }        
 
-        #endregion
+        #endregion  
 
-        private Guid GetVendorId()
+        private static SearchRequestDescriptor<VendorSubmissionCreatedIntegrationEvent> GetQuery(
+            string indexName,
+            SearchRequestDescriptor<VendorSubmissionCreatedIntegrationEvent> requestDescriptor,
+            int offset,
+            int limit,
+            string vendor,
+            string service,
+            string program)
         {
-            return HttpContext.Request.Headers.Keys.Contains("X-UserId")
-                ? Guid.Parse(HttpContext.Request.Headers["X-UserId"])
-                : Guid.Empty;
+                 requestDescriptor
+                   .Index(indexName)
+                   .From(offset)
+                   .Size(limit);
+
+            if (!string.IsNullOrEmpty(vendor))
+            {
+                requestDescriptor
+                .Query(q => q
+                   .Term(new TermQuery(new Field("Vendor.Name")) { Value = vendor }));
+            }
+
+            if (!string.IsNullOrEmpty(service))
+            {
+                requestDescriptor
+                .Query(q => q
+                   .Term(new TermQuery(new Field("Service.Name")) { Value = service }));
+            }
+
+            if (!string.IsNullOrEmpty(vendor))
+            {
+                requestDescriptor
+                .Query(q => q
+                   .Term(new TermQuery(new Field("Program.Service.Name")) { Value = program }));
+            }
+
+            return requestDescriptor;
         }
     }
 }

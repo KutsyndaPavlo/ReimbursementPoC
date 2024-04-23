@@ -1,5 +1,7 @@
-﻿using MassTransit;
+﻿using Elastic.Clients.Elasticsearch;
+using MassTransit;
 using ReimbursementPoC.Administration.IntergrationEvents;
+using ReimbursementPoC.Vendor.IntergrationEvents;
 
 namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Program
 {
@@ -7,23 +9,28 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Program
     {
         public async Task Consume(ConsumeContext<ProgramCanceledIntegrationEvent> context)
         {
-            //var item = new ProductProposal()
-            //{
-            //    Currency = @event.Currency,
-            //    ProductName = @event.ProductName,
-            //    Date = @event.Date,
-            //    Description = @event.Description,
-            //    Price = @event.Price,
-            //    ProductCode = @event.ProductCode,
-            //    ProductId = @event.ProductId,
-            //    SellerId = @event.SellerId,
-            //    SellerName = @event.SellerName,
-            //    Id = @event.Id,
-            //};
+            var client = new ElasticsearchClient(new Uri($"http://{Environment.GetEnvironmentVariable("ElasticSearchHost") ?? "localhost"}:9200"));
 
-            //await _respository.AddItemAsync(item);
+            // create index
+            var indexName = "vendor_submission_index";
+            var res = await client.Indices.ExistsAsync(indexName);
 
-            await Task.CompletedTask;
+            if (!res.Exists)
+            {
+                await client.Indices.CreateAsync(indexName);
+            };
+
+            var response = await client.UpdateAsync<VendorSubmissionCreatedIntegrationEvent, object>(
+                indexName,
+                context.Message.Id,
+                u => u.Doc(new 
+                { 
+                    Service = new { 
+                        Program = new { 
+                            IsCanceled = true
+                        } 
+                    }
+                }));
         }
     }
 }

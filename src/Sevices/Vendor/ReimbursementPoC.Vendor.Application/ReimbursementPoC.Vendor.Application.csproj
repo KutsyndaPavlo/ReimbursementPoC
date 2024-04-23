@@ -26,4 +26,8 @@
     <ProjectReference Include="..\ReimbursementPoC.VendorDomain\ReimbursementPoC.Vendor.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="VendorSubmission\IntegrationEventHandlers\" />
+  </ItemGroup>
+
 </Project>

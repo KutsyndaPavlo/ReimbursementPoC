@@ -44,14 +44,10 @@ builder.Services.AddMassTransit(busConfigurator =>
         configurator.ConfigureEndpoints(context);
     });
 
-    busConfigurator.AddConsumer<ProgramCreatedIntegrationEventConsumer>();
     busConfigurator.AddConsumer<ProgramUpdatedIntegrationEventConsumer>();
     busConfigurator.AddConsumer<ProgramCanceledIntegrationEventConsumer>();
-    busConfigurator.AddConsumer<ProgramDeletedIntegrationEventConsumer>();
-    busConfigurator.AddConsumer<ServiceCreatedIntegrationEventConsumer>();
     busConfigurator.AddConsumer<ServiceUpdatedIntegrationEventConsumer>();
     busConfigurator.AddConsumer<ServiceCanceledIntegrationEventConsumer>();
-    busConfigurator.AddConsumer<ServiceDeletedIntegrationEventConsumer>();
     busConfigurator.AddConsumer<VendorSubmissionCreatedIntegrationEventConsumer>();
     busConfigurator.AddConsumer<VendorSubmissionCanceledIntegrationEventConsumer>();
     busConfigurator.AddConsumer<VendorSubmissionDeletedIntegrationEventConsumer>();
