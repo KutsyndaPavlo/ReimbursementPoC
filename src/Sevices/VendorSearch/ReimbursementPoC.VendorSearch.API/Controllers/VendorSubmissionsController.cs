@@ -91,7 +91,7 @@ namespace ReimbursementPoC.Vendor.API.Controllers
               .Size(limit)
               .Query(q => q
                 .Bool(b => b
-                   .Must(bf => bf.(r => r.Field(uu => uu.IsCanceled).Value(false)))
+                   .Must(bf => bf.Term(r => r.Field(uu => uu.IsCanceled).Value(false)))
                    .Must(bf => bf.Term(r => r.Field(uu => uu.Service.IsCanceled).Value(false)))
                    .Must(bf => bf.Term(r => r.Field(uu => uu.Service.Program.IsCanceled).Value(false)))
                ));
