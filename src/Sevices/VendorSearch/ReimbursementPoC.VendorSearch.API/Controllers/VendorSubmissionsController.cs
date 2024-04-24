@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Elastic.Clients.Elasticsearch;
+using Elastic.Clients.Elasticsearch.Nodes;
 using Elastic.Clients.Elasticsearch.QueryDsl;
 using Microsoft.AspNetCore.Mvc;
 using ReimbursementPoC.Vendor.IntergrationEvents;
@@ -48,11 +49,13 @@ namespace ReimbursementPoC.Vendor.API.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, "Bad Request, Validation error")]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, "Internal Server Error")]
         public async Task<IActionResult> GetSubmissionsdAsync(
-            [FromQuery] int offset = 0, 
+            [FromQuery] int offset = 0,
             [FromQuery] int limit = 50,
             [FromQuery] string vendor = null,
             [FromQuery] string service = null,
-            [FromQuery] string program = null)
+            [FromQuery] string program = null,
+            [FromQuery] string state = null,
+            [FromQuery] DateTime? startDate = null)
         {
 
             var client = new ElasticsearchClient(new Uri($"http://{Environment.GetEnvironmentVariable("ElasticSearchHost") ?? "localhost"}:9200"));
@@ -61,12 +64,13 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             var indexName = "vendor_submission_index";
 
             //// Searching documents
-            var response = await client.SearchAsync<VendorSubmissionCreatedIntegrationEvent>(s => GetQuery(indexName, s, offset, limit, vendor, service, program));
+            var response = await client.SearchAsync<VendorSubmissionCreatedIntegrationEvent>(s =>
+            GetQuery(indexName, s, offset, limit, vendor, service, program, state, startDate));
 
             return Ok(response?.Documents);
-        }        
+        }
 
-        #endregion  
+        #endregion
 
         private static SearchRequestDescriptor<VendorSubmissionCreatedIntegrationEvent> GetQuery(
             string indexName,
@@ -75,32 +79,70 @@ namespace ReimbursementPoC.Vendor.API.Controllers
             int limit,
             string vendor,
             string service,
-            string program)
+            string program,
+            string state,
+            DateTime? startDate)
         {
-                 requestDescriptor
-                   .Index(indexName)
-                   .From(offset)
-                   .Size(limit);
+            // https://www.elastic.co/guide/en/elasticsearch/client/net-api/5.x/writing-queries.html
+
+            requestDescriptor
+              .Index(indexName)
+              .From(offset)
+              .Size(limit)
+              .Query(q => q
+                .Bool(b => b
+                   .Must(bf => bf.(r => r.Field(uu => uu.IsCanceled).Value(false)))
+                   .Must(bf => bf.Term(r => r.Field(uu => uu.Service.IsCanceled).Value(false)))
+                   .Must(bf => bf.Term(r => r.Field(uu => uu.Service.Program.IsCanceled).Value(false)))
+               ));
 
             if (!string.IsNullOrEmpty(vendor))
             {
-                requestDescriptor
-                .Query(q => q
-                   .Term(new TermQuery(new Field("Vendor.Name")) { Value = vendor }));
+                requestDescriptor.Query(q => q
+                    .MatchPhrase(m => m
+                        .Field(f => f.Vendor.Name)
+                        .Query(vendor)
+                    ));
             }
 
             if (!string.IsNullOrEmpty(service))
             {
-                requestDescriptor
-                .Query(q => q
-                   .Term(new TermQuery(new Field("Service.Name")) { Value = service }));
+                requestDescriptor.Query(q => q
+                   .Match(m => m
+                       .Field(f => f.Service.Name)
+                       .Query(service)
+                   ));
             }
 
-            if (!string.IsNullOrEmpty(vendor))
+            if (!string.IsNullOrEmpty(program))
             {
-                requestDescriptor
-                .Query(q => q
-                   .Term(new TermQuery(new Field("Program.Service.Name")) { Value = program }));
+                requestDescriptor.Query(q => q
+                  .Match(m => m
+                      .Field(f => f.Service.Program.Name)
+                      .Query(program)
+                  ));
+            }
+
+            if (!string.IsNullOrEmpty(state))
+            {
+                requestDescriptor.Query(q => q
+                  .Match(m => m
+                      .Field(f => f.Service.Program.State)
+                      .Query(state)
+                  ));
+            }
+
+            if (startDate.HasValue)
+            {
+                requestDescriptor.Query(q => q
+               .Bool(b => b
+                   .Filter(bf => bf
+                       .Range(r => r
+                           .DateRange(f => f.Field(f => f.Service.Program.StartDate)
+                           .Gte(startDate.Value)
+                       )
+                   )
+               )));
             }
 
             return requestDescriptor;
