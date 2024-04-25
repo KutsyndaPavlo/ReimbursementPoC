@@ -81,6 +81,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VendorSearch", "VendorSearc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReimbursementPoC.VendorSearch.API", "Sevices\VendorSearch\ReimbursementPoC.VendorSearch.API\ReimbursementPoC.VendorSearch.API.csproj", "{DAA19D63-030B-4561-A6F5-F77729971AC0}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ReimbursementPoC.Angular.UI", "UI\ReimbursementPoC.Angular.UI\ReimbursementPoC.Angular.UI.esproj", "{663B8C32-1D22-474A-92CD-F43BBD027729}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,6 +189,12 @@ Global
 		{DAA19D63-030B-4561-A6F5-F77729971AC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAA19D63-030B-4561-A6F5-F77729971AC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAA19D63-030B-4561-A6F5-F77729971AC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{663B8C32-1D22-474A-92CD-F43BBD027729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{663B8C32-1D22-474A-92CD-F43BBD027729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{663B8C32-1D22-474A-92CD-F43BBD027729}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{663B8C32-1D22-474A-92CD-F43BBD027729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{663B8C32-1D22-474A-92CD-F43BBD027729}.Release|Any CPU.Build.0 = Release|Any CPU
+		{663B8C32-1D22-474A-92CD-F43BBD027729}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -227,6 +235,7 @@ Global
 		{40B15462-6918-4203-B7C6-591845384388} = {DF983D10-A86E-41A8-B20E-05EF5F20FDE6}
 		{623F7EBB-3AE1-4060-8E29-11450F1C7B6E} = {8491F429-EB05-40A2-A659-B16BA39DECD5}
 		{DAA19D63-030B-4561-A6F5-F77729971AC0} = {623F7EBB-3AE1-4060-8E29-11450F1C7B6E}
+		{663B8C32-1D22-474A-92CD-F43BBD027729} = {9320491D-69EB-43F1-BFA5-7FD7AE624FAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B33D5C8-E483-4BF1-841E-87067212476D}
