@@ -24,14 +24,16 @@ namespace ReimbursementPoC.Administration.Application.Program.EventHandlers
 
             _logger.LogInformation("Domain Event: {DomainEvent}", domainEvent.GetType().Name);
 
-            var integrationEvent = new ProgramCreatedIntegrationEvent
-            { 
-                ProgramId = domainEvent.Program.Id,
-            };
+            var integrationEvent = new ProgramCreatedIntegrationEvent(
+                domainEvent.Program.Id,
+                domainEvent.Program.Name,
+                domainEvent.Program.Description ?? "",
+                "state",//domainEvent.Program.State,              // ToDo bug
+                domainEvent.Program.Period.StartDate,
+                domainEvent.Program.Period.EndDate);
 
             await _publishEndpoint.Publish(integrationEvent);
 
-            //await Task.Delay(TimeSpan.FromSeconds(1));
             domainEvent.IsPublished = true;
         }
     }

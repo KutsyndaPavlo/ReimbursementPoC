@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "ReimbursementPoC.Vendor.API": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConnectionStrings__EventBus": "Endpoint=sb://ri-event-bussu445yrz7ulry.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=dJCSxV2gLaq8zYtpuvH+ujWXvKfqs/TF9+ASbGrKWy0="
+        //"ConnectionStrings__Db": "***",
+        //"EventBus__SubscriptionClientName": "ri-event-bus-sc2"
+      },
+      "applicationUrl": "http://localhost:8504",
+      "dotnetRunMessages": true
+    }
+    //"Docker": {
+    //  "commandName": "Docker",
+    //  "launchBrowser": true,
+    //  "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+    //  "publishAllPorts": true
+    //}
+  }
+}

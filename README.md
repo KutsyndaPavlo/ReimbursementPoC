@@ -9,6 +9,7 @@
 - [Swashbuckle]
 - [Dapper]
 - [MassTransit]
+- [RabbitMQ]
 - [Newtonsoft.Json]
 - [FluentValidation]
 - [MediatR]

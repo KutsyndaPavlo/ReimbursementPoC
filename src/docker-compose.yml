@@ -22,6 +22,26 @@ services:
     volumes:
       - sqldata:/var/opt/mssql
       
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0-SNAPSHOT
+    container_name: elasticsearch
+    environment:
+      - network.host=0.0.0.0
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - node.name=cluster1-node1
+      - xpack.license.self_generated.type=basic
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    volumes:
+      - elasticsearch:/var/opt/elasticsearch
+      
   identity.api:
     image: ${DOCKER_REGISTRY:-ri}/identity
     build:
@@ -41,6 +61,7 @@ services:
        - ~/.aspnet/https:/https:ro  
     depends_on:
          - sqldata
+         - rabbitmq
 
   administration.api:
     image: ${DOCKER_REGISTRY:-ri}/administration
@@ -53,6 +74,9 @@ services:
       - ConnectionStrings__Db=Server=sqldata;Database=administration;User Id=sa;Password=Pass@word;TrustServerCertificate=True; 
       - ConnectionStrings__EventBus=Endpoint=***
       - EventBus__SubscriptionClientName=ri-event-bus-sc2
+      - RabbitMqPass=guest
+      - RabbitMqUser=guest
+      - RabbitMqHost=rabbitmq
     ports:
       - "8501:80"
     volumes:
@@ -60,6 +84,7 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
     depends_on:
       - sqldata
+      - rabbitmq
       
   customer.api:
       image: ${DOCKER_REGISTRY:-ri}/customer
@@ -72,6 +97,9 @@ services:
        - ConnectionStrings__Db=Server=sqldata;Database=customer;User Id=sa;Password=Pass@word;TrustServerCertificate=True; 
        - ConnectionStrings__EventBus=Endpoint=***
        - EventBus__SubscriptionClientName=ri-event-bus-sc2
+       - RabbitMqHost=rabbitmq
+       - RabbitMqPass=guest
+       - RabbitMqUser=guest
       ports:
         - "8502:80"
       volumes:
@@ -79,6 +107,7 @@ services:
         - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       depends_on:
         - sqldata
+        - rabbitmq
       
   vendor.api:
       image: ${DOCKER_REGISTRY:-ri}/vendor
@@ -91,6 +120,9 @@ services:
        - ConnectionStrings__Db=Server=sqldata;Database=vendor;User Id=sa;Password=Pass@word;TrustServerCertificate=True; 
        - ConnectionStrings__EventBus=Endpoint=***
        - EventBus__SubscriptionClientName=ri-event-bus-sc2
+       - RabbitMqHost=rabbitmq
+       - RabbitMqPass=guest
+       - RabbitMqUser=guest
       ports:
         - "8503:80"
       volumes:
@@ -98,6 +130,7 @@ services:
         - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       depends_on:
         - sqldata
+        - rabbitmq
       
   apigateway:
       image: ${DOCKER_REGISTRY:-ri}/api-gateway
@@ -134,14 +167,35 @@ services:
         - apigateway
         - identity.api
       environment:
-        - ASPNETCORE_ENVIRONMENT=development
+        - ASPNETCORE_ENVIRONMENT=Development
         - ASPNETCORE_URLS=https://+:443
       ports:
         - "8505:443"
         # - "8605:80"
       volumes:
         - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro    
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro  
+        
+  vendor.search.api:
+      image: ${DOCKER_REGISTRY:-ri}/vendor-search
+      build:
+        context: .
+        dockerfile: Sevices/VendorSearch/ReimbursementPoC.VendorSearch.API/Dockerfile
+      environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://0.0.0.0:80
+       - RabbitMqHost=rabbitmq
+       - RabbitMqPass=guest
+       - RabbitMqUser=guest
+       - ElasticSearchHost=elasticsearch
+      ports:
+        - "8506:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      depends_on:
+        - rabbitmq
+        - elasticsearch
         
   seq:
     image: datalust/seq:latest
@@ -156,3 +210,4 @@ volumes:
   sqldata:
     external: false
   rabbitmq_data:
+  elasticsearch:

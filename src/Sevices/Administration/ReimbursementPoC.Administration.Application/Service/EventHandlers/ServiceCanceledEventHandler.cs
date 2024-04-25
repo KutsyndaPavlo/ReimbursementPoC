@@ -7,33 +7,29 @@ using ReimbursementPoC.Administration.IntergrationEvents;
 
 namespace ReimbursementPoC.Service.Application.Service.EventHandlers
 {
-    internal class ServiceCreatedEventHandler : INotificationHandler<DomainEventNotification<ServiceCreatedEvent>>
+    public class ServiceCanceledEventHandler : INotificationHandler<DomainEventNotification<ServiceCanceledEvent>>
     {
-        private readonly ILogger<ServiceCreatedEventHandler> _logger;
+        private readonly ILogger<ServiceCanceledEventHandler> _logger;
         private readonly IPublishEndpoint _publishEndpoint;
 
-        public ServiceCreatedEventHandler(ILogger<ServiceCreatedEventHandler> logger, IPublishEndpoint publishEndpoint)
+        public ServiceCanceledEventHandler(ILogger<ServiceCanceledEventHandler> logger, IPublishEndpoint publishEndpoint)
         {
             _logger = logger;
             _publishEndpoint = publishEndpoint;
         }
 
-        public async Task Handle(DomainEventNotification<ServiceCreatedEvent> notification, CancellationToken cancellationToken)
+        public async Task Handle(DomainEventNotification<ServiceCanceledEvent> notification, CancellationToken cancellationToken)
         {
             var domainEvent = notification.DomainEvent;
 
             _logger.LogInformation("Domain Event: {DomainEvent}", domainEvent.GetType().Name);
 
-            var integrationEvent = new ServiceCreatedIntegrationEvent(
-                domainEvent.Service.Id,
-                domainEvent.Service.Name,
-                domainEvent.Service.Description ?? "",
-                domainEvent.Service.IsCanceled,
-                domainEvent.Service.ProgramId);
+            var integrationEvent = new ServiceCanceledIntegrationEvent(domainEvent.Service.Id);
 
             await _publishEndpoint.Publish(integrationEvent);
 
             domainEvent.IsPublished = true;
+
         }
     }
 }
