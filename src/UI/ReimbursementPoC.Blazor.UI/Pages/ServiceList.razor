@@ -1,0 +1,156 @@
+﻿@page "/program/{programId}/services"
+@using Microsoft.AspNetCore.Authorization;
+@using ReimbursementPoC.Blazor.UI.Model;
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "admin")]
+<h1>Service List</h1>
+<p>Blazor CRUD operation</p>
+<hr />
+
+<div class="row">
+            <div class="col-md-6">
+                <a href='/program/@programId/service/add' class="btn btn-primary" role="button">
+                    <i class="fas fa-user-plus"></i>
+                    Add Service
+                </a>
+            </div>
+        </div>
+        <br />
+
+
+<AuthorizeView>
+    <Authorized>
+
+        @if (serviceList == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table table-striped align-middle table-bordered">
+                <thead class="table-success">
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Is canceled?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in serviceList)
+                    {
+                        <tr>
+                            <td>@item.FullName</td>
+                            <td>@item.Description</td>
+                            <td>@item.IsCanceled</td>
+                            <td>
+                                @if (!item.IsCanceled)
+                                {
+                                    <a href='/program/@programId/service/@item.Id/edit' class="btn btn-outline-dark" role="button">
+                                        Edit
+                                    </a>
+                                    <a href='/program/@programId/service/@item.Id/cancel' class="btn btn-outline-danger" role="button">
+                                        Cancel
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    @foreach (var link in _links)
+                    {
+                        <li @onclick="() => OnSelectedPage(link)" style="cursor: pointer;" class="page-item  @(link.Active ? "active" : null)">
+                            <span class="page-link" href="#">@link.Text</span>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>I'm sorry, I can't display anything until you log in</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public string programId { get; set; }
+    protected List<ServiceDto> serviceList = new();
+    private int defaultLimit = 5;
+    private int CurrentOffset = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetServicesAsync();
+    }
+
+    protected async Task GetServicesAsync()
+    {
+        var result = await Http.GetFromJsonAsync<PaginatedList<ServiceDto>>($"/administration/api/programs/{programId}/services?offset={CurrentOffset}&limit={defaultLimit}");
+
+        serviceList.Clear();
+        serviceList.AddRange(result.Items.ToList());
+
+        CreatePaginationLinks(result.Page);
+    }
+
+    private List<PagingLink> _links = new List<PagingLink>();
+
+    private void CreatePaginationLinks(Page page)
+    {
+        _links.Clear();
+        var totalPageCount = (page.Total / defaultLimit) + ((page.Total % defaultLimit) > 0 ? 1 : 0);
+        var currentPage = (page.Offset / defaultLimit) + 1;
+        var countOfVisualPages = 5;
+
+        if (currentPage != 1)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "First",
+                    Offset = 0
+                });
+        }
+
+        for (int i = ((currentPage - countOfVisualPages) > 0 ? (currentPage - countOfVisualPages) : 1); i < currentPage; i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+        for (int i = currentPage; i <= ((currentPage + countOfVisualPages) > totalPageCount ? totalPageCount : (currentPage + countOfVisualPages)); i++)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = i == currentPage,
+                    Text = i.ToString(),
+                    Offset = (i - 1) * defaultLimit
+                });
+        }
+
+
+        if (currentPage <= totalPageCount && currentPage != totalPageCount)
+        {
+            _links?.Add(new PagingLink
+                {
+                    Active = false,
+                    Text = "Last",
+                    Offset = (int)((totalPageCount - 1) * defaultLimit)
+                });
+        }
+    }
+
+    private async Task OnSelectedPage(PagingLink link)
+    {
+        CurrentOffset = link.Offset;
+        await GetServicesAsync();
+    }
+}

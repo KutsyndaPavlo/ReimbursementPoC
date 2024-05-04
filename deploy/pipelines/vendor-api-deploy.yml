@@ -1,0 +1,31 @@
+steps:
+- script: |
+   echo Write your commands here
+   
+   echo Old file
+   cat '$(System.DefaultWorkingDirectory)/_ReimbursementPoC.Vendor.API build azure pipelines/manifests/vendor.yml'
+   
+   sed -i 's/REPLACEConnectionStrings__DbREPLACE/$(dbVendorConnectionString)/'  '$(System.DefaultWorkingDirectory)/_ReimbursementPoC.Vendor.API build azure pipelines/manifests/vendor.yml'
+   
+   sed -i 's/REPLACEASB_Connection_StringREPLACE/$(serviceBusConnectionString)/'   '$(System.DefaultWorkingDirectory)/_ReimbursementPoC.Vendor.API build azure pipelines/manifests/vendor.yml'
+   
+   echo Updated file
+   cat '$(System.DefaultWorkingDirectory)/_ReimbursementPoC.Vendor.API build azure pipelines/manifests/vendor.yml'
+  displayName: 'Command Line Script'
+
+- task: KubernetesManifest@1
+  displayName: createSecret
+  inputs:
+    action: createSecret
+    kubernetesServiceConnection: 'aks_connection'
+    secretName: 'reimbursementpoccontainerregistrycr170491e0-auth'
+    dockerRegistryEndpoint: 'acr_connection'
+steps:
+- task: KubernetesManifest@1
+  displayName: deploy
+  inputs:
+    kubernetesServiceConnection: 'aks_connection'
+    manifests: '$(System.DefaultWorkingDirectory)/*/manifests/vendor.yml'
+    containers: 'reimbursementpoccontainerregistry.azurecr.io/vendor-api:$(Build.BuildNumber)'
+    imagePullSecrets: 'reimbursementpoccontainerregistrycr170491e0-auth'
+

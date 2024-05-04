@@ -1,0 +1,227 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: apigateway
+  name: apigateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: apigateway
+  template:
+    metadata:
+      labels:
+        name: apigateway
+    spec:
+      containers:
+      - image: reimbursementpoccontainerregistry.azurecr.io/gateway-api
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Dev"
+        - name: ASPNETCORE_URLS
+          value: "http://0.0.0.0:80"
+        - name: GlobalConfiguration__Hosts__AdministrationAPI
+          value: "http://administration"
+        - name: GlobalConfiguration__Hosts__VendorAPI
+          value: "http://vendor"
+        - name: GlobalConfiguration__Hosts__CustomerAPI
+          value: "http://customer"
+        # - name: GlobalConfiguration__BaseUrl
+          # value: "http://52.224.186.68"
+        - name: IdentityAPI
+          value: "https://identity:443"
+        name: apigateway
+        ports:
+         - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: administration
+  name: administration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: administration
+  template:
+    metadata:
+      labels:
+        name: administration
+    spec:
+      containers:
+        - image: reimbursementpoccontainerregistry.azurecr.io/administration-api
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Dev"
+          - name: ASPNETCORE_URLS
+            value: "http://0.0.0.0:80"
+          - name: ConnectionStrings__Db
+            value: ""
+          name: administration
+          ports:
+            - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: customer
+  name: customer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: customer
+  template:
+    metadata:
+      labels:
+        name: customer
+    spec:
+      containers:
+        - image: reimbursementpoccontainerregistry.azurecr.io/customer-api
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Dev"
+          - name: ASPNETCORE_URLS
+            value: "http://0.0.0.0:80"
+          - name: ConnectionStrings__Db
+            value: ""
+          name: customer
+          ports:
+            - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: vendor
+  name: vendor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: vendor
+  template:
+    metadata:
+      labels:
+        name: vendor
+    spec:
+      containers:
+        - image: reimbursementpoccontainerregistry.azurecr.io/vendor-api
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Dev"
+          - name: ASPNETCORE_URLS
+            value: "http://0.0.0.0:80"
+          - name: ConnectionStrings__Db
+            value: ""
+          name: vendor
+          ports:
+            - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: identity
+  name: identity
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: identity
+  template:
+    metadata:
+      labels:
+        name: identity
+    spec:
+      containers:
+        - image: reimbursementpoccontainerregistry.azurecr.io/identity-api
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Dev"
+          - name: ASPNETCORE_URLS
+            value: "https://0.0.0.0:443"
+          - name: ConnectionStrings__Db
+            value: ""
+          name: vendor
+          ports:
+            - containerPort: 443
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: apigateway
+    labels:
+      name: apigateway
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+    selector:
+        name: apigateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: administration
+  labels:
+    name: administration
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: LoadBalancer
+  selector:
+    name: administration  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer
+  labels:
+    name: customer
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: LoadBalancer
+  selector:
+    name: customer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vendor
+  labels:
+    name: vendor
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: LoadBalancer
+  selector:
+    name: vendor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: identity
+  labels:
+    name: identity
+spec:
+  ports:
+    - port: 443
+      targetPort: 443
+      protocol: TCP
+  type: LoadBalancer
+  selector:
+    name: identity

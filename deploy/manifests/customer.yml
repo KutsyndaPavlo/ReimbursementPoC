@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: customer
+  name: customer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: customer
+  template:
+    metadata:
+      labels:
+        name: customer
+    spec:
+      containers:
+        - image: reimbursementpoccontainerregistry.azurecr.io/customer-api
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Development"
+          - name: ASPNETCORE_URLS
+            value: "http://0.0.0.0:80"
+          - name: ConnectionStrings__Db
+            value: "REPLACEConnectionStrings__DbREPLACE"
+          - name: ASB_Connection_String
+            value: "REPLACEASB_Connection_StringREPLACE"
+          name: customer
+          ports:
+            - containerPort: 80 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer
+  labels:
+    name: customer
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    name: customer

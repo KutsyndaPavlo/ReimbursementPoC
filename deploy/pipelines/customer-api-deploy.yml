@@ -1,0 +1,34 @@
+#Your build pipeline references an undefined variable named ‘dbCustomerConnectionString’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+#Your build pipeline references an undefined variable named ‘serviceBusConnectionString’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+
+steps:
+- script: |
+   echo Write your commands here
+   
+   echo Old file
+   cat '$(System.DefaultWorkingDirectory)/_ReimbursementPoC.Customer.API build azure pipelines/manifests/customer.yml'
+   
+   sed -i 's/REPLACEConnectionStrings__DbREPLACE/$(dbCustomerConnectionString)/'  '$(System.DefaultWorkingDirectory)/_ReimbursementPoC.Customer.API build azure pipelines/manifests/customer.yml'
+   
+   sed -i 's/REPLACEASB_Connection_StringREPLACE/$(serviceBusConnectionString)/'  '$(System.DefaultWorkingDirectory)/_ReimbursementPoC.Customer.API build azure pipelines/manifests/customer.yml'
+   
+   echo Updated file
+   cat '$(System.DefaultWorkingDirectory)/_ReimbursementPoC.Customer.API build azure pipelines/manifests/customer.yml'
+  displayName: 'Command Line Script'
+
+- task: KubernetesManifest@1
+  displayName: createSecret
+  inputs:
+    action: createSecret
+    kubernetesServiceConnection: 'aks_connection'
+    secretName: 'reimbursementpoccontainerregistrycr170491e0-auth'
+    dockerRegistryEndpoint: 'acr_connection'
+steps:
+- task: KubernetesManifest@1
+  displayName: deploy
+  inputs:
+    kubernetesServiceConnection: 'aks_connection'
+    manifests: '$(System.DefaultWorkingDirectory)/*/manifests/customer.yml'
+    containers: 'reimbursementpoccontainerregistry.azurecr.io/customer-api:$(Build.BuildNumber)'
+    imagePullSecrets: 'reimbursementpoccontainerregistrycr170491e0-auth'
+

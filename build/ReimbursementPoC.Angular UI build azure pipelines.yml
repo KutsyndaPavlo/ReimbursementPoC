@@ -1,0 +1,60 @@
+# Node.js with Angular
+# Build a Node.js project that uses Angular.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+  branches:
+    include:
+    - main
+name: $(date:yyyyMMdd)$(rev:.r)
+resources:
+  repositories:
+  - repository: self
+    type: git
+    ref: refs/heads/main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '20.x'
+        displayName: 'Install Node.js 20.x'
+
+      - script: |
+          cd src/UI/ReimbursementPoC.Angular.UI/
+          npm install -g @angular/cli
+          npm install
+          ng build
+        displayName: 'npm install and build'
+        workingDirectory: '$(Build.SourcesDirectory)'
+      - task: CmdLine@2
+        displayName: "Run unit tests"
+        inputs:
+          script: |
+            cd src/UI/ReimbursementPoC.Angular.UI/
+            ng test --browsers=ChromeHeadless --code-coverage --watch=false
+      - task: ArchiveFiles@2
+        displayName: 'Archive files'
+        inputs:
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/src/UI/ReimbursementPoC.Angular.UI/dist/reimbursement-po-c.angular.ui/browser'
+          includeRootFolder: false
+          archiveType: zip
+          archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+          replaceExistingArchive: true
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'
+

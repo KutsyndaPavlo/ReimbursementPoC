@@ -1,0 +1,207 @@
+name: reimbursement_poc
+services:
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - 'rabbitmq_data:/data'
+    environment:
+      - "RABBITMQ_DEFAULT_PASS=guest"
+      - "RABBITMQ_DEFAULT_USER=guest"
+
+  sqldata:
+    image: mcr.microsoft.com/mssql/server:2019-latest 
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+      
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0-SNAPSHOT
+    container_name: elasticsearch
+    environment:
+      - network.host=0.0.0.0
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - node.name=cluster1-node1
+      - xpack.license.self_generated.type=basic
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    volumes:
+      - elasticsearch:/var/opt/elasticsearch
+      
+  identity.api:
+    image: ${DOCKER_REGISTRY:-ri}/identity
+    build:
+         context: .
+         dockerfile: Sevices/Identity/ReimbursementPoC.Identity.API/Dockerfile
+    environment:
+         - ASPNETCORE_ENVIRONMENT=Development
+         - ASPNETCORE_URLS=https://+:443
+         - ConnectionStrings__DefaultConnection=Server=sqldata;Database=iden;User Id=sa;Password=Pass@word;TrustServerCertificate=True; 
+         - UiUrl=http://localhost:8505
+         - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+         - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    ports:
+         - "8500:443"
+         # - "8600:80"
+    volumes:
+       - ~/.aspnet/https:/https:ro  
+    depends_on:
+         - sqldata
+         - rabbitmq
+
+  administration.api:
+    image: ${DOCKER_REGISTRY:-ri}/administration
+    build:
+      context: .
+      dockerfile: Sevices/Administration/ReimbursementPoC.Administration.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionStrings__Db=Server=sqldata;Database=administration;User Id=sa;Password=Pass@word;TrustServerCertificate=True;
+      - RabbitMqPass=guest
+      - RabbitMqUser=guest
+      - RabbitMqHost=rabbitmq
+    ports:
+      - "8501:80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      - sqldata
+      - rabbitmq
+      
+  customer.api:
+      image: ${DOCKER_REGISTRY:-ri}/customer
+      build:
+        context: .
+        dockerfile: Sevices/Customer/ReimbursementPoC.Customer.API/Dockerfile
+      environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://0.0.0.0:80
+       - ConnectionStrings__Db=Server=sqldata;Database=customer;User Id=sa;Password=Pass@word;TrustServerCertificate=True;
+       - RabbitMqHost=rabbitmq
+       - RabbitMqPass=guest
+       - RabbitMqUser=guest
+      ports:
+        - "8502:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      depends_on:
+        - sqldata
+        - rabbitmq
+      
+  vendor.api:
+      image: ${DOCKER_REGISTRY:-ri}/vendor
+      build:
+        context: .
+        dockerfile: Sevices/Vendor/ReimbursementPoC.Vendor.API/Dockerfile
+      environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://0.0.0.0:80
+       - ConnectionStrings__Db=Server=sqldata;Database=vendor;User Id=sa;Password=Pass@word;TrustServerCertificate=True;
+       - RabbitMqHost=rabbitmq
+       - RabbitMqPass=guest
+       - RabbitMqUser=guest
+      ports:
+        - "8503:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      depends_on:
+        - sqldata
+        - rabbitmq
+      
+  apigateway:
+      image: ${DOCKER_REGISTRY:-ri}/api-gateway
+      build:
+        context: .
+        dockerfile: ApiGateways/ReimbursementPoC.ApiGateway/Dockerfile
+      depends_on:
+        - administration.api
+        - customer.api
+        - vendor.api
+        - identity.api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=https://+:443
+        # - GlobalConfiguration__BaseUrl=https://apigateway
+        - GlobalConfiguration__Hosts__AdministrationAPI=http://administration.api
+        - GlobalConfiguration__Hosts__VendorAPI=http://vendor.api
+        - GlobalConfiguration__Hosts__CustomerAPI=http://customer.api
+        # - BaseUrl=https://apigateway
+        - IdentityAPI=https://identity.api
+        - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+        - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      ports:
+          - "8504:443"
+      volumes:
+       - ~/.aspnet/https:/https:ro  
+          
+  ui:
+      image: ${DOCKER_REGISTRY:-ri}/ui
+      build:
+        context: .
+        dockerfile: UI/ReimbursementPoC.Blazor.UI/Dockerfile
+      depends_on:
+        - apigateway
+        - identity.api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=https://+:443
+      ports:
+        - "8505:443"
+        # - "8605:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro  
+        
+  vendor.search.api:
+      image: ${DOCKER_REGISTRY:-ri}/vendor-search
+      build:
+        context: .
+        dockerfile: Sevices/VendorSearch/ReimbursementPoC.VendorSearch.API/Dockerfile
+      environment:
+       - ASPNETCORE_ENVIRONMENT=Development
+       - ASPNETCORE_URLS=http://0.0.0.0:80
+       - RabbitMqHost=rabbitmq
+       - RabbitMqPass=guest
+       - RabbitMqUser=guest
+       - ElasticSearchHost=elasticsearch
+      ports:
+        - "8506:80"
+      volumes:
+        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      depends_on:
+        - rabbitmq
+        - elasticsearch
+        
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:5341
+      - 8081:80
+       
+volumes:
+  sqldata:
+    external: false
+  rabbitmq_data:
+  elasticsearch:
