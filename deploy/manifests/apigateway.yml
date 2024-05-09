@@ -25,6 +25,8 @@ spec:
           value: "http://administration"
         - name: GlobalConfiguration__Hosts__VendorAPI
           value: "http://vendor"
+        - name: GlobalConfiguration__Hosts__VendorSearchAPI
+          value: "http://vendorsearch"
         - name: GlobalConfiguration__Hosts__CustomerAPI
           value: "http://customer"
         # - name: GlobalConfiguration__BaseUrl
