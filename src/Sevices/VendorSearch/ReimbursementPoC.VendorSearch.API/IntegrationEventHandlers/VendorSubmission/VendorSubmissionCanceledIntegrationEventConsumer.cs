@@ -25,4 +25,14 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.VendorSubmi
                 u => u.Doc(new { IsCanceled  = true }));
         }
     }
+
+    public class VendorSubmissionCanceledIntegrationEventConsumerDefinition : ConsumerDefinition<VendorSubmissionCanceledIntegrationEventConsumer>
+    {
+        protected override void ConfigureConsumer(
+            IReceiveEndpointConfigurator endpointConfigurator,
+            IConsumerConfigurator<VendorSubmissionCanceledIntegrationEventConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(retry => retry.Interval(3, TimeSpan.FromSeconds(5)));
+        }
+    }
 }

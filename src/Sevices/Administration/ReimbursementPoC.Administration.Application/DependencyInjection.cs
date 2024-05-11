@@ -7,6 +7,7 @@ using ReimbursementPoC.Administration.Application.Common.Behaviours;
 using ReimbursementPoC.Administration.Application.Common.Mappings;
 using ReimbursementPoC.Administration.Application.Program.DomainServices;
 using ReimbursementPoC.Administration.Domain.Program;
+using ReimbursementPoC.Administration.IntergrationEvents;
 using System.Reflection;
 
 namespace ReimbursementPoC.Administration.Application
@@ -32,6 +33,7 @@ namespace ReimbursementPoC.Administration.Application
             var asb_connection_strig = Environment.GetEnvironmentVariable("ASB_Connection_String");
             services.AddMassTransit(busConfigurator =>
             {
+                busConfigurator.AddServiceBusMessageScheduler();
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
 
                 if (!string.IsNullOrWhiteSpace(asb_connection_strig))
@@ -41,6 +43,17 @@ namespace ReimbursementPoC.Administration.Application
                         configurator.Host(asb_connection_strig);
 
                         configurator.ConfigureEndpoints(context);
+
+                        configurator.UseServiceBusMessageScheduler();
+                        configurator.UseMessageRetry(retry => retry.Interval(3, TimeSpan.FromSeconds(5)));
+                        configurator.Message<ProgramCanceledIntegrationEvent>(m => m.SetEntityName(Constants.ProgramCanceledTopic));
+                        configurator.Message<ProgramDeletedIntegrationEvent>(m => m.SetEntityName(Constants.ProgramDeletedTopic));
+                        configurator.Message<ProgramCreatedIntegrationEvent>(m => m.SetEntityName(Constants.ProgramCreatedTopic));
+                        configurator.Message<ProgramUpdatedIntegrationEvent>(m => m.SetEntityName(Constants.ProgramUpdatedTopic));
+                        configurator.Message<ServiceCanceledIntegrationEvent>(m => m.SetEntityName(Constants.ServiceCanceledTopic));
+                        configurator.Message<ServiceCreatedIntegrationEvent>(m => m.SetEntityName(Constants.ServiceCreatedTopic));
+                        configurator.Message<ServiceDeletedIntegrationEvent>(m => m.SetEntityName(Constants.ServiceDeletedTopic));
+                        configurator.Message<ServiceUpdatedIntegrationEvent>(m => m.SetEntityName(Constants.ServiceUpdatedTopic));
                     });
                 }
                 else

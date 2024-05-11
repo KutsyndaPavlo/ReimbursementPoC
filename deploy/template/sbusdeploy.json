@@ -10,13 +10,36 @@
         }
     },
     "variables": {
-		"serviceBusTopicName": "ri_event_bus",
-		"VendorSubscriptionName": "Vendor",
+		"programCreatedTopicName": "program-created",
+		"programCreatedSubscriptionName": "program-created-sub",
+	    "programUpdatedTopicName": "program-updated",
+		"programUpdatedSubscriptionName": "program-updated-sub",
+        "programCanceledTopicName": "program-canceled",
+		"programCanceledSubscriptionName": "program-canceled-sub",
+		"programDeletedTopicName": "program-deleted",
+		"programDeletedSubscriptionName": "program-deleted-sub",
+		
+	    "serviceCreatedTopicName": "service-created",
+		"serviceCreatedSubscriptionName": "service-created-sub",
+	    "serviceUpdatedTopicName": "service-updated",
+		"serviceUpdatedSubscriptionName": "service-updated-sub",
+        "serviceCanceledTopicName": "service-canceled",
+		"serviceCanceledSubscriptionName": "service-canceled-sub",
+		"serviceDeletedTopicName": "service-deleted",
+		"serviceDeletedSubscriptionName": "service-deleted-sub",
+		
+		"vendorsubmissionCreatedTopicName": "vendorsubmission-created",
+		"vendorsubmissionCreatedSubscriptionName": "vendorsubmission-created-sub",
+        "vendorsubmissionCanceledTopicName": "vendorsubmission-canceled",
+		"vendorsubmissionCanceledSubscriptionName": "vendorsubmission-canceled-sub",
+		"vendorsubmissionDeletedTopicName": "vendorsubmission-deleted",
+		"vendorsubmissionDeletedSubscriptionName": "vendorsubmission-deleted-sub",
+		
         "location": "[resourceGroup().location]",
         "sbVersion": "2015-08-01",
         "defaultSASKeyName": "Root",
         "namespace":"[concat(parameters('namespaceprefix'), '-', uniqueString(resourceGroup().id))]",
-        "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/topics/authorizationRules', variables('namespace'), variables('serviceBusTopicName'), variables('defaultSASKeyName'))]"        
+        "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/topics/authorizationRules', variables('namespace'), variables('programCreatedTopicName'), variables('defaultSASKeyName'))]"        
     },
     "resources": [
         {
@@ -31,13 +54,13 @@
             "resources": [
                 {
                     "apiVersion": "[variables('sbVersion')]",
-                    "name": "[variables('serviceBusTopicName')]",
+                    "name": "[variables('programCreatedTopicName')]",
                     "type": "Topics",
                     "dependsOn": [
                         "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
                     ],
                     "properties": {
-                        "path": "[variables('serviceBusTopicName')]",
+                        "path": "[variables('programCreatedTopicName')]",
 						"defaultMessageTimeToLive": "14.00:00:00",
 						"maxSizeInMegabytes": 1024,
 						"requiresDuplicateDetection": false,
@@ -66,15 +89,755 @@
 								]
 							},
 							"dependsOn": [
-								"[variables('serviceBusTopicName')]"
+								"[variables('programCreatedTopicName')]"
 							]
 						},
                         {
                             "apiVersion": "[variables('sbVersion')]",
-                            "name": "[variables('VendorSubscriptionName')]",
+                            "name": "[variables('programCreatedSubscriptionName')]",
                             "type": "Subscriptions",
                             "dependsOn": [
-                                "[variables('serviceBusTopicName')]"
+                                "[variables('programCreatedTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('programCreatedTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('programUpdatedTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('programUpdatedTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('programUpdatedSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('programUpdatedTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('programCanceledTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('programCanceledTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('programCanceledTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('programCanceledSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('programCanceledTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('programDeletedTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('programDeletedTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('programDeletedTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('programDeletedSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('programDeletedTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('serviceCreatedTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('serviceCreatedTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('serviceCreatedTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('serviceCreatedSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('serviceCreatedTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('serviceUpdatedTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('serviceUpdatedTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('serviceUpdatedTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('serviceUpdatedSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('serviceUpdatedTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('serviceCanceledTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('serviceCanceledTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('serviceCanceledTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('serviceCanceledSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('serviceCanceledTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('serviceDeletedTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('serviceDeletedTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('serviceDeletedTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('serviceDeletedSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('serviceDeletedTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('vendorsubmissionCreatedTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('vendorsubmissionCreatedTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('vendorsubmissionCreatedTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('vendorsubmissionCreatedSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('vendorsubmissionCreatedTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('vendorsubmissionCanceledTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('vendorsubmissionCanceledTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('vendorsubmissionCanceledTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('vendorsubmissionCanceledSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('vendorsubmissionCanceledTopicName')]"
+                            ],
+                            "properties": {
+								"lockDuration": "00:00:30",
+								"requiresSession": false,
+								"defaultMessageTimeToLive": "14.00:00:00",
+								"deadLetteringOnMessageExpiration": true,
+								"deadLetteringOnFilterEvaluationExceptions": true,
+								"maxDeliveryCount": 10,
+								"enableBatchedOperations": false,
+								"status": "Active",
+								"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+								"entityAvailabilityStatus": "Available"
+							}
+                        }
+                    ]
+                }
+            ]
+        },
+		{
+            "apiVersion": "[variables('sbVersion')]",
+            "name": "[variables('namespace')]",
+            "type": "Microsoft.ServiceBus/Namespaces",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "[variables('vendorsubmissionDeletedTopicName')]",
+                    "type": "Topics",
+                    "dependsOn": [
+                        "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
+                    ],
+                    "properties": {
+                        "path": "[variables('vendorsubmissionDeletedTopicName')]",
+						"defaultMessageTimeToLive": "14.00:00:00",
+						"maxSizeInMegabytes": 1024,
+						"requiresDuplicateDetection": false,
+						"enableBatchedOperations": true,
+						"sizeInBytes": 0,
+						"filteringMessagesBeforePublishing": false,
+						"isAnonymousAccessible": false,
+						"status": "Active",
+						"supportOrdering": false,
+						"autoDeleteOnIdle": "10675199.02:48:05.4775807",
+						"enablePartitioning": true,
+						"isExpress": false,
+						"enableSubscriptionPartitioning": false,
+						"enableExpress": false
+                    },
+                    "resources": [
+						{
+							"type": "AuthorizationRules",
+							"name": "[variables('defaultSASKeyName')]",
+							"apiVersion": "[variables('sbVersion')]",
+							"properties": {
+								"rights": [
+									"Manage",
+									"Send",
+									"Listen"
+								]
+							},
+							"dependsOn": [
+								"[variables('vendorsubmissionDeletedTopicName')]"
+							]
+						},
+                        {
+                            "apiVersion": "[variables('sbVersion')]",
+                            "name": "[variables('vendorsubmissionDeletedSubscriptionName')]",
+                            "type": "Subscriptions",
+                            "dependsOn": [
+                                "[variables('vendorsubmissionDeletedTopicName')]"
                             ],
                             "properties": {
 								"lockDuration": "00:00:30",

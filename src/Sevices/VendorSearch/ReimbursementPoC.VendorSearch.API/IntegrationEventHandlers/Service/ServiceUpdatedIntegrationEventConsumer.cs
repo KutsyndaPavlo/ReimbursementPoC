@@ -1,6 +1,7 @@
 ﻿using Elastic.Clients.Elasticsearch;
 using MassTransit;
 using ReimbursementPoC.Administration.IntergrationEvents;
+using ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Program;
 
 namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Service
 {
@@ -30,6 +31,16 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Service
                         context.Message.Description
                     }
                 }));
+        }
+    }
+
+    public class ServiceUpdatedIntegrationEventConsumerDefinition : ConsumerDefinition<ServiceUpdatedIntegrationEventConsumer>
+    {
+        protected override void ConfigureConsumer(
+            IReceiveEndpointConfigurator endpointConfigurator,
+            IConsumerConfigurator<ServiceUpdatedIntegrationEventConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(retry => retry.Interval(3, TimeSpan.FromSeconds(5)));
         }
     }
 }

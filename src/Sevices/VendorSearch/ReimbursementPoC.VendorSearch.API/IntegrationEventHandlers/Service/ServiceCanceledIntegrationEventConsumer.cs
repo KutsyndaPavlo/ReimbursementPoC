@@ -2,6 +2,7 @@
 using MassTransit;
 using ReimbursementPoC.Administration.IntergrationEvents;
 using ReimbursementPoC.Vendor.IntergrationEvents;
+using ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Program;
 
 namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Service
 {
@@ -30,6 +31,16 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Service
                         IsCanceled = true
                     } 
                 }));
+        }
+    }
+
+    public class ServiceCanceledIntegrationEventConsumerDefinition : ConsumerDefinition<ServiceCanceledIntegrationEventConsumer>
+    {
+        protected override void ConfigureConsumer(
+            IReceiveEndpointConfigurator endpointConfigurator,
+            IConsumerConfigurator<ServiceCanceledIntegrationEventConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(retry => retry.Interval(3, TimeSpan.FromSeconds(5)));
         }
     }
 }

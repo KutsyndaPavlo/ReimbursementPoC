@@ -2,6 +2,7 @@ using HealthChecks.UI.Client;
 using MassTransit;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using ReimbursementPoC.Administration.IntergrationEvents;
 using ReimbursementPoC.Vendor.API;
 using ReimbursementPoC.Vendor.IntergrationEvents;
 using ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Program;
@@ -26,7 +27,16 @@ builder.Services.AddMvc(options =>
 var asb_connection_strig = Environment.GetEnvironmentVariable("ASB_Connection_String");
 builder.Services.AddMassTransit(busConfigurator =>
 {
+    busConfigurator.AddServiceBusMessageScheduler();
     busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+    busConfigurator.AddConsumer<ProgramCanceledIntegrationEventConsumer>(typeof(ProgramCanceledIntegrationEventConsumerDefinition));
+    busConfigurator.AddConsumer<ProgramUpdatedIntegrationEventConsumer>(typeof(ProgramUpdatedIntegrationEventConsumerDefinition));
+    busConfigurator.AddConsumer<ServiceCanceledIntegrationEventConsumer>(typeof(ServiceCanceledIntegrationEventConsumerDefinition));
+    busConfigurator.AddConsumer<ServiceUpdatedIntegrationEventConsumer>(typeof(ServiceUpdatedIntegrationEventConsumerDefinition));
+    busConfigurator.AddConsumer<VendorSubmissionCanceledIntegrationEventConsumer>(typeof(VendorSubmissionCanceledIntegrationEventConsumerDefinition));
+    busConfigurator.AddConsumer<VendorSubmissionCreatedIntegrationEventConsumer>(typeof(VendorSubmissionCreatedIntegrationEventConsumerDefinition));
+    busConfigurator.AddConsumer<VendorSubmissionDeletedIntegrationEventConsumer>(typeof(VendorSubmissionDeletedIntegrationEventConsumerDefinition));
 
     if (!string.IsNullOrWhiteSpace(asb_connection_strig))
     {
@@ -35,6 +45,41 @@ builder.Services.AddMassTransit(busConfigurator =>
             configurator.Host(asb_connection_strig);
 
             configurator.ConfigureEndpoints(context);
+            // https://tech.playgokids.com/messaging-masstransit-azure-servicebus-net7/
+
+            configurator.UseServiceBusMessageScheduler();
+            configurator.UseMessageRetry(retry => retry.Interval(3, TimeSpan.FromSeconds(5)));
+
+            configurator.SubscriptionEndpoint<ProgramCanceledIntegrationEvent>(ReimbursementPoC.Administration.IntergrationEvents.Constants.ProgramCanceledSubscription, configurator =>
+            {
+                configurator.ConfigureConsumer<ProgramCanceledIntegrationEventConsumer>(context);
+            });
+            configurator.SubscriptionEndpoint<ProgramUpdatedIntegrationEvent>(ReimbursementPoC.Administration.IntergrationEvents.Constants.ProgramUpdatedSubscription, configurator =>
+            {
+                configurator.ConfigureConsumer<ProgramUpdatedIntegrationEventConsumer>(context);
+            });
+
+            configurator.SubscriptionEndpoint<ServiceCanceledIntegrationEvent>(ReimbursementPoC.Administration.IntergrationEvents.Constants.ServiceCanceledSubscription, configurator =>
+            {
+                configurator.ConfigureConsumer<ServiceCanceledIntegrationEventConsumer>(context);
+            });
+            configurator.SubscriptionEndpoint<ServiceUpdatedIntegrationEvent>(ReimbursementPoC.Administration.IntergrationEvents.Constants.ServiceUpdatedSubscription, configurator =>
+            {
+                configurator.ConfigureConsumer<ServiceUpdatedIntegrationEventConsumer>(context);
+            });
+
+            configurator.SubscriptionEndpoint<VendorSubmissionCanceledIntegrationEvent>(ReimbursementPoC.Vendor.IntergrationEvents.Constants.VendorSubmissionCanceledSubscription, configurator =>
+            {
+                configurator.ConfigureConsumer<VendorSubmissionCanceledIntegrationEventConsumer>(context);
+            });            
+            configurator.SubscriptionEndpoint<VendorSubmissionCreatedIntegrationEvent>(ReimbursementPoC.Vendor.IntergrationEvents.Constants.VendorSubmissionCreatedSubscription, configurator =>
+            {
+                configurator.ConfigureConsumer<VendorSubmissionCreatedIntegrationEventConsumer>(context);
+            });
+            configurator.SubscriptionEndpoint<VendorSubmissionDeletedIntegrationEvent>(ReimbursementPoC.Vendor.IntergrationEvents.Constants.VendorSubmissionDeletedSubscription, configurator =>
+            {
+                configurator.ConfigureConsumer<VendorSubmissionDeletedIntegrationEventConsumer>(context);
+            });
         });
     }
     else

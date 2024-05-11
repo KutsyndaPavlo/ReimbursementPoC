@@ -9,7 +9,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
         //"ConnectionStrings__Db": "***"
       },
-      "applicationUrl": "http://localhost:8504",
+      "applicationUrl": "http://localhost:8506",
       "dotnetRunMessages": true
     }
     //"Docker": {

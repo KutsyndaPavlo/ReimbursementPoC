@@ -22,4 +22,14 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.VendorSubmi
             await client.DeleteAsync(request);
         }
     }
+
+    public class VendorSubmissionDeletedIntegrationEventConsumerDefinition : ConsumerDefinition<VendorSubmissionDeletedIntegrationEventConsumer>
+    {
+        protected override void ConfigureConsumer(
+            IReceiveEndpointConfigurator endpointConfigurator,
+            IConsumerConfigurator<VendorSubmissionDeletedIntegrationEventConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(retry => retry.Interval(3, TimeSpan.FromSeconds(5)));
+        }
+    }
 }

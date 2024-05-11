@@ -32,6 +32,17 @@
           "Url": "https://localhost:8504/vendor/swagger/v1/swagger.json"
         }
       ]
+    },
+    {
+      "Key": "vendorsearch",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "VendorSearch.API",
+          "Version": "1.0",
+          "Url": "https://localhost:8504/vendorsearch/swagger/v1/swagger.json"
+        }
+      ]
     }
   ]
 }

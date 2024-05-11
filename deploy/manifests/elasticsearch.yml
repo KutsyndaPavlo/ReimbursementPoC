@@ -1,45 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: elasticsearch
   labels:
-    name: vendorsearch
-  name: vendorsearch
+    app: elasticsearch
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      name: vendorsearch
-  template:
+      app: elasticsearch
+  replicas: 1 
+  template: 
     metadata:
       labels:
-        name: vendorsearch
+        app: elasticsearch
     spec:
       containers:
-        - image: reimbursementpoccontainerregistry.azurecr.io/vendorsearch-api
-          env:
-          - name: ASPNETCORE_ENVIRONMENT
-            value: "Development"
-          - name: ASPNETCORE_URLS
-            value: "http://0.0.0.0:80"
-          - name: ElasticSearchHost
-            value: elasticsearch
-          - name: ASB_Connection_String
-            value: "REPLACEASB_Connection_StringREPLACE"
-          name: vendorsearch
-          ports:
-            - containerPort: 80
+      - name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0-SNAPSHOT
+        resources:
+          requests:
+            memory: 4Gi
+          limits:
+            memory: 5Gi
+        ports:
+        - containerPort: 9200
+        - containerPort: 9300
+        env:
+        - name: discovery.type
+          value: single-node            
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: vendorsearch
-  labels:
-    name: vendorsearch
+  name: elasticsearch
 spec:
-  ports:
-    - port: 80
-      targetPort: 80
-      protocol: TCP
-  type: ClusterIP
   selector:
-    name: vendorsearch
+    app: elasticsearch
+    component: elasticsearch
+  ports:
+    - name: db
+      protocol: TCP
+      port: 9200
+      targetPort: 9200
+    - name: monitoring
+      protocol: TCP
+      port: 9300
+      targetPort: 9300
+  type: LoadBalancer

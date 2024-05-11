@@ -7,6 +7,7 @@ using ReimbursementPoC.Vendor.Application.Common.Behaviours;
 using ReimbursementPoC.Vendor.Application.Common.Mappings;
 using ReimbursementPoC.Vendor.Application.VendorSubmission.DomainServices;
 using ReimbursementPoC.Vendor.Domain.VendorSubmission.DomainServices;
+using ReimbursementPoC.Vendor.IntergrationEvents;
 using System.Reflection;
 
 namespace ReimbursementPoC.Vendor.Application
@@ -30,6 +31,7 @@ namespace ReimbursementPoC.Vendor.Application
             var asb_connection_strig = Environment.GetEnvironmentVariable("ASB_Connection_String");
             services.AddMassTransit(busConfigurator =>
             {
+                busConfigurator.AddServiceBusMessageScheduler();
                 busConfigurator.SetKebabCaseEndpointNameFormatter();
 
                 if (!string.IsNullOrWhiteSpace(asb_connection_strig))
@@ -39,6 +41,13 @@ namespace ReimbursementPoC.Vendor.Application
                         configurator.Host(asb_connection_strig);
 
                         configurator.ConfigureEndpoints(context);
+
+                        configurator.UseServiceBusMessageScheduler();
+                        configurator.UseMessageRetry(retry => retry.Interval(3, TimeSpan.FromSeconds(5)));
+
+                        configurator.Message<VendorSubmissionCanceledIntegrationEvent>(m => m.SetEntityName(Constants.VendorSubmissionCanceledTopic));
+                        configurator.Message<VendorSubmissionCreatedIntegrationEvent>(m => m.SetEntityName(Constants.VendorSubmissionCreatedTopic));
+                        configurator.Message<VendorSubmissionDeletedIntegrationEvent>(m => m.SetEntityName(Constants.VendorSubmissionDeletedTopic));
                     });
                 }
                 else

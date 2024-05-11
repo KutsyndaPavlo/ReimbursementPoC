@@ -4,7 +4,8 @@
     "Hosts": {
       "AdministrationAPI": "http://localhost:8501",
       "CustomerAPI": "http://localhost:8502",
-      "VendorAPI": "http://localhost:8503"
+      "VendorAPI": "http://localhost:8503",
+      "VendorSearchAPI": "http://localhost:8506"
     }
   }
 }

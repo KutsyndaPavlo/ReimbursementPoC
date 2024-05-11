@@ -33,4 +33,14 @@ namespace ReimbursementPoC.VendorSearch.API.IntegrationEventHandlers.Program
                 }));
         }
     }
+
+    public class ProgramCanceledIntegrationEventConsumerDefinition : ConsumerDefinition<ProgramCanceledIntegrationEventConsumer>
+    {
+        protected override void ConfigureConsumer(
+            IReceiveEndpointConfigurator endpointConfigurator,
+            IConsumerConfigurator<ProgramCanceledIntegrationEventConsumer> consumerConfigurator)
+        {
+            consumerConfigurator.UseMessageRetry(retry => retry.Interval(3, TimeSpan.FromSeconds(5)));
+        }
+    }
 }

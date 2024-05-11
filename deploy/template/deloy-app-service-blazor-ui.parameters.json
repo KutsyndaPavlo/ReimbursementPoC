@@ -3,10 +3,10 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "projectName": {
-      "value": "riablazorui"
+      "value": "riblazorui"
     },
 	"linuxFxVersion": {
-      "value": "NODE|20-lts"
+      "value": "DOTNETCORE|7.0"
     }
   }
 }
