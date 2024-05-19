@@ -14,16 +14,16 @@ using System.Security.Claims;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-               .AddJwtBearer("Bearer",  options =>
-               
+               .AddJwtBearer("Bearer", (Action<JwtBearerOptions>)(options =>
+
                {
-                   options.Authority = Environment.GetEnvironmentVariable("IdentityAPI"); //builder.Configuration.GetSection("IdentityAPI").Value;
+                   options.Authority = GetIdentityURL(); //builder.Configuration.GetSection("IdentityAPI").Value;
                    options.Audience = "apiscope";
                    options.TokenValidationParameters = new TokenValidationParameters()
                    {
                        NameClaimType = "name"
                    };
-               });
+               }));
 
 // Add services to the container.
 builder.Services.AddControllers(options =>
@@ -87,6 +87,14 @@ app.UseSwaggerForOcelotUI(options =>
 app.MapControllers();
 //app.UseOcelot();
 app.Run();
+
+static string? GetIdentityURL()
+{
+    var url = Environment.GetEnvironmentVariable("IdentityAPI");
+
+    Console.WriteLine($"IdentityURL: {url}");
+    return url;
+}
 
 public class UpdateConfigMiddleware
 {
@@ -178,4 +186,3 @@ public static class ServiceCollectionExtensions
         return services;
     }
 }
-

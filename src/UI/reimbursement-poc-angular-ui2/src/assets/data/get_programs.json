@@ -1,0 +1,38 @@
+{
+  "items": [
+    {
+      "id": "4ce96a23-1cdf-45c1-8c99-fd5d0d6b16fd",
+      "name": "string878new",
+      "description": "string8778",
+      "stateId": "1",
+      "state": "Alabama",
+      "startDate": "2024-05-04T06:55:13.402",
+      "endDate": "2025-05-04T06:55:13.402",
+      "created": "2024-05-04T06:55:24.3674098",
+      "createdBy": "",
+      "lastModified": "2024-05-16T07:28:34.2559914",
+      "lastModifiedBy": "",
+      "isCanceled": true
+    },
+    {
+      "id": "2bd456db-5736-4b9a-92e0-ffe6c2fa684a",
+      "name": "ewrfgfdgdfdhd",
+      "description": "dfsdsnw",
+      "stateId": "2",
+      "state": "Alaska",
+      "startDate": "2024-05-07T00:00:00",
+      "endDate": "2025-05-15T00:00:00",
+      "created": "2024-05-14T22:07:23.6431289",
+      "createdBy": "",
+      "lastModified": "2024-05-16T06:53:13.9043544",
+      "lastModifiedBy": "",
+      "isCanceled": true
+    }
+  ],
+  "page": {
+    "offset": 0,
+    "limit": 50,
+    "count": 2,
+    "total": 2
+  }
+}

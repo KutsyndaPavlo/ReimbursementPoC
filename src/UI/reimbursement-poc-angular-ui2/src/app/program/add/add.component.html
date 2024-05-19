@@ -1,0 +1,66 @@
+<div class="container">
+    <h1>Create New Product</h1>
+  
+    <a href="#" routerLink="/program/list" class="btn btn-primary">Back</a>
+        
+    <form [formGroup]="form" (ngSubmit)="submit()">
+  
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input 
+                formControlName="name"
+                id="name" 
+                type="text" 
+                class="form-control">
+            <div *ngIf="f['name'].touched && f['name'].invalid" class="alert alert-danger">
+                <div *ngIf="f['name'].errors && f['name'].errors['required']">Name is required.</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input 
+                formControlName="description"
+                id="description" 
+                type="text" 
+                class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="stateId">State:</label>
+                <select name="stateId" id="stateId" class="form-control" formControlName="stateId">
+                    <option value="1">Alabama</option>
+                    <option value="2">Alaska</option>
+                  </select>
+            <div *ngIf="f['stateId'].touched && f['stateId'].invalid" class="alert alert-danger">
+                <div *ngIf="f['stateId'].errors && f['stateId'].errors['required']">State is required.</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="startDate">Start Date:</label>
+            <input 
+                formControlName="startDate"
+                id="startDate" 
+                type="date" 
+                class="form-control">
+            <div *ngIf="f['startDate'].touched && f['startDate'].invalid" class="alert alert-danger">
+                <div *ngIf="f['startDate'].errors && f['startDate'].errors['required']">Start Date is required.</div>
+            </div>
+        </div>     
+
+        <div class="form-group">
+            <label for="endDate">End Date:</label>
+            <input 
+                formControlName="endDate"
+                id="endDate" 
+                type="date" 
+                class="form-control">
+            <div *ngIf="f['endDate'].touched && f['endDate'].invalid" class="alert alert-danger">
+                <div *ngIf="f['endDate'].errors && f['endDate'].errors['required']">End Date is required.</div>
+            </div>
+        </div>     
+  
+        <button class="btn btn-primary" type="submit" [disabled]="!form.valid">Submit</button>
+    </form>
+</div>

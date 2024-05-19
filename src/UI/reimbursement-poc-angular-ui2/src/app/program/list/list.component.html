@@ -1,0 +1,34 @@
+<div class="container">
+    <h1>Program list</h1>
+    
+    <a href="#" routerLink="/program/add" class="btn btn-success">Create New Program</a>
+      
+    <table class="table table-striped">
+        <thead>
+              <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>State</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th width="250px">Action</th>
+              </tr>
+        </thead>
+       <tbody>
+              <tr *ngFor="let program of programs">
+                <td>{{ program.id }}</td>
+                <td>{{ program.name }}</td>
+                <td>{{ program.description }}</td>
+                <td>{{ program.state }}</td>
+                <td>{{ program.startDate | date:"dd/MM/yyyy"}}</td>
+                <td>{{ program.endDate | date:"dd/MM/yyyy"}}</td>
+                <td>
+                  <a href="#" [routerLink]="['/program/', program.id, 'edit']" class="btn btn-info">Edit</a>
+                  <a href="#" [routerLink]="['/program/', program.id, 'cancel']" class="btn btn-warning">Cancel</a>
+                  <a href="#" [routerLink]="['/program/', program.id, 'delete']" class="btn btn-danger">Delete</a>
+                </td>
+              </tr>
+        </tbody> 
+    </table>
+ </div>

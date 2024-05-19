@@ -1,0 +1,38 @@
+<div class="container">
+    <h1>Delete program</h1>
+  
+    <a href="#" routerLink="/program/list" class="btn btn-primary">Back</a>
+   
+    <div>
+        <strong>Id:</strong>
+        <p>{{ program.id }}</p>
+    </div>
+   
+    <div>
+        <strong>Name:</strong>
+        <p>{{ program.name }}</p>
+    </div>
+
+    <div>
+        <strong>Description:</strong>
+        <p>{{ program.description }}</p>
+    </div>
+
+    <div>
+        <strong>State:</strong>
+        <p>{{ program.state }}</p>
+    </div>
+
+    <div>
+        <strong>Start Date:</strong>
+        <p>{{ program.startDate | date:"dd/MM/yyyy" }}</p>
+    </div>
+
+    <div>
+        <strong>End Date:</strong>
+        <p>{{ program.endDate | date:"dd/MM/yyyy" }}</p>
+    </div>
+
+    <a (click)="delete()" class="btn btn-danger">Delete</a>
+   
+</div>

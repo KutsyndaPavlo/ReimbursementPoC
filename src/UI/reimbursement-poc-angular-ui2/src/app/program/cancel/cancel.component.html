@@ -1,0 +1,38 @@
+<div class="container">
+    <h1>Cancel program</h1>
+  
+    <a href="#" routerLink="/program/list" class="btn btn-primary">Back</a>
+   
+    <div>
+        <strong>Id:</strong>
+        <p>{{ program.id }}</p>
+    </div>
+   
+    <div>
+        <strong>Name:</strong>
+        <p>{{ program.name }}</p>
+    </div>
+
+    <div>
+        <strong>Description:</strong>
+        <p>{{ program.description }}</p>
+    </div>
+
+    <div>
+        <strong>State:</strong>
+        <p>{{ program.state }}</p>
+    </div>
+
+    <div>
+        <strong>Start Date:</strong>
+        <p>{{ program.startDate }}</p>
+    </div>
+
+    <div>
+        <strong>End Date:</strong>
+        <p>{{ program.endDate }}</p>
+    </div>
+
+    <a (click)="cancel()" class="btn btn-warning">Cancel</a>
+   
+</div>

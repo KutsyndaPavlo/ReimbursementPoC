@@ -22,26 +22,35 @@ services:
     volumes:
       - sqldata:/var/opt/mssql
       
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0-SNAPSHOT
-    container_name: elasticsearch
+  # elasticsearch:
+    # image: docker.elastic.co/elasticsearch/elasticsearch:8.0.0-SNAPSHOT
+    # container_name: elasticsearch
+    # environment:
+      # - network.host=0.0.0.0
+      # - discovery.type=single-node
+      # - cluster.name=docker-cluster
+      # - node.name=cluster1-node1
+      # - xpack.license.self_generated.type=basic
+      # - xpack.security.enabled=false
+      # - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    # ulimits:
+      # memlock:
+        # soft: -1
+        # hard: -1
+    # ports:
+      # - 9200:9200
+    # volumes:
+      # - elasticsearch:/var/opt/elasticsearch
+
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
     environment:
-      - network.host=0.0.0.0
-      - discovery.type=single-node
-      - cluster.name=docker-cluster
-      - node.name=cluster1-node1
-      - xpack.license.self_generated.type=basic
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
+      - ACCEPT_EULA=Y
     ports:
-      - 9200:9200
-    volumes:
-      - elasticsearch:/var/opt/elasticsearch
-      
+      - 5341:5341
+      - 8081:80
+
   identity.api:
     image: ${DOCKER_REGISTRY:-ri}/identity
     build:
@@ -58,11 +67,11 @@ services:
          - "8500:443"
          # - "8600:80"
     volumes:
-       - ~/.aspnet/https:/https:ro  
+       - ~/.aspnet/https:/https:ro
     depends_on:
          - sqldata
          - rabbitmq
-
+         
   administration.api:
     image: ${DOCKER_REGISTRY:-ri}/administration
     build:
@@ -83,6 +92,7 @@ services:
     depends_on:
       - sqldata
       - rabbitmq
+      - identity.api
       
   customer.api:
       image: ${DOCKER_REGISTRY:-ri}/customer
@@ -104,6 +114,7 @@ services:
       depends_on:
         - sqldata
         - rabbitmq
+        - administration.api
       
   vendor.api:
       image: ${DOCKER_REGISTRY:-ri}/vendor
@@ -125,6 +136,7 @@ services:
       depends_on:
         - sqldata
         - rabbitmq
+        - customer.api
       
   apigateway:
       image: ${DOCKER_REGISTRY:-ri}/api-gateway
@@ -150,7 +162,7 @@ services:
       ports:
           - "8504:443"
       volumes:
-       - ~/.aspnet/https:/https:ro  
+       - ~/.aspnet/https:/https:ro 
           
   ui:
       image: ${DOCKER_REGISTRY:-ri}/ui
@@ -168,40 +180,31 @@ services:
         # - "8605:80"
       volumes:
         - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-        - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro  
-        
-  vendor.search.api:
-      image: ${DOCKER_REGISTRY:-ri}/vendor-search
-      build:
-        context: .
-        dockerfile: Sevices/VendorSearch/ReimbursementPoC.VendorSearch.API/Dockerfile
-      environment:
-       - ASPNETCORE_ENVIRONMENT=Development
-       - ASPNETCORE_URLS=http://0.0.0.0:80
-       - RabbitMqHost=rabbitmq
-       - RabbitMqPass=guest
-       - RabbitMqUser=guest
-       - ElasticSearchHost=elasticsearch
-      ports:
-        - "8506:80"
-      volumes:
-        - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
         - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-      depends_on:
-        - rabbitmq
-        - elasticsearch
         
-  seq:
-    image: datalust/seq:latest
-    container_name: seq
-    environment:
-      - ACCEPT_EULA=Y
-    ports:
-      - 5341:5341
-      - 8081:80
+  # vendor.search.api:
+      # image: ${DOCKER_REGISTRY:-ri}/vendor-search
+      # build:
+        # context: .
+        # dockerfile: Sevices/VendorSearch/ReimbursementPoC.VendorSearch.API/Dockerfile
+      # environment:
+       # - ASPNETCORE_ENVIRONMENT=Development
+       # - ASPNETCORE_URLS=http://0.0.0.0:80
+       # - RabbitMqHost=rabbitmq
+       # - RabbitMqPass=guest
+       # - RabbitMqUser=guest
+       # - ElasticSearchHost=elasticsearch
+      # ports:
+        # - "8506:80"
+      # volumes:
+        # - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+        # - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      # depends_on:
+        # - rabbitmq
+        # - elasticsearch
        
 volumes:
   sqldata:
     external: false
   rabbitmq_data:
-  elasticsearch:
+  # elasticsearch:
