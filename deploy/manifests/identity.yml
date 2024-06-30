@@ -23,7 +23,7 @@ spec:
             value: "https://0.0.0.0:443"
           - name: ConnectionStrings__Db
             value: "REPLACEConnectionStrings__DbREPLACE"
-          name: vendor
+          name: identity
           ports:
             - containerPort: 443
 ---

@@ -52,7 +52,7 @@
                 "tier": "Standard"
             },
             "resources": [
-                {
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('programCreatedTopicName')]",
                     "type": "Topics",
@@ -113,22 +113,10 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				{
                     "apiVersion": "[variables('sbVersion')]",
-                    "name": "[variables('programCreatedTopicName')]",
+                    "name": "[variables('programUpdatedTopicName')]",
                     "type": "Topics",
                     "dependsOn": [
                         "[concat('Microsoft.ServiceBus/namespaces/', variables('namespace'))]"
@@ -187,20 +175,8 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('programCanceledTopicName')]",
                     "type": "Topics",
@@ -261,20 +237,8 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('programDeletedTopicName')]",
                     "type": "Topics",
@@ -335,20 +299,9 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('serviceCreatedTopicName')]",
                     "type": "Topics",
@@ -409,20 +362,8 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('serviceUpdatedTopicName')]",
                     "type": "Topics",
@@ -483,20 +424,8 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('serviceCanceledTopicName')]",
                     "type": "Topics",
@@ -557,20 +486,8 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('serviceDeletedTopicName')]",
                     "type": "Topics",
@@ -631,20 +548,9 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('vendorsubmissionCreatedTopicName')]",
                     "type": "Topics",
@@ -705,20 +611,8 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('vendorsubmissionCanceledTopicName')]",
                     "type": "Topics",
@@ -779,20 +673,8 @@
 							}
                         }
                     ]
-                }
-            ]
-        },
-		{
-            "apiVersion": "[variables('sbVersion')]",
-            "name": "[variables('namespace')]",
-            "type": "Microsoft.ServiceBus/Namespaces",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Standard"
-            },
-            "resources": [
-                {
+                },
+				{
                     "apiVersion": "[variables('sbVersion')]",
                     "name": "[variables('vendorsubmissionDeletedTopicName')]",
                     "type": "Topics",

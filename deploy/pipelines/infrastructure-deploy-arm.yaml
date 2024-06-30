@@ -126,6 +126,21 @@ steps:
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-ui.parameters.json'   
     deploymentMode: 'Incremental'
     # overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
+
+- task: AzureResourceManagerTemplateDeployment@3
+  displayName: 'ARM Template deployment: App service - Blazor UI'
+  inputs:
+    deploymentScope: 'Resource Group'
+    action: 'Create Or Update Resource Group'
+    azureResourceManagerConnection: $(arm_connection)
+    subscriptionId: $(subscriptionId)
+    resourceGroupName: $(resourceGroupName)
+    location: $(location)
+    templateLocation: 'Linked artifact'
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-static.json' 
+    csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-blazor-ui.parameters.json'   
+    deploymentMode: 'Incremental'
+    # overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
  
     
 - task: AzureResourceManagerTemplateDeployment@3
