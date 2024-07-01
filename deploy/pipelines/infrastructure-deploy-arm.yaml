@@ -122,7 +122,7 @@ steps:
     resourceGroupName: $(resourceGroupName)
     location: $(location)
     templateLocation: 'Linked artifact'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service.json' 
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-linux.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-ui.parameters.json'   
     deploymentMode: 'Incremental'
     # overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
@@ -137,7 +137,7 @@ steps:
     resourceGroupName: $(resourceGroupName)
     location: $(location)
     templateLocation: 'Linked artifact'
-    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-static.json' 
+    csmFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-windows.json' 
     csmParametersFile: '$(System.DefaultWorkingDirectory)/deploy/template/deloy-app-service-blazor-ui.parameters.json'   
     deploymentMode: 'Incremental'
     # overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
