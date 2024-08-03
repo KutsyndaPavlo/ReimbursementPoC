@@ -16,6 +16,9 @@ namespace ReimbursementPoC.Vendor.API
         {
             var exception = context.Exception;
 
+            // ToDo: add logger
+            Console.WriteLine(exception.Message);
+
             //if (context.RouteData.Values["controller"].ToString() == "Proposal")
             //{
             //    if (exception is ProductNotFoundException)

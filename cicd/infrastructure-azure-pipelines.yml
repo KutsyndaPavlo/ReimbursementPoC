@@ -1,0 +1,309 @@
+trigger:
+- main
+
+variables:
+- name: releaseBranchName
+  value: 'main'
+
+name: release-$(date:yyyyMMdd)$(rev:.r)
+
+stages:
+- stage: 'Publish_artefacts'
+  displayName: 'Publish artefacts'
+  jobs: 
+  - job: 'Publish'
+    displayName: 'Build job'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+      - task: ArchiveFiles@2
+        displayName: 'Archive files'
+        inputs:
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)/cicd'
+          includeRootFolder: false
+          archiveType: zip
+          archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+          replaceExistingArchive: true
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+          ArtifactName: 'drop'
+          publishLocation: 'Container'
+          
+- stage: 'Dev'
+  displayName: 'Deploy to the dev environment'
+  dependsOn: 'Publish_artefacts'
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+    )
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: Dev
+    variables:
+    - group: 'dev-variable-group'
+    - name: resourceGroupName
+      value: 'ri-poc-rg'
+    - name: location
+      value: 'eastus2'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+
+          - task: ExtractFiles@1
+            inputs:
+                  archiveFilePatterns: '$(Pipeline.Workspace)/drop/*.zip'
+                  destinationFolder: '$(System.DefaultWorkingDirectory)'
+                  cleanDestinationFolder: true
+                  overwriteExistingFiles: true
+
+          - task: AzureCLI@2
+            displayName: 'Resource group'
+            inputs:
+                azureSubscription: 'azureResourceManagerConnection'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: 'az group create --resource-group ri-poc-rg --location $(location)'
+
+          - task: AzureCLI@2
+            displayName: 'az monitor log-analytics'
+            inputs:
+                azureSubscription: 'azureResourceManagerConnection'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: 'az monitor log-analytics workspace create --resource-group ri-poc-rg --workspace-name riWorkspace'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: Storage'
+            inputs:
+                deploymentScope: 'Resource Group'
+                action: 'Create Or Update Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/deploystorage.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/deploystorage.parameters.json'   
+                deploymentMode: 'Incremental'  
+                                
+          - task: AzureCLI@2
+            displayName: 'Container registry'
+            inputs:
+                azureSubscription: 'azureResourceManagerConnection'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: 'az acr create --resource-group $(resourceGroupName) --name reimbursementpoccontainerregistry --sku Basic'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: App service - UI'
+            inputs:
+                deploymentScope: 'Resource Group'
+                action: 'Create Or Update Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/deloy-app-service-linux.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/deloy-app-service-ui.parameters.json'   
+                deploymentMode: 'Incremental'
+                # overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: App service - Blazor UI'
+            inputs:
+                deploymentScope: 'Resource Group'
+                action: 'Create Or Update Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/deloy-app-service-windows.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/deloy-app-service-blazor-ui.parameters.json'   
+                deploymentMode: 'Incremental'
+                # overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: App service - Identity API'
+            inputs:
+                deploymentScope: 'Resource Group'
+                action: 'Create Or Update Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/deloy-app-service-linux.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/deloy-app-service-reverse-proxy-api.parameters.json'   
+                deploymentMode: 'Incremental'
+                # overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: App service - Reverse proxy'
+            inputs:
+                deploymentScope: 'Resource Group'
+                action: 'Create Or Update Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/deloy-app-service-linux.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/deloy-app-service-identity-api.parameters.json'   
+                deploymentMode: 'Incremental'
+                # overrideParameters: '-subscriptionId $(subscriptionId) -resourceGroupName $(resourceGroupName) -location $(location) -serverFarmResourceGroup $(resourceGroupName)'
+                
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: Service bus'
+            inputs:
+                deploymentScope: 'Resource Group'
+                action: 'Create Or Update Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/sbusdeploy.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/sbusdeploy.parameters.json'   
+                deploymentMode: 'Incremental'
+                deploymentOutputs: servicebustemplateoutput
+
+          - pwsh: |
+                $armOutputObj = '$(servicebustemplateoutput)' | convertfrom-json
+                Write-Output  $armOutputObj
+                $cs = $armOutputObj.namespaceConnectionString.value.Replace("/","\\/")
+                Write-Output "##vso[task.setvariable variable=serviceBusConn;issecret=true;]$cs"
+                
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: SQL'
+            inputs:
+                deploymentScope: 'Resource Group'    
+                action: 'Create Or Update Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/sqldeploy.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/sqldeploy.parameters.json'
+                deploymentMode: 'Incremental'
+                overrideParameters: '-al $(sqlAdminLogin) -alp $(sqlAdminPassword)'
+                deploymentOutputs: sqltemplateoutput
+                
+
+          - pwsh: |
+                $armOutputObj2 = '$(sqltemplateoutput)' | convertfrom-json
+                $sqlServerName1 = $armOutputObj2.sqlServerName.value
+                Write-Output "##vso[task.setvariable variable=sqlServerName;issecret=true;]$sqlServerName1"
+                
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: Cosmos Db'
+            inputs:
+                deploymentScope: 'Resource Group'
+                action: 'Create Or Update Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/deploycosmos.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/deploycosmos.parameters.json'   
+                deploymentMode: 'Incremental'
+
+
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: Key Vault'
+            inputs:
+                deploymentScope: 'Resource Group'
+                action: 'Create Or Update Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/keyvault.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/keyvault.parameters.json'   
+                deploymentMode: 'Incremental'
+                overrideParameters: '-serviceBusConnectionString $(serviceBusConn) -sqlServerName $(sqlServerName) -sqlAdminLogin $(sqlAdminLogin) -sqlAdminPassword $(sqlAdminPassword)'
+                
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: Redis'
+            inputs:
+                deploymentScope: 'Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                action: 'Create Or Update Resource Group'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/redisdeploy.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/redisdeploy.parameters.json'   
+                deploymentMode: 'Incremental'
+                
+          - task: AzureResourceManagerTemplateDeployment@3
+            displayName: 'ARM Template deployment: K8S'
+            inputs:
+                deploymentScope: 'Resource Group'
+                azureResourceManagerConnection: 'azureResourceManagerConnection'
+                action: 'Create Or Update Resource Group'
+                subscriptionId: $(subscriptionId)
+                resourceGroupName: $(resourceGroupName)
+                location: $(location)
+                templateLocation: 'Linked artifact'
+                csmFile: '$(System.DefaultWorkingDirectory)/template/aksdeploy.json' 
+                csmParametersFile: '$(System.DefaultWorkingDirectory)/template/aksdeploy.parameters.json'   
+                deploymentmode: 'incremental'
+                overrideparameters: ''
+
+          - task: AzureCLI@2
+            displayName: 'az aks enable-addons'
+            inputs:
+                  azureSubscription: 'azureResourceManagerConnection'
+                  scriptType: bash
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    workspaceResourceId=$(az monitor log-analytics workspace show --resource-group ri-poc-rg --workspace-name riWorkspace --query id -o tsv)
+                    az aks enable-addons --resource-group ri-poc-rg --name riakscluster --addons monitoring --workspace-resource-id $workspaceResourceId
+
+          # - task: DownloadSecureFile@1            
+          #   displayName: 'Download Secure File tls.crt' 
+          #   name: tlsCrt
+          #   inputs:
+          #     secureFile: 'tls.cert'
+
+          # - task: DownloadSecureFile@1
+          #   displayName: 'Download Secure File tls.key' 
+          #   name: tlsKey
+          #   inputs:
+          #     secureFile: 'tls.key'
+
+          # - task: Kubernetes@1
+          #   displayName: 'Create TLS Secret' 
+          #   inputs:
+          #     connectionType: 'Kubernetes Service Connection'
+          #     kubernetesServiceEndpoint: 'AzureKubernetesConnection'
+          #     command: 'create'
+          #     arguments: 'secret tls apigateway-tls-secret --cert=$(tlsCrt.secureFilePath) --key=$(tlsKey.secureFilePath)'
+          #     secretType: 'generic'
+
+          # - script: |
+          #     kubectl create secret tls apigateway-tls-secret --cert=$(tlsCrt.secureFilePath) --key=$(tlsKey.secureFilePath)
+          #   displayName: 'Create TLS Secret' 
+            # https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/self-signed-certificate.html
+            # - task: AzureCLI@2
+              # displayName: 'K8S'
+              # inputs:
+                # azureSubscription: ''
+                # scriptType: bash
+                # scriptLocation: inlineScript
+                # inlineScript: 'az aks create --resource-group reimbursement-poc-rg --name reimbursement-poc --node-count 1 --enable-addons monitoring --generate-ssh-keys  --node-vm-size Standard_B2s'
+

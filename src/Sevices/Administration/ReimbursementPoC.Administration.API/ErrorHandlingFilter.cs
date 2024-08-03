@@ -18,6 +18,8 @@ namespace ReimbursementPoC.Administration.API
         {
             var exception = context.Exception;
 
+            // ToDo: add logger
+            Console.WriteLine(exception.Message);
 
             if (exception is BusinessRuleValidationException || exception.GetType().Name == typeof(ValidationException).Name)
             {

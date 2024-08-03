@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "String",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "webAppName": {
+            "type": "String",
+            "metadata": {
+                "description": "latestjank"
+            }
+        },
+        "sku": {
+           "type": "String",
+           "metadata": {
+            "description": ""
+           }
+        },
+        "skuname": {
+           "type": "String",
+           "metadata": {
+            "description": ""
+           }
+        },
+        "customHostname": {
+            "type": "String",
+            "metadata": {
+                "description": "mynewhost"
+            }
+        }
+    },
+    "variables": {
+        "appServicePlanName": "[concat(parameters('webAppName'),'-asp-', uniquestring(resourceGroup().id))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/staticsites",
+            "apiVersion": "2019-08-01",
+            "name": "[parameters('webAppName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "name": "[parameters('webAppName')]"
+            },
+            "sku": {
+                    "Tier": "[parameters('sku')]",
+                    "Name": "[parameters('skuname')]"
+                }
+        }		
+    ],
+    "outputs": {
+    }
+}

@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: apigateway
+  name: apigateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: apigateway
+  template:
+    metadata:
+      labels:
+        name: apigateway
+    spec:
+      containers:
+      - image: "reimbursementpoccontainerregistry.azurecr.io/gateway-api"
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_URLS
+          value: "http://0.0.0.0:80"
+        - name: GlobalConfiguration__Hosts__AdministrationAPI
+          value: "http://administration"
+        - name: GlobalConfiguration__Hosts__VendorAPI
+          value: "http://vendor"
+        - name: GlobalConfiguration__Hosts__VendorSearchAPI
+          value: "http://vendorsearch"
+        - name: GlobalConfiguration__Hosts__CustomerAPI
+          value: "http://customer"
+        # - name: GlobalConfiguration__BaseUrl
+          # value: "http://52.224.186.68"
+        - name: IdentityAPI
+          value: "https://riidndev.azurewebsites.net"
+        name: apigateway
+        ports:
+         - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: apigateway
+    labels:
+      name: apigateway
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+    selector:
+        name: apigateway
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: apigateway-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+    - hosts:
+        - ri-gtw.hcp.eastus2.azmk8s.io
+      secretName: apigateway-tls-secret
+  rules:
+    - host: ri-gtw.hcp.eastus2.azmk8s.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: apigateway
+                port:
+                  number: 80

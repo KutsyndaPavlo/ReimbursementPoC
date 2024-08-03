@@ -16,6 +16,9 @@ namespace ReimbursementPoC.ApiGateway
         {
             var exception = context.Exception;
 
+            // ToDo: add logger
+            Console.WriteLine(exception.Message);
+
             context.Result = new JsonResult($"Something went wrong. Details: {context.Exception}")
             {
                 StatusCode = (int)HttpStatusCode.InternalServerError
