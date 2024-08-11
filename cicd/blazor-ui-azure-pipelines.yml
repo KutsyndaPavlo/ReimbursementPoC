@@ -1,0 +1,86 @@
+trigger:
+- main
+
+name: release-$(date:yyyyMMdd)$(rev:.r)
+
+variables:
+- name: buildConfiguration
+  value: 'Release'
+- name: releaseBranchName
+  value: 'main'
+
+stages:
+- stage: 'Build'
+  displayName: 'Build the web application'
+  jobs: 
+  - job: 'Build'
+    displayName: 'Build job'
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: 'Build the project - $(buildConfiguration)'
+      inputs:
+        command: 'build'
+        projects: '**/ReimbursementPoC.Blazor.UI.csproj'
+        arguments: --configuration $(buildConfiguration)
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish the project - $(buildConfiguration)'
+      inputs:
+        command: 'publish'
+        projects: '**/ReimbursementPoC.Blazor.UI.csproj'
+        publishWebProjects: false
+        arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+        zipAfterPublish: true
+
+    - publish: '$(Build.ArtifactStagingDirectory)'
+      artifact: drop
+
+- stage: 'Dev'
+  displayName: 'Deploy to the dev environment'
+  dependsOn: Build
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+    )
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: Dev
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: website'
+            inputs:
+              azureSubscription: 'azureResourceManagerConnection'
+              appName: 'ribluidev'
+              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+          - task: AzureAppServiceSettings@1
+            displayName: Azure App Service Settings
+            inputs:
+              azureSubscription: 'azureResourceManagerConnection'
+              appName: 'ribluidev'
+            # To deploy the settings on a slot, provide slot name as below. By default, the settings would be applied to the actual Web App (Production slot)
+            # slotName: staging
+              appSettings: |
+                [
+                    {
+                      "name": "ASPNETCORE_ENVIRONMENT",
+                      "value": "development",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "ASPNETCORE_URLS",
+                      "value": "http://0.0.0.0:80;https://0.0.0.0:443;",
+                      "slotSetting": false
+                    }
+                ]

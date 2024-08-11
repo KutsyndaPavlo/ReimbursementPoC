@@ -1,0 +1,128 @@
+trigger:
+- main
+
+variables:
+- name: releaseBranchName
+  value: 'main'
+
+name: release-$(date:yyyyMMdd)$(rev:.r)
+
+stages:
+- stage: 'Build'
+  displayName: 'Build the web application'
+  jobs:
+  - job: 'Build'
+    displayName: 'Build job'
+    pool:
+      vmImage: 'windows-latest'
+    variables:
+    - name: buildConfiguration
+      value: 'Release'
+    - name: BuildParameters.RestoreBuildProjects
+      value: '**/ReimbursementPoC.Customer.API.csproj'
+    - name: BuildParameters.TestProjects
+      value: '**/Customer/UnitTests/**/*.csproj'
+    - name: BuildParameters.K8S
+      value: 'src/Sevices/Customer/k8s.yml'
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET Core SDK'
+      inputs:
+        version: 8.x
+        includePreviewVersions: true
+    - task: DotNetCoreCLI@2
+      displayName: Build the project - $(buildConfiguration)
+      inputs:
+        command: 'build'
+        projects: $(BuildParameters.RestoreBuildProjects)
+        arguments: --configuration $(BuildConfiguration)
+    - task: DotNetCoreCLI@2
+      displayName: 'Run unit tests'
+      inputs:
+        command: 'test'
+        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
+        publishTestResults: true
+        projects: $(BuildParameters.TestProjects)
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage report'
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: $(BuildParameters.RestoreBuildProjects)
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+        zipAfterPublish: True
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)' 
+        artifactName: 'drop'
+
+- stage: 'Dev'
+  displayName: 'Deploy to the dev environment'
+  dependsOn: Build
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+    )
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: Dev
+    variables:
+    - name: acr_repository
+      value: 'customer-api'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: ExtractFiles@1
+            inputs:
+                  archiveFilePatterns: '$(Pipeline.Workspace)/drop/*.zip'
+                  destinationFolder: '$(System.DefaultWorkingDirectory)'
+                  cleanDestinationFolder: true
+                  overwriteExistingFiles: true
+          - task: Docker@2
+            displayName: buildAndPush
+            inputs:
+              containerRegistry: 'AzureContainerRegistryConnection'
+              repository: '$(acr_repository)'
+              Dockerfile: '$(System.DefaultWorkingDirectory)/DockerfileExternal'
+              tags: >-
+                $(Build.BuildNumber)
+
+          - task: AzureKeyVault@2
+            inputs:
+              azureSubscription: 'azureResourceManagerConnection'
+              KeyVaultName: 'reimbursementpoc-vault'
+              SecretsFilter: '*'
+              RunAsPreJob: true
+              
+          - script: |
+              sed -i 's/REPLACEConnectionStrings__DbREPLACE/$(dbCustomerConnectionString)/'  '$(System.DefaultWorkingDirectory)/k8s.yml'
+              sed -i 's/REPLACEASB_Connection_StringREPLACE/$(serviceBusConnectionString)/'  '$(System.DefaultWorkingDirectory)/k8s.yml'
+            displayName: 'Command Line Script'
+
+          - task: KubernetesManifest@1
+            displayName: createSecret
+            inputs:
+              action: createSecret
+              kubernetesServiceConnection: 'AzureKubernetesConnection'
+              secretName: 'reimbursementpoccontainerregistrycr11e05-auth'
+              dockerRegistryEndpoint: 'AzureContainerRegistryConnection'
+              
+          - task: KubernetesManifest@1
+            displayName: deploy
+            inputs:
+              kubernetesServiceConnection: 'AzureKubernetesConnection'
+              manifests: '$(System.DefaultWorkingDirectory)/k8s.yml'
+              containers: 'reimbursementpoccontainerregistry.azurecr.io/customer-api:$(Build.BuildNumber)'
+              imagePullSecrets: 'reimbursementpoccontainerregistrycr11e05-auth'

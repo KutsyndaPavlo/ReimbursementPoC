@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddCors();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -42,12 +42,12 @@ builder.Services.AddAuthentication()
                 });
 
 var app = builder.Build();
-app.UseCors(config =>
-{
-    config.AllowAnyOrigin();
-    config.AllowAnyMethod();
-    config.AllowAnyHeader();
-});
+//app.UseCors(config =>
+//{
+//    config.AllowAnyOrigin();
+//    config.AllowAnyMethod();
+//    config.AllowAnyHeader();
+//});
 
 
 // Configure the HTTP request pipeline.
@@ -62,6 +62,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors(config =>
+{
+    config.AllowAnyOrigin();
+    config.AllowAnyMethod();
+    config.AllowAnyHeader();
+});
+
 
 app.UseIdentityServer();
 app.UseAuthorization();

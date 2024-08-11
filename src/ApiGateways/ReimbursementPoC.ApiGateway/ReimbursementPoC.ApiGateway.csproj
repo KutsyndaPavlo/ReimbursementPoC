@@ -15,6 +15,20 @@
       <None Remove="Controllers\**" />
     </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="DockerfileExternal" />
+    <None Remove="k8s.yml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="DockerfileExternal">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="k8s.yml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />
       <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />

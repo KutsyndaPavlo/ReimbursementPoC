@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: vendorsearch
+  name: vendorsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: vendorsearch
+  template:
+    metadata:
+      labels:
+        name: vendorsearch
+    spec:
+      containers:
+        - image: "reimbursementpoccontainerregistry.azurecr.io/vendorsearch-api"
+          env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: "Development"
+          - name: ASPNETCORE_URLS
+            value: "http://0.0.0.0:80"
+          - name: ElasticSearchHost
+            value: elasticsearch
+          - name: ASB_Connection_String
+            value: "REPLACEASB_Connection_StringREPLACE"
+          name: vendorsearch
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vendorsearch
+  labels:
+    name: vendorsearch
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: ClusterIP
+  selector:
+    name: vendorsearch

@@ -1,0 +1,125 @@
+trigger:
+- main
+
+variables:
+- name: releaseBranchName
+  value: 'main'
+
+name: release-$(date:yyyyMMdd)$(rev:.r)
+
+stages:
+- stage: 'Build'
+  displayName: 'Build the web application'
+  jobs:
+  - job: 'Build'
+    displayName: 'Build job'
+    pool:
+      vmImage: 'windows-latest'
+    variables:
+    - name: buildConfiguration
+      value: 'Release'
+    - name: BuildParameters.RestoreBuildProjects
+      value: '**/ReimbursementPoC.Identity.API.csproj'
+    - name: BuildParameters.TestProjects
+      value: '**/Identity/UnitTests/*.csproj'
+    - name: BuildParameters.K8S
+      value: 'src/Sevices/Identity/k8s.yml'
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Install .NET Core SDK'
+      inputs:
+        version: 8.x
+        includePreviewVersions: true
+    - task: DotNetCoreCLI@2
+      displayName: Build the project - $(buildConfiguration)
+      inputs:
+        command: 'build'
+        projects: $(BuildParameters.RestoreBuildProjects)
+        arguments: --configuration $(BuildConfiguration)
+    - task: DotNetCoreCLI@2
+      displayName: 'Run unit tests'
+      inputs:
+        command: 'test'
+        arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura'
+        publishTestResults: true
+        projects: $(BuildParameters.TestProjects)
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage report'
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: $(BuildParameters.RestoreBuildProjects)
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+        zipAfterPublish: True
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(Build.ArtifactStagingDirectory)' 
+        artifactName: 'drop'
+
+- stage: 'Dev'
+  displayName: 'Deploy to the dev environment'
+  dependsOn: Build
+  condition: |
+    and
+    (
+      succeeded(),
+      eq(variables['Build.SourceBranchName'], variables['releaseBranchName'])
+    )
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment: Dev
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: drop
+          - task: AzureKeyVault@2
+            inputs:
+              azureSubscription: 'azureResourceManagerConnection'
+              KeyVaultName: 'reimbursementpoc-vault'
+              SecretsFilter: 'dbIdentityConnectionString'
+              RunAsPreJob: true
+          - task: AzureWebApp@1
+            displayName: 'Azure App Service Deploy: website'
+            inputs:
+              azureSubscription: 'azureResourceManagerConnection'
+              appName: 'riidndev'
+              package: '$(Pipeline.Workspace)/drop/*.zip'
+          - task: AzureAppServiceSettings@1
+            displayName: Azure App Service Settings
+            inputs:
+              azureSubscription: 'azureResourceManagerConnection'
+              appName: 'riidndev'
+            # To deploy the settings on a slot, provide slot name as below. By default, the settings would be applied to the actual Web App (Production slot)
+            # slotName: staging
+              appSettings: |
+                [
+                    {
+                      "name": "ASPNETCORE_ENVIRONMENT",
+                      "value": "Development",
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "ASPNETCORE_URLS",
+                      "value": "https://+:443", 
+                      "slotSetting": false
+                    },                    
+                    {
+                      "name": "ConnectionStrings__DefaultConnection",
+                      "value": "$(dbIdentityConnectionString)", 
+                      "slotSetting": false
+                    },
+                    {
+                      "name": "UiUrl",
+                      "value": "https://ribluidev.azurewebsites.net", 
+                      "slotSetting": false
+                    }
+                ]

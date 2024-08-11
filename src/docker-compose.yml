@@ -173,7 +173,7 @@ services:
         - apigateway
         - identity.api
       environment:
-        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_ENVIRONMENT=Local
         - ASPNETCORE_URLS=https://+:443
       ports:
         - "8505:443"
