@@ -17,6 +17,7 @@
 - [NUnit]
 - [Docker]
 - [Specflow]
+- [Blazor]
 
 ## Architecture Overview
 ![ri (1)](https://github.com/user-attachments/assets/7a6d8467-ea97-4261-baff-1cd301c44ecb)
@@ -92,6 +93,22 @@ Add build pipelines for each component using yml files located in "/cicd" folder
 
 - readiness:
   ![image](https://github.com/user-attachments/assets/949e3288-7903-4703-b288-161668885916)
+
+# Workflow
+## Programs
+### Create 
+![image](https://github.com/user-attachments/assets/34fb17b7-61a7-4f7a-830c-823b9ff28a2e)
+### Display
+![image](https://github.com/user-attachments/assets/cf8a8cf6-fb63-43cd-886e-2fea4ebf4b9f)
+### Edit
+![image](https://github.com/user-attachments/assets/b626dcee-dd3f-4e5a-a3e7-b1d2a900da49)
+### Cancel
+![image](https://github.com/user-attachments/assets/2ce6b105-2fa3-4cf5-a0be-241fba37d6ce)
+
+
+
+
+
 
 
 
